@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import './styles/App.css';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
-import Navbar from './components/Navbar';
+import Header from './components/Header';
 import AppRoutes from './routes';
 import { initializeMockData } from './data/mockData';
 
@@ -15,7 +15,7 @@ function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <Navbar />
+        <Header />
         <div className="App">
           <AppRoutes />
         </div>
