@@ -1,0 +1,10 @@
+@import './variables.css';
+
+* {
+  box-sizing: border-box;
+}
+
+.App {
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+}
