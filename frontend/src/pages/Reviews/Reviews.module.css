@@ -1,0 +1,148 @@
+.reviews {
+  min-height: 100vh;
+  background: var(--gradient-dark-vertical);
+  padding: 8rem 2rem 4rem;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: 0.1em;
+  margin: 0 0 1.5rem 0;
+}
+
+.subtitle {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--text-light);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+.card {
+  background: var(--gradient-gold-secondary);
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-gold-lg);
+}
+
+.reviewText {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--bg-secondary);
+  margin: 0;
+  flex: 1;
+  font-style: italic;
+  position: relative;
+  z-index: 1;
+}
+
+.stars {
+  display: flex;
+  gap: 0.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.star {
+  color: var(--bg-secondary);
+  transition: transform 0.2s ease;
+}
+
+.card:hover .star {
+  transform: scale(1.1);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .reviews {
+    padding: 6rem 1.5rem 3rem;
+  }
+
+  .header {
+    margin-bottom: 3rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .card {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
