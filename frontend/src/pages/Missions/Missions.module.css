@@ -1,0 +1,1001 @@
+.container {
+  min-height: 100vh;
+  background: var(--gradient-dark-vertical);
+  padding-top: 80px;
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary-gold);
+  text-align: center;
+  margin-bottom: 1rem;
+  letter-spacing: 2px;
+  text-shadow: var(--shadow-gold-md);
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+}
+
+.controls {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.searchBox {
+  flex: 1;
+  min-width: 300px;
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  color: var(--primary-gold);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-focus);
+}
+
+.searchInput::placeholder {
+  color: var(--text-muted);
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+}
+
+.select {
+  padding: 1rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.select:hover {
+  border-color: var(--primary-gold);
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-focus);
+}
+
+.missionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.missionCard {
+  background: var(--gradient-dark-reverse);
+  border: 2px solid var(--gold-alpha-30);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.missionCard:hover {
+  border-color: var(--primary-gold);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.statusBadge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--bg-primary);
+}
+
+.reward {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary-gold);
+}
+
+.cardBody {
+  flex: 1;
+  margin-bottom: 1.5rem;
+}
+
+.missionTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.8rem;
+}
+
+.missionDescription {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.missionMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.metaIcon {
+  font-size: 1rem;
+}
+
+.metaText {
+  color: var(--text-secondary);
+}
+
+.negotiationBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.negotiationIcon {
+  font-size: 1.2rem;
+}
+
+.negotiationText {
+  font-size: 0.9rem;
+  color: var(--status-warning);
+  font-weight: 600;
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.detailsButton {
+  flex: 1;
+  padding: 0.9rem;
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 12px;
+  color: var(--primary-gold);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.detailsButton:hover {
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
+  transform: translateY(-2px);
+}
+
+.acceptButton {
+  flex: 1;
+  padding: 0.9rem;
+  background: var(--gradient-success);
+  border: none;
+  border-radius: 12px;
+  color: var(--bg-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.acceptButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 222, 128, 0.5);
+}
+
+.negotiateButton {
+  flex: 1;
+  padding: 0.9rem;
+  background: var(--gradient-gold);
+  border: none;
+  border-radius: 12px;
+  color: var(--bg-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.negotiateButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-out;
+  backdrop-filter: blur(8px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  background: var(--gradient-dark-reverse);
+  border: 2px solid var(--gold-alpha-40);
+  border-radius: 20px;
+  padding: 3rem;
+  max-width: 850px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: scaleIn 0.3s ease-out;
+  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-gold);
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.closeButton:hover {
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
+  transform: rotate(90deg);
+}
+
+.modalHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  padding-right: 3rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.modalTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+  padding-right: 1rem;
+}
+
+.modalStatus {
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--bg-primary);
+  align-self: flex-start;
+}
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.modalSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary-gold);
+  margin-bottom: 0.5rem;
+}
+
+.description {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.2rem;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+}
+
+.detailLabel {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detailValue {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.negotiationBox {
+  padding: 1.5rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 12px;
+}
+
+.negotiationProposer {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.8rem;
+}
+
+.negotiationReward {
+  color: var(--primary-gold);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.negotiationMessage {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-bottom: 0.8rem;
+  padding: 0.8rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.negotiationDate {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.modalNegotiateButton {
+  width: 100%;
+  padding: 1.2rem;
+  background: var(--gradient-gold);
+  border: none;
+  border-radius: 12px;
+  color: var(--bg-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.modalNegotiateButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+}
+
+.negotiateInfo {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+}
+
+.negotiateTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.8rem;
+}
+
+.negotiateOriginal {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.negotiateAmount {
+  color: var(--primary-gold);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.negotiateForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-focus);
+  background: rgba(30, 30, 30, 1);
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.textarea:focus {
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-focus);
+  background: rgba(30, 30, 30, 1);
+}
+
+.textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.submitButton {
+  width: 100%;
+  padding: 1.2rem;
+  background: var(--gradient-gold);
+  border: none;
+  border-radius: 12px;
+  color: var(--bg-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .searchBox {
+    min-width: 100%;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .missionsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .cardActions {
+    flex-direction: column;
+  }
+
+  .modal {
+    padding: 2rem;
+    max-width: 95%;
+  }
+
+  .modalHeader {
+    padding-right: 2rem;
+  }
+
+  .modalTitle {
+    font-size: 1.5rem;
+  }
+
+  .closeButton {
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.4rem;
+  }
+}
+
+/* Botón de aceptar */
+.acceptButton {
+  flex: 1;
+  padding: 0.9rem;
+  background: var(--gradient-success);
+  border: none;
+  border-radius: 12px;
+  color: var(--bg-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.acceptButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 222, 128, 0.5);
+}
+
+/* Modal de éxito */
+.successModal {
+  background: var(--gradient-dark-reverse);
+  border: 2px solid rgba(74, 222, 128, 0.4);
+  border-radius: 20px;
+  padding: 3rem;
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+  animation: scaleIn 0.3s ease-out;
+  box-shadow: 0 20px 60px rgba(74, 222, 128, 0.3);
+  text-align: center;
+}
+
+.successIcon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  animation: bounce 0.6s ease-out;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.successTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--status-success);
+  margin-bottom: 1rem;
+}
+
+.successMessage {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.successMissionInfo {
+  padding: 2rem;
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.successMissionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.successReward {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.successRewardLabel {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.successRewardAmount {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-gold);
+}
+
+.successDeadline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.deadlineIcon {
+  font-size: 3rem;
+}
+
+.deadlineInfo {
+  text-align: left;
+}
+
+.deadlineLabel {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+
+.deadlineDate {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--status-warning);
+  margin-bottom: 0.3rem;
+  text-transform: capitalize;
+}
+
+.deadlineSubtext {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.successButton {
+  width: 100%;
+  padding: 1.2rem;
+  background: var(--gradient-success);
+  border: none;
+  border-radius: 12px;
+  color: var(--bg-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.successButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(74, 222, 128, 0.5);
+}
+
+/* Modal de autenticación */
+.authModal {
+  background: var(--gradient-dark-reverse);
+  border: 2px solid var(--gold-alpha-40);
+  border-radius: 20px;
+  padding: 3rem;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  animation: scaleIn 0.3s ease-out;
+  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+  text-align: center;
+}
+
+.authIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.authTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-gold);
+  margin-bottom: 1rem;
+}
+
+.authMessage {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.authButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.authLoginButton,
+.authRegisterButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 1.2rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.authLoginButton {
+  background: var(--gradient-gold);
+  color: var(--bg-primary);
+}
+
+.authLoginButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+}
+
+.authRegisterButton {
+  background: var(--gold-alpha-15);
+  border: 2px solid var(--gold-alpha-30);
+  color: var(--primary-gold);
+}
+
+.authRegisterButton:hover {
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
+  transform: translateY(-2px);
+}
+
+.authButtonIcon {
+  font-size: 1.3rem;
+}
+
+.authNote {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  padding-top: 1rem;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+/* Negociación actual */
+.currentNegotiation {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 12px;
+}
+
+.currentNegotiationTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--status-warning);
+  margin-bottom: 1rem;
+}
+
+.currentNegotiationBox {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
+.currentNegotiationProposer {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.currentNegotiationReward {
+  color: var(--primary-gold);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.currentNegotiationMessage {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+/* Opciones de negociación */
+.negotiateOptions {
+  margin-bottom: 2rem;
+}
+
+.acceptTermsButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(74, 222, 128, 0.1);
+  border: 2px solid rgba(74, 222, 128, 0.3);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.acceptTermsButton:hover {
+  background: rgba(74, 222, 128, 0.2);
+  border-color: var(--status-success);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+}
+
+.acceptTermsButton .optionIcon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.optionText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.optionText strong {
+  font-size: 1.1rem;
+  color: var(--status-success);
+}
+
+.optionSubtext {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.orDivider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.orDivider::before,
+.orDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.orDivider span {
+  padding: 0 1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Información confidencial */
+.negotiationInfo {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 1.5rem;
+  line-height: 1.6;
+}
