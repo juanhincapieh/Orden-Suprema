@@ -1,0 +1,1023 @@
+.container {
+  min-height: 100vh;
+  background: var(--gradient-dark);
+  padding-top: 80px;
+}
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 2rem;
+  letter-spacing: 2px;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tabButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: var(--gold-alpha-15);
+  border: 2px solid var(--gold-alpha-30);
+  border-radius: 12px;
+  color: var(--primary-gold);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tabButton:hover {
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-gold-md);
+}
+
+.tabActive {
+  background: var(--gradient-gold);
+  border-color: var(--primary-gold);
+  color: var(--bg-primary);
+  box-shadow: var(--shadow-gold-lg);
+}
+
+.tabIcon {
+  font-size: 1.5rem;
+}
+
+.section {
+  animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+.refreshButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--gold-alpha-15);
+  border: 2px solid var(--gold-alpha-30);
+  border-radius: 8px;
+  color: var(--primary-gold);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.refreshButton:hover {
+  background: var(--gold-alpha-30);
+  border-color: var(--primary-gold);
+  transform: translateY(-2px);
+}
+
+.subsectionTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 2rem 0 1rem;
+}
+
+/* Asignar Misión */
+.mapContainer {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.assassinsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.assassinCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.assassinCard:hover {
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-sm);
+  transform: translateX(5px);
+}
+
+.assassinAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--gradient-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--bg-primary);
+  border: 2px solid var(--primary-gold);
+}
+
+.assassinInfo {
+  flex: 1;
+}
+
+.assassinName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.assassinStats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.assassinStatus {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--bg-primary);
+}
+
+.mapPlaceholder {
+  background: var(--bg-card-light);
+  border: 2px dashed var(--gold-alpha-30);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.mapIcon {
+  font-size: 4rem;
+}
+
+.mapPlaceholder p {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
+.contractsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contractCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.contractCard:hover {
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-sm);
+}
+
+.contractInfo {
+  flex: 1;
+}
+
+.contractTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.contractReward {
+  color: var(--primary-gold);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.assignButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--gradient-gold);
+  border: none;
+  border-radius: 8px;
+  color: var(--bg-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.assignButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-gold-lg);
+}
+
+/* Gestionar Asesinos */
+.assassinsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.assassinDetailCard {
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.assassinDetailCard:hover {
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-xl);
+  transform: translateY(-5px);
+}
+
+.assassinHeader {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.assassinAvatarLarge {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--gradient-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--bg-primary);
+  border: 3px solid var(--primary-gold);
+  box-shadow: var(--shadow-gold-md);
+}
+
+.statusBadge {
+  position: absolute;
+  top: 0;
+  right: -10px;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--bg-primary);
+  box-shadow: var(--shadow-dark);
+}
+
+.assassinNameLarge {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.assassinEmail {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.assassinMetrics {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metricLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metricValue {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-gold);
+}
+
+.manageButton {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 8px;
+  color: var(--primary-gold);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.manageButton:hover {
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
+}
+
+/* Ver Transacciones */
+.transactionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.transactionCard {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.transactionCard:hover {
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-sm);
+}
+
+.transactionIcon {
+  font-size: 2.5rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 12px;
+}
+
+.transactionInfo {
+  flex: 1;
+}
+
+.transactionUser {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.transactionDescription {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.transactionDate {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.transactionAmount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.positive {
+  color: var(--status-success);
+}
+
+.negative {
+  color: var(--status-danger);
+}
+
+/* Reportes */
+.tabBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 0.4rem;
+  background: var(--status-danger);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 10px;
+  margin-left: 0.5rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.reportsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.reportCard {
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.reportCard:hover {
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-sm);
+}
+
+.reportHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.reportStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.reportStatus[data-status="pending"] {
+  background: var(--warning-alpha-20);
+  border: 1px solid var(--warning-alpha-40);
+  color: var(--status-warning);
+}
+
+.reportStatus[data-status="resolved"] {
+  background: var(--success-alpha-20);
+  border: 1px solid var(--success-alpha-40);
+  color: var(--status-success);
+}
+
+.reportStatus[data-status="cancelled"] {
+  background: var(--danger-alpha-20);
+  border: 1px solid var(--danger-alpha-40);
+  color: var(--status-danger);
+}
+
+.reportDate {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.reportContractTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.reportInfo {
+  margin-bottom: 1rem;
+}
+
+.reportReporter {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.reportReporter strong {
+  color: var(--primary-gold);
+}
+
+.reportDescription {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  padding: 1rem;
+  background: var(--bg-card-dark);
+  border-left: 3px solid var(--gold-alpha-50);
+  border-radius: 4px;
+}
+
+.reportActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.penalizeButton,
+.cancelReportButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.penalizeButton {
+  background: var(--gradient-danger);
+  color: var(--text-primary);
+}
+
+.penalizeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-danger);
+}
+
+.cancelReportButton {
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
+  color: var(--primary-gold);
+}
+
+.cancelReportButton:hover {
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
+  transform: translateY(-2px);
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  animation: fadeInOverlay 0.3s ease-out;
+  backdrop-filter: blur(5px);
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  background: var(--gradient-dark-reverse);
+  border: 2px solid var(--gold-alpha-40);
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  animation: scaleIn 0.3s ease-out;
+  box-shadow: var(--shadow-gold-xl);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-gold);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.closeButton:hover {
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
+  transform: rotate(90deg);
+}
+
+.modalTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contractDetails {
+  padding: 1.5rem;
+  background: var(--bg-card-light);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 12px;
+}
+
+.contractDetails h3 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.contractDetails p {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.rewardText {
+  color: var(--primary-gold) !important;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.select:focus {
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-focus);
+}
+
+.select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.confirmButton {
+  width: 100%;
+  padding: 1rem;
+  background: var(--gradient-gold);
+  border: none;
+  border-radius: 8px;
+  color: var(--bg-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.confirmButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-gold-lg);
+}
+
+@media (max-width: 968px) {
+  .main {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .tabButtons {
+    flex-direction: column;
+  }
+
+  .mapContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .assassinsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .transactionCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .modal {
+    padding: 1.5rem;
+  }
+}
+
+/* Contracts Header */
+.contractsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.createMissionButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: var(--gradient-gold);
+  border: none;
+  border-radius: 10px;
+  color: var(--bg-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.createMissionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+}
+
+/* New Mission Form */
+.newMissionForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: rgba(30, 30, 30, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--primary-gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  background: rgba(30, 30, 30, 1);
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: rgba(30, 30, 30, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.textarea:focus {
+  border-color: var(--primary-gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  background: rgba(30, 30, 30, 1);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Tab Badge */
+.tabBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 0.5rem;
+  background: #ef4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 12px;
+  animation: pulse 2s infinite;
+}
+
+@media (max-width: 768px) {
+  .contractsHeader {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .createMissionButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .tabButtons {
+    flex-direction: column;
+  }
+
+  .tabButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Manage Actions */
+.manageActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.suspendButton,
+.deleteButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.suspendButton {
+  background: rgba(251, 191, 36, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.suspendButton:hover {
+  background: #f59e0b;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+.deleteButton {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.deleteButton:hover {
+  background: #ef4444;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Map Wrapper */
+.mapWrapper {
+  display: flex;
+  background: var(--bg-card-light);
+  border: 2px solid var(--gold-alpha-30);
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 500px;
+}
+
+/* Assassin Card Selected */
+.assassinCardSelected {
+  border-color: var(--primary-gold) !important;
+  background: var(--gold-alpha-15) !important;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4) !important;
+  transform: scale(1.02);
+}
+
+.assassinCard {
+  cursor: pointer;
+  user-select: none;
+}
