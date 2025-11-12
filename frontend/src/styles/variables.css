@@ -1,0 +1,321 @@
+:root {
+  /* Colores principales - Gold */
+  --primary-gold: #d4af37;
+  --secondary-gold: #d4a574;
+  --gold-dark: #c9a02c;
+  --gold-hover: #e6c04d;
+  --gold-light: #e6b886;
+  
+  /* Alias para compatibilidad */
+  --color-primary: #d4af37;
+  --color-primary-dark: #c9a02c;
+  --color-primary-light: #e6c04d;
+  
+  /* Colores de fondo */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2a2a2a;
+  --bg-card: rgba(30, 30, 30, 0.8);
+  --bg-card-light: rgba(30, 30, 30, 0.6);
+  --bg-card-dark: rgba(20, 20, 20, 0.6);
+  --bg-overlay: rgba(0, 0, 0, 0.85);
+  
+  /* Alias para compatibilidad */
+  --bg-dark: #0a0a0a;
+  --bg-dark-secondary: #1a1a1a;
+  --bg-dark-tertiary: #2a2a2a;
+  
+  /* Colores de texto */
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #808080;
+  --text-muted: #808080;
+  --text-light: #e0e0e0;
+  
+  /* Colores de estado */
+  --status-success: #4ade80;
+  --status-warning: #fbbf24;
+  --status-danger: #ef4444;
+  --status-info: #3b82f6;
+  --status-open: #4ade80;
+  --status-open-dark: #22c55e;
+  --status-negotiating: #f59e0b;
+  --status-in-progress: #3b82f6;
+  --status-completed: #8b5cf6;
+  --status-cancelled: #ef4444;
+  --status-available: #4ade80;
+  --status-busy: #f59e0b;
+  --status-inactive: #ef4444;
+  
+  /* Colores de acción */
+  --color-success: #4ade80;
+  --color-success-dark: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  
+  /* Opacidades del color principal - Gold */
+  --gold-alpha-5: rgba(212, 175, 55, 0.05);
+  --gold-alpha-10: rgba(212, 175, 55, 0.1);
+  --gold-alpha-15: rgba(212, 175, 55, 0.15);
+  --gold-alpha-20: rgba(212, 175, 55, 0.2);
+  --gold-alpha-25: rgba(212, 175, 55, 0.25);
+  --gold-alpha-30: rgba(212, 175, 55, 0.3);
+  --gold-alpha-40: rgba(212, 175, 55, 0.4);
+  --gold-alpha-50: rgba(212, 175, 55, 0.5);
+  --gold-alpha-60: rgba(212, 175, 55, 0.6);
+  --gold-alpha-80: rgba(212, 175, 55, 0.8);
+  
+  /* Alias para compatibilidad */
+  --primary-alpha-5: rgba(212, 175, 55, 0.05);
+  --primary-alpha-10: rgba(212, 175, 55, 0.1);
+  --primary-alpha-15: rgba(212, 175, 55, 0.15);
+  --primary-alpha-20: rgba(212, 175, 55, 0.2);
+  --primary-alpha-25: rgba(212, 175, 55, 0.25);
+  --primary-alpha-30: rgba(212, 175, 55, 0.3);
+  --primary-alpha-40: rgba(212, 175, 55, 0.4);
+  
+  /* Opacidades de fondos oscuros */
+  --dark-alpha-30: rgba(30, 30, 30, 0.3);
+  --dark-alpha-60: rgba(30, 30, 30, 0.6);
+  --dark-alpha-80: rgba(30, 30, 30, 0.8);
+  
+  /* Opacidades de éxito */
+  --success-alpha-10: rgba(74, 222, 128, 0.1);
+  --success-alpha-15: rgba(74, 222, 128, 0.15);
+  --success-alpha-20: rgba(74, 222, 128, 0.2);
+  --success-alpha-30: rgba(74, 222, 128, 0.3);
+  --success-alpha-40: rgba(74, 222, 128, 0.4);
+  
+  /* Opacidades de advertencia */
+  --warning-alpha-10: rgba(245, 158, 11, 0.1);
+  --warning-alpha-15: rgba(245, 158, 11, 0.15);
+  --warning-alpha-20: rgba(245, 158, 11, 0.2);
+  --warning-alpha-30: rgba(245, 158, 11, 0.3);
+  --warning-alpha-40: rgba(251, 191, 36, 0.4);
+  
+  /* Opacidades de error/danger */
+  --error-alpha-15: rgba(239, 68, 68, 0.15);
+  --error-alpha-25: rgba(239, 68, 68, 0.25);
+  --error-alpha-30: rgba(239, 68, 68, 0.3);
+  --danger-alpha-20: rgba(239, 68, 68, 0.2);
+  --danger-alpha-40: rgba(239, 68, 68, 0.4);
+  
+  /* Gradientes */
+  --gradient-gold: linear-gradient(135deg, #d4af37 0%, #c9a02c 100%);
+  --gradient-gold-secondary: linear-gradient(135deg, #d4a574 0%, #c89960 100%);
+  --gradient-gold-horizontal: linear-gradient(90deg, #d4a574 0%, #c89960 100%);
+  --gradient-gold-light: linear-gradient(90deg, #e6b886 0%, #d4a574 100%);
+  --gradient-dark: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  --gradient-dark-vertical: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+  --gradient-dark-reverse: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  --gradient-header: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  
+  /* Alias para compatibilidad */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  --gradient-success: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);
+  
+  /* Sombras */
+  --shadow-gold-sm: 0 4px 15px rgba(212, 175, 55, 0.2);
+  --shadow-gold-md: 0 4px 20px rgba(212, 175, 55, 0.3);
+  --shadow-gold-lg: 0 6px 20px rgba(212, 175, 55, 0.4);
+  --shadow-gold-xl: 0 10px 40px rgba(212, 175, 55, 0.3);
+  --shadow-gold-focus: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  --shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-danger: 0 6px 20px rgba(239, 68, 68, 0.4);
+  
+  /* Alias para compatibilidad */
+  --shadow-primary: 0 4px 15px rgba(212, 175, 55, 0.3);
+  --shadow-primary-hover: 0 6px 20px rgba(212, 175, 55, 0.5);
+  --shadow-primary-large: 0 10px 30px rgba(212, 175, 55, 0.5);
+  --shadow-primary-xl: 0 20px 60px rgba(212, 175, 55, 0.3);
+  --shadow-success: 0 6px 20px rgba(74, 222, 128, 0.5);
+  
+  /* Bordes */
+  --border-primary: 1px solid var(--primary-alpha-30);
+  --border-primary-thick: 2px solid var(--primary-alpha-40);
+  --border-success: 2px solid var(--success-alpha-30);
+  --border-error: 2px solid var(--error-alpha-30);
+  
+  /* Radios de borde */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 50%;
+  
+  /* Transiciones */
+  --transition-fast: all 0.2s ease;
+  --transition-normal: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
+  
+  /* Espaciado */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 2.5rem;
+  --spacing-3xl: 3rem;
+  
+  /* Tamaños de fuente */
+  --font-xs: 0.75rem;
+  --font-sm: 0.85rem;
+  --font-base: 1rem;
+  --font-lg: 1.1rem;
+  --font-xl: 1.3rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 2rem;
+  --font-4xl: 2.5rem;
+  --font-5xl: 3rem;
+  
+  /* Z-index */
+  --z-header: 1000;
+  --z-modal: 2000;
+  --z-tooltip: 3000;
+}
+
+/* ============================================
+   TEMA CLARO
+   ============================================ */
+[data-theme="light"] {
+  /* ========== Colores de Fondo ========== */
+  --bg-primary: #fafafa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f0f0f0;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-card-light: rgba(255, 255, 255, 0.85);
+  --bg-card-dark: rgba(250, 250, 250, 0.9);
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  
+  /* Alias para compatibilidad */
+  --bg-dark: #fafafa;
+  --bg-dark-secondary: #ffffff;
+  --bg-dark-tertiary: #f0f0f0;
+  
+  /* ========== Colores de Texto ========== */
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-tertiary: #6a6a6a;
+  --text-muted: #9a9a9a;
+  --text-light: #2a2a2a;
+  
+  /* ========== Colores Dorados (Gold) ========== */
+  /* Mantener los colores dorados principales */
+  --primary-gold: #c9a02c;
+  --secondary-gold: #b8902a;
+  --gold-dark: #a88025;
+  --gold-hover: #d4af37;
+  --gold-light: #d4a574;
+  
+  /* Alias para compatibilidad */
+  --color-primary: #c9a02c;
+  --color-primary-dark: #a88025;
+  --color-primary-light: #d4af37;
+  
+  /* ========== Opacidades del Gold ========== */
+  --gold-alpha-5: rgba(201, 160, 44, 0.05);
+  --gold-alpha-10: rgba(201, 160, 44, 0.1);
+  --gold-alpha-15: rgba(201, 160, 44, 0.15);
+  --gold-alpha-20: rgba(201, 160, 44, 0.2);
+  --gold-alpha-25: rgba(201, 160, 44, 0.25);
+  --gold-alpha-30: rgba(201, 160, 44, 0.3);
+  --gold-alpha-40: rgba(201, 160, 44, 0.4);
+  --gold-alpha-50: rgba(201, 160, 44, 0.5);
+  --gold-alpha-60: rgba(201, 160, 44, 0.6);
+  --gold-alpha-80: rgba(201, 160, 44, 0.8);
+  
+  /* Alias para compatibilidad */
+  --primary-alpha-5: rgba(201, 160, 44, 0.05);
+  --primary-alpha-10: rgba(201, 160, 44, 0.1);
+  --primary-alpha-15: rgba(201, 160, 44, 0.15);
+  --primary-alpha-20: rgba(201, 160, 44, 0.2);
+  --primary-alpha-25: rgba(201, 160, 44, 0.25);
+  --primary-alpha-30: rgba(201, 160, 44, 0.3);
+  --primary-alpha-40: rgba(201, 160, 44, 0.4);
+  
+  /* ========== Opacidades de Fondos ========== */
+  --dark-alpha-30: rgba(250, 250, 250, 0.3);
+  --dark-alpha-60: rgba(250, 250, 250, 0.6);
+  --dark-alpha-80: rgba(250, 250, 250, 0.8);
+  
+  /* ========== Opacidades de Estados ========== */
+  --success-alpha-10: rgba(34, 197, 94, 0.1);
+  --success-alpha-15: rgba(34, 197, 94, 0.15);
+  --success-alpha-20: rgba(34, 197, 94, 0.2);
+  --success-alpha-30: rgba(34, 197, 94, 0.3);
+  --success-alpha-40: rgba(34, 197, 94, 0.4);
+  
+  --warning-alpha-10: rgba(245, 158, 11, 0.1);
+  --warning-alpha-15: rgba(245, 158, 11, 0.15);
+  --warning-alpha-20: rgba(245, 158, 11, 0.2);
+  --warning-alpha-30: rgba(245, 158, 11, 0.3);
+  --warning-alpha-40: rgba(245, 158, 11, 0.4);
+  
+  --error-alpha-15: rgba(239, 68, 68, 0.15);
+  --error-alpha-25: rgba(239, 68, 68, 0.25);
+  --error-alpha-30: rgba(239, 68, 68, 0.3);
+  --danger-alpha-20: rgba(239, 68, 68, 0.2);
+  --danger-alpha-40: rgba(239, 68, 68, 0.4);
+  
+  /* ========== Gradientes ========== */
+  --gradient-gold: linear-gradient(135deg, #c9a02c 0%, #a88025 100%);
+  --gradient-gold-secondary: linear-gradient(135deg, #b8902a 0%, #a07820 100%);
+  --gradient-gold-horizontal: linear-gradient(90deg, #b8902a 0%, #a07820 100%);
+  --gradient-gold-light: linear-gradient(90deg, #d4a574 0%, #c9a02c 100%);
+  
+  --gradient-dark: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+  --gradient-dark-vertical: linear-gradient(180deg, #fafafa 0%, #f0f0f0 100%);
+  --gradient-dark-reverse: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  --gradient-header: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  
+  /* Alias para compatibilidad */
+  --gradient-primary: linear-gradient(135deg, #c9a02c 0%, #a88025 100%);
+  --gradient-success: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  
+  /* ========== Sombras ========== */
+  --shadow-gold-sm: 0 2px 8px rgba(201, 160, 44, 0.2);
+  --shadow-gold-md: 0 4px 12px rgba(201, 160, 44, 0.25);
+  --shadow-gold-lg: 0 6px 16px rgba(201, 160, 44, 0.3);
+  --shadow-gold-xl: 0 10px 30px rgba(201, 160, 44, 0.25);
+  --shadow-gold-focus: 0 0 0 3px rgba(201, 160, 44, 0.15);
+  
+  --shadow-dark: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-danger: 0 4px 12px rgba(239, 68, 68, 0.3);
+  
+  /* Alias para compatibilidad */
+  --shadow-primary: 0 2px 8px rgba(201, 160, 44, 0.2);
+  --shadow-primary-hover: 0 4px 16px rgba(201, 160, 44, 0.3);
+  --shadow-primary-large: 0 8px 24px rgba(201, 160, 44, 0.3);
+  --shadow-primary-xl: 0 12px 40px rgba(201, 160, 44, 0.25);
+  --shadow-success: 0 4px 12px rgba(34, 197, 94, 0.3);
+  
+  /* ========== Colores de Estado (ajustados para mejor contraste) ========== */
+  --status-success: #22c55e;
+  --status-warning: #f59e0b;
+  --status-danger: #ef4444;
+  --status-info: #3b82f6;
+  --status-open: #22c55e;
+  --status-open-dark: #16a34a;
+  --status-negotiating: #f59e0b;
+  --status-in-progress: #3b82f6;
+  --status-completed: #8b5cf6;
+  --status-cancelled: #ef4444;
+  --status-available: #22c55e;
+  --status-busy: #f59e0b;
+  --status-inactive: #ef4444;
+  
+  /* Colores de acción */
+  --color-success: #22c55e;
+  --color-success-dark: #16a34a;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  
+  /* ========== Bordes ========== */
+  --border-primary: 1px solid rgba(201, 160, 44, 0.3);
+  --border-primary-thick: 2px solid rgba(201, 160, 44, 0.4);
+  --border-success: 2px solid rgba(34, 197, 94, 0.3);
+  --border-error: 2px solid rgba(239, 68, 68, 0.3);
+}
