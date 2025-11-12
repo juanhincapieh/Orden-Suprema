@@ -3,13 +3,13 @@ import Home from '../pages/Home';
 import AboutUs from '../pages/AboutUs';
 import Reviews from '../pages/Reviews';
 import Leaderboard from '../pages/Leaderboard';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
-import Contractor from '../pages/Contractor';
-import Assasin from '../pages/Assasin';
-import Assasins from '../pages/Assasins';
+import Login from '../pages/login';
+import Register from '../pages/register';
+import Contractor from '../pages/contractor';
+import Assasin from '../pages/assasin';
+import Assassins from '../pages/Assassins';
 import Missions from '../pages/Missions';
-import Admin from '../pages/Admin';
+import Admin from '../pages/admin';
 
 const AppRoutes = () => {
   return (
