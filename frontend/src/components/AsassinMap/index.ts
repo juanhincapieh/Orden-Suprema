@@ -1,0 +1,1 @@
+export { AssassinMap } from './AssassinMap';
