@@ -1,4 +1,5 @@
 import { useLogin } from './useLogin';
+import { Eye, EyeOff, Target, Crown, Sword, Briefcase, Lightbulb } from 'lucide-react';
 import styles from './Login.module.css';
 
 const Login = () => {
@@ -71,7 +72,7 @@ const Login = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label="Toggle password visibility"
               >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
+                {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
           </div>
@@ -96,11 +97,11 @@ const Login = () => {
           {/* Panel de credenciales demo */}
           <div className={styles.demoPanel}>
             <h3 className={styles.demoTitle}>
-              {isSpanish ? '🎯 Perfiles de Prueba' : '🎯 Test Profiles'}
+              <Target size={20} /> {isSpanish ? 'Perfiles de Prueba' : 'Test Profiles'}
             </h3>
             <div className={styles.demoUsers}>
               <div className={styles.demoUser}>
-                <span className={styles.demoIcon}>👑</span>
+                <Crown className={styles.demoIcon} size={24} />
                 <div className={styles.demoInfo}>
                   <strong>{isSpanish ? 'Administrador' : 'Administrator'}</strong>
                   <code className={styles.demoEmail}>admin@hightable.com</code>
@@ -108,7 +109,7 @@ const Login = () => {
                 </div>
               </div>
               <div className={styles.demoUser}>
-                <span className={styles.demoIcon}>🗡️</span>
+                <Sword className={styles.demoIcon} size={24} />
                 <div className={styles.demoInfo}>
                   <strong>{isSpanish ? 'Asesino - John Wick' : 'Assassin - John Wick'}</strong>
                   <code className={styles.demoEmail}>johnwick@continental.com</code>
@@ -116,7 +117,7 @@ const Login = () => {
                 </div>
               </div>
               <div className={styles.demoUser}>
-                <span className={styles.demoIcon}>💼</span>
+                <Briefcase className={styles.demoIcon} size={24} />
                 <div className={styles.demoInfo}>
                   <strong>{isSpanish ? 'Contratista - Winston' : 'Contractor - Winston'}</strong>
                   <code className={styles.demoEmail}>winston@continental.com</code>
@@ -125,9 +126,9 @@ const Login = () => {
               </div>
             </div>
             <p className={styles.demoNote}>
-              {isSpanish 
-                ? '💡 Cada perfil tiene acceso a diferentes funcionalidades del sistema' 
-                : '💡 Each profile has access to different system features'}
+              <Lightbulb size={16} /> {isSpanish 
+                ? 'Cada perfil tiene acceso a diferentes funcionalidades del sistema' 
+                : 'Each profile has access to different system features'}
             </p>
           </div>
         </form>

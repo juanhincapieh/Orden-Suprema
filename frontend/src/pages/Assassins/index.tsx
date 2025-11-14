@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAssassins } from './useAssassins';
 import { RequestFavorButton } from './RequestFavorButton';
 import { debtService } from '../../services/debtService';
+import { Search, Coins, Star, Check, Target, AlertTriangle, X, Lock, Key, Sparkles, Lightbulb, DollarSign } from 'lucide-react';
 import styles from './Assassins.module.css';
 
 const Assassins = () => {
@@ -78,7 +79,7 @@ const Assassins = () => {
         {/* Filtros y búsqueda */}
         <div className={styles.controls}>
           <div className={styles.searchBox}>
-            <span className={styles.searchIcon}>🔍</span>
+            <Search className={styles.searchIcon} size={20} />
             <input
               type="text"
               placeholder={
@@ -151,7 +152,7 @@ const Assassins = () => {
                         className={styles.targetBadge}
                         title={targetInfo?.reason || (isSpanish ? 'Rechazó pagar una deuda' : 'Rejected debt payment')}
                       >
-                        🎯 {isSpanish ? 'OBJETIVO' : 'TARGET'}
+                        <Target size={14} /> {isSpanish ? 'OBJETIVO' : 'TARGET'}
                       </div>
                     )}
                   </div>
@@ -167,7 +168,7 @@ const Assassins = () => {
                       {isSpanish ? 'Valor mínimo' : 'Min. value'}
                     </span>
                     <span className={styles.statValue}>
-                      🪙 {assassin.minContractValue.toLocaleString()}
+                      <Coins size={14} /> {assassin.minContractValue.toLocaleString()}
                     </span>
                   </div>
 
@@ -176,7 +177,7 @@ const Assassins = () => {
                       {isSpanish ? 'Puntuación histórica' : 'All-time rating'}
                     </span>
                     <span className={styles.statValue}>
-                      ⭐ {assassin.averageRatingAllTime.toFixed(1)}
+                      <Star size={14} /> {assassin.averageRatingAllTime.toFixed(1)}
                     </span>
                   </div>
 
@@ -185,7 +186,7 @@ const Assassins = () => {
                       {isSpanish ? 'Último mes' : 'Last month'}
                     </span>
                     <span className={styles.statValue}>
-                      ⭐ {assassin.averageRatingLastMonth.toFixed(1)}
+                      <Star size={14} /> {assassin.averageRatingLastMonth.toFixed(1)}
                     </span>
                   </div>
 
@@ -194,7 +195,7 @@ const Assassins = () => {
                       {isSpanish ? 'Contratos completados' : 'Completed contracts'}
                     </span>
                     <span className={styles.statValue}>
-                      ✓ {assassin.completedContracts}
+                      <Check size={14} /> {assassin.completedContracts}
                     </span>
                   </div>
                 </div>
@@ -240,7 +241,7 @@ const Assassins = () => {
 
         {filteredAssassins.length === 0 && (
           <div className={styles.emptyState}>
-            <span className={styles.emptyIcon}>🔍</span>
+            <Search className={styles.emptyIcon} size={48} />
             <p>{isSpanish ? 'No se encontraron asesinos' : 'No assassins found'}</p>
           </div>
         )}
@@ -275,7 +276,7 @@ const Assassins = () => {
                   </div>
                   {isTarget && (
                     <div className={styles.modalTargetBadge}>
-                      🎯 {isSpanish ? 'OBJETIVO' : 'TARGET'}
+                      <Target size={16} /> {isSpanish ? 'OBJETIVO' : 'TARGET'}
                     </div>
                   )}
                 </div>
@@ -283,7 +284,7 @@ const Assassins = () => {
 
               {isTarget && targetInfo && (
                 <div className={styles.targetWarning}>
-                  <span className={styles.targetWarningIcon}>⚠️</span>
+                  <AlertTriangle className={styles.targetWarningIcon} size={24} />
                   <div className={styles.targetWarningContent}>
                     <strong>{isSpanish ? 'Asesino marcado como objetivo' : 'Assassin marked as target'}</strong>
                     <p>{targetInfo.reason}</p>
@@ -305,7 +306,7 @@ const Assassins = () => {
                         {isSpanish ? 'Valor mínimo de contrato' : 'Minimum contract value'}
                       </span>
                       <span className={styles.modalStatValue}>
-                        🪙 {selectedAssassin.minContractValue.toLocaleString()}
+                        <Coins size={16} /> {selectedAssassin.minContractValue.toLocaleString()}
                       </span>
                     </div>
                     <div className={styles.modalStat}>
@@ -313,7 +314,7 @@ const Assassins = () => {
                         {isSpanish ? 'Puntuación histórica' : 'All-time rating'}
                       </span>
                       <span className={styles.modalStatValue}>
-                        ⭐ {selectedAssassin.averageRatingAllTime.toFixed(1)} / 5.0
+                        <Star size={16} /> {selectedAssassin.averageRatingAllTime.toFixed(1)} / 5.0
                       </span>
                     </div>
                     <div className={styles.modalStat}>
@@ -321,7 +322,7 @@ const Assassins = () => {
                         {isSpanish ? 'Puntuación último mes' : 'Last month rating'}
                       </span>
                       <span className={styles.modalStatValue}>
-                        ⭐ {selectedAssassin.averageRatingLastMonth.toFixed(1)} / 5.0
+                        <Star size={16} /> {selectedAssassin.averageRatingLastMonth.toFixed(1)} / 5.0
                       </span>
                     </div>
                     <div className={styles.modalStat}>
@@ -329,7 +330,7 @@ const Assassins = () => {
                         {isSpanish ? 'Contratos completados' : 'Completed contracts'}
                       </span>
                       <span className={styles.modalStatValue}>
-                        ✓ {selectedAssassin.completedContracts}
+                        <Check size={16} /> {selectedAssassin.completedContracts}
                       </span>
                     </div>
                   </div>
@@ -360,7 +361,7 @@ const Assassins = () => {
                         className={styles.sendCoinsButton}
                         onClick={() => setShowSendCoinsModal(true)}
                       >
-                        <span className={styles.sendCoinsIcon}>💰</span>
+                        <Coins className={styles.sendCoinsIcon} size={20} />
                         {isSpanish ? 'Enviar Monedas' : 'Send Coins'}
                       </button>
                     ) : (
@@ -370,7 +371,7 @@ const Assassins = () => {
                             {isSpanish ? 'Tus monedas:' : 'Your coins:'}
                           </span>
                           <span className={styles.userCoinsAmount}>
-                            🪙 {currentUser.coins.toLocaleString()}
+                            <Coins size={16} /> {currentUser.coins.toLocaleString()}
                           </span>
                         </div>
 
@@ -422,7 +423,7 @@ const Assassins = () => {
                             className={styles.confirmSendButton}
                             disabled={!coinsToSend || parseInt(coinsToSend) <= 0 || parseInt(coinsToSend) > currentUser.coins}
                           >
-                            <span className={styles.buttonIcon}>💸</span>
+                            <DollarSign className={styles.buttonIcon} size={18} />
                             {isSpanish ? 'Enviar' : 'Send'}
                           </button>
                         </div>
@@ -441,7 +442,7 @@ const Assassins = () => {
         <div className={styles.modalOverlay} onClick={() => setShowProposeModal(false)}>
           <div className={styles.modalLarge} onClick={(e) => e.stopPropagation()}>
             <button className={styles.closeButton} onClick={() => setShowProposeModal(false)}>
-              ✕
+              <X size={24} />
             </button>
 
             <h2 className={styles.modalTitle}>
@@ -459,7 +460,7 @@ const Assassins = () => {
                   <p className={styles.proposeMinValue}>
                     {isSpanish ? 'Valor mínimo:' : 'Min. value:'}{' '}
                     <span className={styles.proposeAmount}>
-                      🪙 {selectedAssassin.minContractValue.toLocaleString()}
+                      <Coins size={14} /> {selectedAssassin.minContractValue.toLocaleString()}
                     </span>
                   </p>
                 </div>
@@ -514,7 +515,7 @@ const Assassins = () => {
                       .filter(m => m.status === 'open' || m.status === 'negotiating')
                       .map((mission) => (
                         <option key={mission.id} value={mission.id}>
-                          {mission.title} - 🪙 {mission.reward.toLocaleString()}
+                          {mission.title} - ⚜ {mission.reward.toLocaleString()}
                         </option>
                       ))}
                   </select>
@@ -632,10 +633,10 @@ const Assassins = () => {
         <div className={styles.modalOverlay} onClick={() => setShowAuthModal(false)}>
           <div className={styles.authModal} onClick={(e) => e.stopPropagation()}>
             <button className={styles.closeButton} onClick={() => setShowAuthModal(false)}>
-              ✕
+              <X size={24} />
             </button>
 
-            <div className={styles.authIcon}>🔐</div>
+            <div className={styles.authIcon}><Lock size={64} /></div>
 
             <h2 className={styles.authTitle}>
               {isSpanish ? 'Autenticación Requerida' : 'Authentication Required'}
@@ -655,7 +656,7 @@ const Assassins = () => {
                   navigate('/login');
                 }}
               >
-                <span className={styles.authButtonIcon}>🔑</span>
+                <Key className={styles.authButtonIcon} size={20} />
                 {isSpanish ? 'Iniciar Sesión' : 'Log In'}
               </button>
 
@@ -666,15 +667,15 @@ const Assassins = () => {
                   navigate('/register');
                 }}
               >
-                <span className={styles.authButtonIcon}>✨</span>
+                <Sparkles className={styles.authButtonIcon} size={20} />
                 {isSpanish ? 'Registrarse' : 'Sign Up'}
               </button>
             </div>
 
             <p className={styles.authNote}>
-              {isSpanish
-                ? '💡 Regístrate como contratista para publicar misiones'
-                : '💡 Register as a contractor to post missions'}
+              <Lightbulb size={16} /> {isSpanish
+                ? 'Regístrate como contratista para publicar misiones'
+                : 'Register as a contractor to post missions'}
             </p>
           </div>
         </div>

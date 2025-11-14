@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Debt } from '../../services/debtService';
 import { RequestPaymentModal } from './RequestPaymentModal';
+import { CheckCircle, AlertCircle, Clock, HelpCircle, Target, Coins } from 'lucide-react';
 import styles from './DebtCard.module.css';
 
 interface User {
@@ -36,31 +37,31 @@ export const DebtCard = ({
     switch (debt.status) {
       case 'active':
         return {
-          icon: '✅',
+          icon: <CheckCircle size={16} />,
           text: isSpanish ? 'Activa' : 'Active',
           className: styles.statusActive
         };
       case 'payment_requested':
         return {
-          icon: '🔴',
+          icon: <AlertCircle size={16} />,
           text: isSpanish ? 'Pago Solicitado' : 'Payment Requested',
           className: styles.statusPaymentRequested
         };
       case 'in_progress':
         return {
-          icon: '⏳',
+          icon: <Clock size={16} />,
           text: isSpanish ? 'En Curso' : 'In Progress',
           className: styles.statusInProgress
         };
       case 'rejected':
         return {
-          icon: '🎯',
+          icon: <Target size={16} />,
           text: isSpanish ? 'Rechazada' : 'Rejected',
           className: styles.statusRejected
         };
       default:
         return {
-          icon: '❓',
+          icon: <HelpCircle size={16} />,
           text: debt.status,
           className: ''
         };
@@ -144,7 +145,7 @@ export const DebtCard = ({
               className={styles.requestPaymentButton}
               onClick={() => setShowPaymentModal(true)}
             >
-              <span>💰</span>
+              <Coins size={18} />
               <span>{isSpanish ? 'Solicitar Pago' : 'Request Payment'}</span>
             </button>
           )}
@@ -154,14 +155,14 @@ export const DebtCard = ({
               className={styles.markCompletedButton}
               onClick={handleMarkCompleted}
             >
-              <span>✅</span>
+              <CheckCircle size={18} />
               <span>{isSpanish ? 'Marcar como Completada' : 'Mark as Completed'}</span>
             </button>
           )}
 
           {debt.status === 'rejected' && (
             <div className={styles.rejectedWarning}>
-              <span>🎯</span>
+              <Target size={18} />
               <span>
                 {isSpanish 
                   ? 'Has sido marcado como objetivo por rechazar esta deuda' 

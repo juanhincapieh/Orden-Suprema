@@ -1,4 +1,5 @@
 import { Contract } from '../../types';
+import { X, Coins, MapPin, Clock, Calendar, Sword, Lock, Globe, CheckCircle, XCircle } from 'lucide-react';
 import styles from './MissionDetailModal.module.css';
 
 interface MissionDetailModalProps {
@@ -99,7 +100,7 @@ const MissionDetailModal = ({
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.closeButton} onClick={onClose}>
-          ✕
+          <X size={24} />
         </button>
 
         <div className={styles.modalHeader}>
@@ -130,7 +131,7 @@ const MissionDetailModal = ({
                   {isSpanish ? 'Recompensa' : 'Reward'}
                 </span>
                 <span className={styles.detailValue}>
-                  🪙 {mission.reward.toLocaleString()}
+                  <Coins size={16} /> {mission.reward.toLocaleString()}
                 </span>
               </div>
               {mission.location && (
@@ -138,7 +139,7 @@ const MissionDetailModal = ({
                   <span className={styles.detailLabel}>
                     {isSpanish ? 'Ubicación' : 'Location'}
                   </span>
-                  <span className={styles.detailValue}>📍 {mission.location}</span>
+                  <span className={styles.detailValue}><MapPin size={16} /> {mission.location}</span>
                 </div>
               )}
               {mission.deadline && (
@@ -147,7 +148,7 @@ const MissionDetailModal = ({
                     {isSpanish ? 'Fecha límite' : 'Deadline'}
                   </span>
                   <span className={styles.detailValue}>
-                    ⏰ {new Date(mission.deadline).toLocaleDateString()}
+                    <Clock size={16} /> {new Date(mission.deadline).toLocaleDateString()}
                   </span>
                 </div>
               )}
@@ -156,7 +157,7 @@ const MissionDetailModal = ({
                   {isSpanish ? 'Publicada' : 'Posted'}
                 </span>
                 <span className={styles.detailValue}>
-                  📅 {new Date(mission.createdAt).toLocaleDateString()}
+                  <Calendar size={16} /> {new Date(mission.createdAt).toLocaleDateString()}
                 </span>
               </div>
               {mission.assassinName && (
@@ -164,7 +165,7 @@ const MissionDetailModal = ({
                   <span className={styles.detailLabel}>
                     {isSpanish ? 'Asesino asignado' : 'Assigned assassin'}
                   </span>
-                  <span className={styles.detailValue}>🗡️ {mission.assassinName}</span>
+                  <span className={styles.detailValue}><Sword size={16} /> {mission.assassinName}</span>
                 </div>
               )}
               {mission.isPrivate !== undefined && (
@@ -174,12 +175,16 @@ const MissionDetailModal = ({
                   </span>
                   <span className={styles.detailValue}>
                     {mission.isPrivate
-                      ? isSpanish
-                        ? '🔒 Privada'
-                        : '🔒 Private'
-                      : isSpanish
-                      ? '🌐 Pública'
-                      : '🌐 Public'}
+                      ? (
+                        <>
+                          <Lock size={16} /> {isSpanish ? 'Privada' : 'Private'}
+                        </>
+                      )
+                      : (
+                        <>
+                          <Globe size={16} /> {isSpanish ? 'Pública' : 'Public'}
+                        </>
+                      )}
                   </span>
                 </div>
               )}
@@ -214,14 +219,14 @@ const MissionDetailModal = ({
                       className={styles.acceptButton}
                       onClick={() => onAcceptNegotiation(mission)}
                     >
-                      <span className={styles.buttonIcon}>✅</span>
+                      <CheckCircle className={styles.buttonIcon} size={18} />
                       {isSpanish ? 'Aceptar propuesta' : 'Accept proposal'}
                     </button>
                     <button
                       className={styles.rejectButton}
                       onClick={() => onRejectNegotiation(mission)}
                     >
-                      <span className={styles.buttonIcon}>❌</span>
+                      <XCircle className={styles.buttonIcon} size={18} />
                       {isSpanish ? 'Rechazar propuesta' : 'Reject proposal'}
                     </button>
                   </div>
@@ -237,9 +242,9 @@ const MissionDetailModal = ({
               </h3>
               <div className={styles.negotiationBox}>
                 <p className={styles.negotiationInfo}>
-                  {isSpanish
-                    ? '🔒 Esta misión tiene una negociación activa. Los detalles son confidenciales.'
-                    : '🔒 This mission has an active negotiation. Details are confidential.'}
+                  <Lock size={16} /> {isSpanish
+                    ? 'Esta misión tiene una negociación activa. Los detalles son confidenciales.'
+                    : 'This mission has an active negotiation. Details are confidential.'}
                 </p>
               </div>
             </div>
@@ -261,8 +266,13 @@ const MissionDetailModal = ({
                 }
               }}
             >
+<<<<<<< Updated upstream
               <span className={styles.buttonIcon}>✅</span>
               {isSpanish ? 'Completar Misión' : 'Complete Mission'}
+=======
+              <CheckCircle className={styles.buttonIcon} size={18} />
+              {isSpanish ? 'Marcar como Completada' : 'Mark as Completed'}
+>>>>>>> Stashed changes
             </button>
           </div>
         )}

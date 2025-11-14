@@ -2,7 +2,7 @@ import BuyCoinsModal from '../BuyCoinsModal';
 import { NotificationsPanel } from '../NotificationsPanel';
 import { useTheme } from '../../context/ThemeContext';
 import { useHeader } from './useHeader';
-import { Home, FileText, Sword, Users, Star, Trophy } from 'lucide-react';
+import { Home, FileText, Sword, Users, Star, Trophy, User, Coins, Moon, Sun, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import styles from './Header.module.css';
 
@@ -67,7 +67,7 @@ const Header = () => {
           aria-label={isSpanish ? 'Cambiar a inglés' : 'Switch to Spanish'}
           title={isSpanish ? 'Cambiar a inglés' : 'Switch to Spanish'}
         >
-          {isSpanish ? '🇪🇸' : '🇺🇸'}
+          <span className={styles.flagText}>{isSpanish ? 'ES' : 'EN'}</span>
         </button>
         {currentUser ? (
           <>
@@ -75,7 +75,7 @@ const Header = () => {
               className={styles.personalPageButton}
               onClick={() => navigate(getPersonalPageRoute())}
             >
-              <span className={styles.personalPageIcon}>👤</span>
+              <User className={styles.personalPageIcon} size={20} />
               <span className={styles.personalPageText}>{getPersonalPageLabel()}</span>
             </button>
 
@@ -88,7 +88,7 @@ const Header = () => {
               className={styles.coinsDisplay}
               onClick={() => setShowBuyModal(true)}
             >
-              <span className={styles.coinIcon}>🪙</span>
+              <Coins className={styles.coinIcon} size={20} />
               <span className={styles.coinAmount}>
                 {currentUser.coins.toLocaleString()}
               </span>
@@ -120,9 +120,11 @@ const Header = () => {
 
                   <div className={styles.profileMenuItem}>
                     <div className={styles.themeToggleContainer}>
-                      <span className={styles.profileMenuIcon}>
-                        {theme === 'dark' ? '🌙' : '☀️'}
-                      </span>
+                      {theme === 'dark' ? (
+                        <Moon className={styles.profileMenuIcon} size={18} />
+                      ) : (
+                        <Sun className={styles.profileMenuIcon} size={18} />
+                      )}
                       <span className={styles.themeLabel}>
                         {isSpanish ? 'Tema' : 'Theme'}
                       </span>
@@ -135,9 +137,11 @@ const Header = () => {
                         aria-label={isSpanish ? 'Cambiar tema' : 'Toggle theme'}
                       >
                         <span className={`${styles.themeToggleSlider} ${theme === 'light' ? styles.themeToggleSliderLight : ''}`}>
-                          <span className={styles.themeToggleIcon}>
-                            {theme === 'dark' ? '🌙' : '☀️'}
-                          </span>
+                          {theme === 'dark' ? (
+                            <Moon className={styles.themeToggleIcon} size={14} />
+                          ) : (
+                            <Sun className={styles.themeToggleIcon} size={14} />
+                          )}
                         </span>
                       </button>
                     </div>
@@ -150,7 +154,7 @@ const Header = () => {
                       handleLogout();
                     }}
                   >
-                    <span className={styles.profileMenuIcon}>🚪</span>
+                    <LogOut className={styles.profileMenuIcon} size={18} />
                     {isSpanish ? 'Cerrar sesión' : 'Logout'}
                   </button>
                 </div>

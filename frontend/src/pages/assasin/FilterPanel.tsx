@@ -1,3 +1,4 @@
+import { Calendar, Coins } from 'lucide-react';
 import styles from './Assassin.module.css';
 
 interface MissionFilters {
@@ -98,7 +99,7 @@ export const FilterPanel = ({
             }`}
             onClick={() => onSortChange('date')}
           >
-            <span>📅</span>
+            <Calendar size={16} />
             <span>{isSpanish ? 'Fecha' : 'Date'}</span>
             {filters.sortBy === 'date' && (
               <span className={styles.sortArrow}>
@@ -112,7 +113,7 @@ export const FilterPanel = ({
             }`}
             onClick={() => onSortChange('reward')}
           >
-            <span>🪙</span>
+            <Coins size={16} />
             <span>{isSpanish ? 'Recompensa' : 'Reward'}</span>
             {filters.sortBy === 'reward' && (
               <span className={styles.sortArrow}>

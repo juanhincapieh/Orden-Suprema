@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useMissions } from './useMissions';
 import MissionDetailModal from '../../components/MissionDetailModal';
+import { Search, Coins, MapPin, Clock, Calendar, MessageCircle, X, PartyPopper, Lock, Key, Sparkles, ClipboardList, Lightbulb } from 'lucide-react';
 import styles from './Missions.module.css';
 
 const Missions = () => {
@@ -54,7 +55,7 @@ const Missions = () => {
         {/* Filtros y búsqueda */}
         <div className={styles.controls}>
           <div className={styles.searchBox}>
-            <span className={styles.searchIcon}>🔍</span>
+            <Search className={styles.searchIcon} size={20} />
             <input
               type="text"
               placeholder={isSpanish ? 'Buscar misiones...' : 'Search missions...'}
@@ -99,7 +100,7 @@ const Missions = () => {
                   {getStatusText(mission.status)}
                 </div>
                 <span className={styles.reward}>
-                  🪙 {mission.reward.toLocaleString()}
+                  <Coins size={16} /> {mission.reward.toLocaleString()}
                 </span>
               </div>
 
@@ -110,20 +111,20 @@ const Missions = () => {
                 <div className={styles.missionMeta}>
                   {mission.location && (
                     <div className={styles.metaItem}>
-                      <span className={styles.metaIcon}>📍</span>
+                      <MapPin className={styles.metaIcon} size={16} />
                       <span className={styles.metaText}>{mission.location}</span>
                     </div>
                   )}
                   {mission.deadline && (
                     <div className={styles.metaItem}>
-                      <span className={styles.metaIcon}>⏰</span>
+                      <Clock className={styles.metaIcon} size={16} />
                       <span className={styles.metaText}>
                         {new Date(mission.deadline).toLocaleDateString()}
                       </span>
                     </div>
                   )}
                   <div className={styles.metaItem}>
-                    <span className={styles.metaIcon}>📅</span>
+                    <Calendar className={styles.metaIcon} size={16} />
                     <span className={styles.metaText}>
                       {new Date(mission.createdAt).toLocaleDateString()}
                     </span>
@@ -132,7 +133,7 @@ const Missions = () => {
 
                 {mission.negotiation && mission.negotiation.status === 'pending' && (
                   <div className={styles.negotiationBanner}>
-                    <span className={styles.negotiationIcon}>💬</span>
+                    <MessageCircle className={styles.negotiationIcon} size={16} />
                     <span className={styles.negotiationText}>
                       {isSpanish ? 'Negociación pendiente' : 'Negotiation pending'}
                     </span>
@@ -180,7 +181,7 @@ const Missions = () => {
 
         {filteredMissions.length === 0 && (
           <div className={styles.emptyState}>
-            <span className={styles.emptyIcon}>📋</span>
+            <ClipboardList className={styles.emptyIcon} size={48} />
             <p>{isSpanish ? 'No hay misiones disponibles' : 'No missions available'}</p>
           </div>
         )}
@@ -218,7 +219,7 @@ const Missions = () => {
         <div className={styles.modalOverlay} onClick={() => setShowNegotiateModal(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <button className={styles.closeButton} onClick={() => setShowNegotiateModal(false)}>
-              ✕
+              <X size={24} />
             </button>
 
             <h2 className={styles.modalTitle}>
@@ -232,7 +233,7 @@ const Missions = () => {
               <p className={styles.negotiateOriginal}>
                 {isSpanish ? 'Recompensa actual:' : 'Current reward:'}{' '}
                 <span className={styles.negotiateAmount}>
-                  🪙 {selectedMission.reward.toLocaleString()}
+                  <Coins size={16} /> {selectedMission.reward.toLocaleString()}
                 </span>
               </p>
             </div>
@@ -247,7 +248,7 @@ const Missions = () => {
                     <strong>{selectedMission.negotiation.proposedByName}</strong>{' '}
                     {isSpanish ? 'propone' : 'proposes'}:{' '}
                     <span className={styles.currentNegotiationReward}>
-                      🪙 {selectedMission.negotiation.proposedReward.toLocaleString()}
+                      <Coins size={16} /> {selectedMission.negotiation.proposedReward.toLocaleString()}
                     </span>
                   </p>
                   {selectedMission.negotiation.message && (
@@ -266,9 +267,9 @@ const Missions = () => {
                 </h4>
                 <div className={styles.currentNegotiationBox}>
                   <p className={styles.negotiationInfo}>
-                    {isSpanish
-                      ? '🔒 Esta misión está en negociación. Los detalles son confidenciales por seguridad.'
-                      : '🔒 This mission is under negotiation. Details are confidential for security.'}
+                    <Lock size={16} /> {isSpanish
+                      ? 'Esta misión está en negociación. Los detalles son confidenciales por seguridad.'
+                      : 'This mission is under negotiation. Details are confidential for security.'}
                   </p>
                 </div>
               </div>
@@ -349,10 +350,10 @@ const Missions = () => {
         <div className={styles.modalOverlay} onClick={() => setShowSuccessModal(false)}>
           <div className={styles.successModal} onClick={(e) => e.stopPropagation()}>
             <button className={styles.closeButton} onClick={() => setShowSuccessModal(false)}>
-              ✕
+              <X size={24} />
             </button>
 
-            <div className={styles.successIcon}>🎉</div>
+            <div className={styles.successIcon}><PartyPopper size={64} /></div>
 
             <h2 className={styles.successTitle}>
               {isSpanish ? '¡Felicitaciones!' : 'Congratulations!'}
@@ -371,14 +372,14 @@ const Missions = () => {
                   {isSpanish ? 'Recompensa:' : 'Reward:'}
                 </span>
                 <span className={styles.successRewardAmount}>
-                  🪙 {acceptedMission.reward.toLocaleString()}
+                  <Coins size={20} /> {acceptedMission.reward.toLocaleString()}
                 </span>
               </div>
             </div>
 
             {acceptedMission.deadline && (
               <div className={styles.successDeadline}>
-                <span className={styles.deadlineIcon}>⏰</span>
+                <Clock className={styles.deadlineIcon} size={32} />
                 <div className={styles.deadlineInfo}>
                   <p className={styles.deadlineLabel}>
                     {isSpanish ? 'Tienes hasta el' : 'You have until'}
@@ -418,10 +419,10 @@ const Missions = () => {
         <div className={styles.modalOverlay} onClick={() => setShowAuthModal(false)}>
           <div className={styles.authModal} onClick={(e) => e.stopPropagation()}>
             <button className={styles.closeButton} onClick={() => setShowAuthModal(false)}>
-              ✕
+              <X size={24} />
             </button>
 
-            <div className={styles.authIcon}>🔐</div>
+            <div className={styles.authIcon}><Lock size={64} /></div>
 
             <h2 className={styles.authTitle}>
               {isSpanish ? 'Autenticación Requerida' : 'Authentication Required'}
@@ -441,7 +442,7 @@ const Missions = () => {
                   navigate('/login');
                 }}
               >
-                <span className={styles.authButtonIcon}>🔑</span>
+                <Key className={styles.authButtonIcon} size={20} />
                 {isSpanish ? 'Iniciar Sesión' : 'Log In'}
               </button>
 
@@ -452,15 +453,15 @@ const Missions = () => {
                   navigate('/register');
                 }}
               >
-                <span className={styles.authButtonIcon}>✨</span>
+                <Sparkles className={styles.authButtonIcon} size={20} />
                 {isSpanish ? 'Registrarse' : 'Sign Up'}
               </button>
             </div>
 
             <p className={styles.authNote}>
-              {isSpanish
-                ? '💡 Crea una cuenta para aceptar misiones y ganar recompensas'
-                : '💡 Create an account to accept missions and earn rewards'}
+              <Lightbulb size={16} /> {isSpanish
+                ? 'Crea una cuenta para aceptar misiones y ganar recompensas'
+                : 'Create an account to accept missions and earn rewards'}
             </p>
           </div>
         </div>

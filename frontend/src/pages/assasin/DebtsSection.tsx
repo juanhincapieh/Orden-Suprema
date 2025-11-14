@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Debt } from '../../services/debtService';
 import { DebtCard } from './DebtCard';
+import { Coins, Sparkles, CheckCircle, Inbox, Send, Download } from 'lucide-react';
 import styles from './DebtsSection.module.css';
 
 interface User {
@@ -41,10 +42,10 @@ export const DebtsSection = ({
     return (
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>
-          💰 {isSpanish ? 'MIS DEUDAS' : 'MY DEBTS'}
+          <Coins size={24} /> {isSpanish ? 'MIS DEUDAS' : 'MY DEBTS'}
         </h2>
         <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>✨</div>
+          <div className={styles.emptyIcon}><Sparkles size={48} /></div>
           <p>{isSpanish ? 'No tienes deudas activas' : 'You have no active debts'}</p>
           <p className={styles.emptySubtext}>
             {isSpanish 
@@ -59,7 +60,7 @@ export const DebtsSection = ({
   return (
     <div className={styles.section}>
       <h2 className={styles.sectionTitle}>
-        💰 {isSpanish ? 'MIS DEUDAS' : 'MY DEBTS'}
+        <Coins size={24} /> {isSpanish ? 'MIS DEUDAS' : 'MY DEBTS'}
       </h2>
 
       {/* Tabs */}
@@ -68,7 +69,7 @@ export const DebtsSection = ({
           className={`${styles.tab} ${activeTab === 'owe' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('owe')}
         >
-          <span className={styles.tabIcon}>📤</span>
+          <Send className={styles.tabIcon} size={18} />
           <span className={styles.tabLabel}>
             {isSpanish ? 'Deudas que Debo' : 'Debts I Owe'}
           </span>
@@ -78,7 +79,7 @@ export const DebtsSection = ({
           className={`${styles.tab} ${activeTab === 'owed' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('owed')}
         >
-          <span className={styles.tabIcon}>📥</span>
+          <Download className={styles.tabIcon} size={18} />
           <span className={styles.tabLabel}>
             {isSpanish ? 'Deudas que me Deben' : 'Debts Owed to Me'}
           </span>
@@ -101,7 +102,7 @@ export const DebtsSection = ({
         {activeTab === 'owe' ? (
           debtsIOwe.length === 0 ? (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>✅</div>
+              <div className={styles.emptyIcon}><CheckCircle size={48} /></div>
               <p>{isSpanish ? 'No debes ningún favor' : 'You owe no favors'}</p>
             </div>
           ) : (
@@ -123,7 +124,7 @@ export const DebtsSection = ({
         ) : activeTab === 'owed' ? (
           debtsOwedToMe.length === 0 ? (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>📭</div>
+              <div className={styles.emptyIcon}><Inbox size={48} /></div>
               <p>{isSpanish ? 'Nadie te debe favores' : 'No one owes you favors'}</p>
             </div>
           ) : (

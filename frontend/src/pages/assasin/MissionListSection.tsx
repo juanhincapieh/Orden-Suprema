@@ -1,6 +1,7 @@
 import { Contract } from '../../types';
 import { MissionCard } from './MissionCard';
 import { FilterPanel } from './FilterPanel';
+import { Target, Inbox } from 'lucide-react';
 import styles from './Assassin.module.css';
 
 interface MissionFilters {
@@ -114,7 +115,7 @@ export const MissionListSection = ({
         {missions.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyIcon}>
-              {viewMode === 'active' ? '🎯' : '📭'}
+              {viewMode === 'active' ? <Target size={48} /> : <Inbox size={48} />}
             </div>
             <p>
               {viewMode === 'active'

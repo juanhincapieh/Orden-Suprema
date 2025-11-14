@@ -1,5 +1,6 @@
 import { useContractor } from './useContractor';
 import MissionDetailModal from '../../components/MissionDetailModal';
+import { Star, AlertTriangle, Eye, X, Coins } from 'lucide-react';
 import styles from './Contractor.module.css';
 
 const Contractor = () => {
@@ -96,20 +97,20 @@ const Contractor = () => {
                       className={styles.reviewButton}
                       onClick={() => handleReviewClick(contract)}
                     >
-                      ⭐ {isSpanish ? 'RESEÑA' : 'REVIEW'}
+                      <Star size={16} /> {isSpanish ? 'RESEÑA' : 'REVIEW'}
                     </button>
                   )}
                   <button
                     className={styles.reportButton}
                     onClick={() => handleReportClick(contract)}
                   >
-                    ⚠️ {isSpanish ? 'REPORTAR' : 'REPORT'}
+                    <AlertTriangle size={16} /> {isSpanish ? 'REPORTAR' : 'REPORT'}
                   </button>
                   <button
                     className={styles.detailsButton}
                     onClick={() => handleViewDetails(contract)}
                   >
-                    👁️ {isSpanish ? 'DETALLES' : 'DETAILS'}
+                    <Eye size={16} /> {isSpanish ? 'DETALLES' : 'DETAILS'}
                   </button>
                 </div>
               </div>
@@ -126,7 +127,7 @@ const Contractor = () => {
               className={styles.closeButton}
               onClick={() => setShowReviewModal(false)}
             >
-              ✕
+              <X size={24} />
             </button>
 
             <h2 className={styles.modalTitle}>
@@ -193,7 +194,7 @@ const Contractor = () => {
               className={styles.closeButton}
               onClick={() => setShowReportModal(false)}
             >
-              ✕
+              <X size={24} />
             </button>
 
             <h2 className={styles.modalTitle}>
@@ -243,7 +244,7 @@ const Contractor = () => {
               className={styles.closeButton}
               onClick={() => setShowCreateModal(false)}
             >
-              ✕
+              <X size={24} />
             </button>
 
             <h2 className={styles.modalTitle}>
@@ -255,7 +256,7 @@ const Contractor = () => {
                 {isSpanish ? 'Monedas disponibles:' : 'Available coins:'}
               </span>
               <span className={styles.coinsInfoAmount}>
-                🪙 {currentUser.coins.toLocaleString()}
+                <Coins size={18} /> {currentUser.coins.toLocaleString()}
               </span>
             </div>
 
@@ -307,9 +308,9 @@ const Contractor = () => {
                 />
                 {missionReward && parseInt(missionReward) > currentUser.coins && (
                   <p className={styles.errorText}>
-                    {isSpanish 
-                      ? '⚠️ No tienes suficientes monedas' 
-                      : "⚠️ You don't have enough coins"}
+                    <AlertTriangle size={16} /> {isSpanish 
+                      ? 'No tienes suficientes monedas' 
+                      : "You don't have enough coins"}
                   </p>
                 )}
               </div>
@@ -346,13 +347,13 @@ const Contractor = () => {
                 <div className={styles.summaryRow}>
                   <span>{isSpanish ? 'Recompensa:' : 'Reward:'}</span>
                   <span className={styles.summaryValue}>
-                    🪙 {missionReward ? parseInt(missionReward).toLocaleString() : '0'}
+                    <Coins size={16} /> {missionReward ? parseInt(missionReward).toLocaleString() : '0'}
                   </span>
                 </div>
                 <div className={styles.summaryRow}>
                   <span>{isSpanish ? 'Saldo restante:' : 'Remaining balance:'}</span>
                   <span className={styles.summaryValue}>
-                    🪙 {missionReward 
+                    <Coins size={16} /> {missionReward 
                       ? (currentUser.coins - parseInt(missionReward || '0')).toLocaleString()
                       : currentUser.coins.toLocaleString()}
                   </span>

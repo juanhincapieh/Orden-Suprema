@@ -5,6 +5,7 @@ import { DebtsSection } from './DebtsSection';
 import { RegisterDebtModal } from './RegisterDebtModal';
 import { debtService } from '../../services/debtService';
 import MissionDetailModal from '../../components/MissionDetailModal';
+import { Star, Calendar, Coins } from 'lucide-react';
 import styles from './Assassin.module.css';
 
 const Assassin = () => {
@@ -201,7 +202,7 @@ const Assassin = () => {
           {/* Reputation Stats */}
           <div className={styles.userStats}>
             <div className={styles.statItem}>
-              <span className={styles.statIcon}>⭐</span>
+              <Star className={styles.statIcon} size={20} />
               <div className={styles.statContent}>
                 <span className={styles.statValue}>
                   {userReputationAllTime > 0 
@@ -215,7 +216,7 @@ const Assassin = () => {
             </div>
             
             <div className={styles.statItem}>
-              <span className={styles.statIcon}>📅</span>
+              <Calendar className={styles.statIcon} size={20} />
               <div className={styles.statContent}>
                 <span className={styles.statValue}>
                   {userReputationLastMonth > 0 
@@ -230,7 +231,7 @@ const Assassin = () => {
           </div>
           
           <div className={styles.userCoins}>
-            <span className={styles.coinIcon}>🪙</span>
+            <Coins className={styles.coinIcon} size={20} />
             <span className={styles.coinAmount}>{formatCurrency(userCoins)}</span>
           </div>
         </div>

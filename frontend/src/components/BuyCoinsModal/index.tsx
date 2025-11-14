@@ -1,4 +1,5 @@
 import { useBuyCoinsModal } from './useBuyCoinsModal';
+import { X, Coins } from 'lucide-react';
 import styles from './BuyCoinsModal.module.css';
 
 interface BuyCoinsModalProps {
@@ -32,7 +33,7 @@ const BuyCoinsModal = ({ isOpen, onClose, userEmail, onPurchaseComplete }: BuyCo
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.closeButton} onClick={onClose}>
-          ✕
+          <X size={24} />
         </button>
 
         <h2 className={styles.modalTitle}>
@@ -49,7 +50,7 @@ const BuyCoinsModal = ({ isOpen, onClose, userEmail, onPurchaseComplete }: BuyCo
               }`}
               onClick={() => setSelectedPackage(pkg)}
             >
-              <span className={styles.packageIcon}>🪙</span>
+              <Coins className={styles.packageIcon} size={32} />
               <span className={styles.packageAmount}>{pkg.amount.toLocaleString()}</span>
               <span className={styles.packagePrice}>${pkg.price}</span>
             </button>

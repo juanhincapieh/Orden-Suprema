@@ -1,6 +1,7 @@
 import { useAdmin } from './useAdmin';
 import { AssassinMap } from '../../components/AssassinMap';
 import { AssassinEditModal, AssassinHistoryModal } from './components';
+import { Plus, ClipboardList, Eye, AlertTriangle, Star, Check, X, Sparkles, Coins, RefreshCw, ShoppingCart, DollarSign, Gift, Clock, CheckCircle, XCircle, Edit, ScrollText, Ban, Trash2 } from 'lucide-react';
 import styles from './Admin.module.css';
 
 const Admin = () => {
@@ -61,28 +62,28 @@ const Admin = () => {
             className={`${styles.tabButton} ${activeTab === 'assign' ? styles.tabActive : ''}`}
             onClick={() => setActiveTab('assign')}
           >
-            <span className={styles.tabIcon}>➕</span>
+            <Plus className={styles.tabIcon} size={20} />
             {isSpanish ? 'ASIGNAR MISIÓN' : 'ASSIGN MISSION'}
           </button>
           <button
             className={`${styles.tabButton} ${activeTab === 'manage' ? styles.tabActive : ''}`}
             onClick={() => setActiveTab('manage')}
           >
-            <span className={styles.tabIcon}>📋</span>
+            <ClipboardList className={styles.tabIcon} size={20} />
             {isSpanish ? 'GESTIONAR ASESINOS' : 'MANAGE ASSASSINS'}
           </button>
           <button
             className={`${styles.tabButton} ${activeTab === 'transactions' ? styles.tabActive : ''}`}
             onClick={() => setActiveTab('transactions')}
           >
-            <span className={styles.tabIcon}>👁️</span>
+            <Eye className={styles.tabIcon} size={20} />
             {isSpanish ? 'VER TRANSACCIONES' : 'VIEW TRANSACTIONS'}
           </button>
           <button
             className={`${styles.tabButton} ${activeTab === 'reports' ? styles.tabActive : ''}`}
             onClick={() => setActiveTab('reports')}
           >
-            <span className={styles.tabIcon}>⚠️</span>
+            <AlertTriangle className={styles.tabIcon} size={20} />
             {isSpanish ? 'REPORTES' : 'REPORTS'}
             {reports.filter(r => r.status === 'pending').length > 0 && (
               <span className={styles.tabBadge}>
@@ -113,8 +114,8 @@ const Admin = () => {
                     <div className={styles.assassinInfo}>
                       <h3 className={styles.assassinName}>{assassin.name}</h3>
                       <div className={styles.assassinStats}>
-                        <span>⭐ {assassin.rating.toFixed(1)}</span>
-                        <span>✓ {assassin.completedContracts}</span>
+                        <span><Star size={14} /> {assassin.rating.toFixed(1)}</span>
+                        <span><Check size={14} /> {assassin.completedContracts}</span>
                       </div>
                     </div>
                     <div
@@ -149,7 +150,7 @@ const Admin = () => {
                     setShowAssignModal(true);
                   }}
                 >
-                  <span>✨</span>
+                  <Sparkles size={18} />
                   <span>{isSpanish ? 'Crear Nueva Misión' : 'Create New Mission'}</span>
                 </button>
               </div>
@@ -158,7 +159,7 @@ const Admin = () => {
                   <div className={styles.contractInfo}>
                     <h4 className={styles.contractTitle}>{contract.title}</h4>
                     <p className={styles.contractReward}>
-                      💰 {contract.reward.toLocaleString()} {isSpanish ? 'monedas' : 'coins'}
+                      <Coins size={16} /> {contract.reward.toLocaleString()} {isSpanish ? 'monedas' : 'coins'}
                     </p>
                   </div>
                   <button
@@ -206,7 +207,7 @@ const Admin = () => {
                       <span className={styles.metricLabel}>
                         {isSpanish ? 'Calificación' : 'Rating'}
                       </span>
-                      <span className={styles.metricValue}>⭐ {assassin.rating.toFixed(1)}</span>
+                      <span className={styles.metricValue}><Star size={16} /> {assassin.rating.toFixed(1)}</span>
                     </div>
                     <div className={styles.metric}>
                       <span className={styles.metricLabel}>
@@ -222,28 +223,28 @@ const Admin = () => {
                       onClick={() => handleEditAssassin(assassin.email)}
                       title={isSpanish ? 'Editar perfil' : 'Edit profile'}
                     >
-                      ✏️ {isSpanish ? 'Editar' : 'Edit'}
+                      <Edit size={16} /> {isSpanish ? 'Editar' : 'Edit'}
                     </button>
                     <button 
                       className={styles.historyButton}
                       onClick={() => handleViewHistory(assassin.email)}
                       title={isSpanish ? 'Ver historial' : 'View history'}
                     >
-                      📜 {isSpanish ? 'Historial' : 'History'}
+                      <ScrollText size={16} /> {isSpanish ? 'Historial' : 'History'}
                     </button>
                     <button 
                       className={styles.suspendButton}
                       onClick={() => handleSuspendAssassin(assassin.email)}
                       title={isSpanish ? 'Suspender cuenta' : 'Suspend account'}
                     >
-                      🚫 {isSpanish ? 'Suspender' : 'Suspend'}
+                      <Ban size={16} /> {isSpanish ? 'Suspender' : 'Suspend'}
                     </button>
                     <button 
                       className={styles.deleteButton}
                       onClick={() => handleDeleteAssassin(assassin.email)}
                       title={isSpanish ? 'Eliminar cuenta' : 'Delete account'}
                     >
-                      🗑️ {isSpanish ? 'Eliminar' : 'Delete'}
+                      <Trash2 size={16} /> {isSpanish ? 'Eliminar' : 'Delete'}
                     </button>
                   </div>
                 </div>
@@ -264,13 +265,13 @@ const Admin = () => {
                 onClick={loadTransactions}
                 title={isSpanish ? 'Actualizar transacciones' : 'Refresh transactions'}
               >
-                🔄 {isSpanish ? 'Actualizar' : 'Refresh'}
+                <RefreshCw size={18} /> {isSpanish ? 'Actualizar' : 'Refresh'}
               </button>
             </div>
 
             {transactions.length === 0 ? (
               <div className={styles.emptyState}>
-                <span className={styles.emptyIcon}>💰</span>
+                <Coins className={styles.emptyIcon} size={48} />
                 <p>{isSpanish ? 'No hay transacciones registradas' : 'No transactions recorded'}</p>
               </div>
             ) : (
@@ -278,9 +279,9 @@ const Admin = () => {
                 {transactions.map((transaction) => (
                 <div key={transaction.id} className={styles.transactionCard}>
                   <div className={styles.transactionIcon}>
-                    {transaction.type === 'purchase' && '🛒'}
-                    {transaction.type === 'payment' && '💸'}
-                    {transaction.type === 'reward' && '🎁'}
+                    {transaction.type === 'purchase' && <ShoppingCart size={24} />}
+                    {transaction.type === 'payment' && <DollarSign size={24} />}
+                    {transaction.type === 'reward' && <Gift size={24} />}
                   </div>
 
                   <div className={styles.transactionInfo}>
@@ -297,7 +298,7 @@ const Admin = () => {
                     }`}
                   >
                     {transaction.amount > 0 ? '+' : ''}
-                    {transaction.amount.toLocaleString()} 🪙
+                    {transaction.amount.toLocaleString()} <Coins size={16} />
                   </div>
                 </div>
               ))}
@@ -315,7 +316,7 @@ const Admin = () => {
 
             {reports.length === 0 ? (
               <div className={styles.emptyState}>
-                <span className={styles.emptyIcon}>📋</span>
+                <ClipboardList className={styles.emptyIcon} size={48} />
                 <p>{isSpanish ? 'No hay reportes' : 'No reports'}</p>
               </div>
             ) : (
@@ -324,9 +325,9 @@ const Admin = () => {
                   <div key={report.id} className={styles.reportCard}>
                     <div className={styles.reportHeader}>
                       <div className={styles.reportStatus} data-status={report.status}>
-                        {report.status === 'pending' && '⏳'}
-                        {report.status === 'resolved' && '✅'}
-                        {report.status === 'cancelled' && '❌'}
+                        {report.status === 'pending' && <Clock size={18} />}
+                        {report.status === 'resolved' && <CheckCircle size={18} />}
+                        {report.status === 'cancelled' && <XCircle size={18} />}
                         <span>
                           {report.status === 'pending' && (isSpanish ? 'Pendiente' : 'Pending')}
                           {report.status === 'resolved' && (isSpanish ? 'Resuelto' : 'Resolved')}
@@ -353,13 +354,13 @@ const Admin = () => {
                           className={styles.penalizeButton}
                           onClick={() => handlePenalizeReport(report.id)}
                         >
-                          ⚠️ {isSpanish ? 'Penalizar' : 'Penalize'}
+                          <AlertTriangle size={16} /> {isSpanish ? 'Penalizar' : 'Penalize'}
                         </button>
                         <button
                           className={styles.cancelReportButton}
                           onClick={() => handleCancelReport(report.id)}
                         >
-                          ❌ {isSpanish ? 'Cancelar Reporte' : 'Cancel Report'}
+                          <X size={16} /> {isSpanish ? 'Cancelar Reporte' : 'Cancel Report'}
                         </button>
                       </div>
                     )}
@@ -376,7 +377,7 @@ const Admin = () => {
         <div className={styles.modalOverlay} onClick={() => setShowAssignModal(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <button className={styles.closeButton} onClick={() => setShowAssignModal(false)}>
-              ✕
+              <X size={24} />
             </button>
 
             <h2 className={styles.modalTitle}>
@@ -391,7 +392,7 @@ const Admin = () => {
                   <h3>{selectedContract.title}</h3>
                   <p>{selectedContract.description}</p>
                   <p className={styles.rewardText}>
-                    💰 {selectedContract.reward.toLocaleString()} {isSpanish ? 'monedas' : 'coins'}
+                    <Coins size={18} /> {selectedContract.reward.toLocaleString()} {isSpanish ? 'monedas' : 'coins'}
                   </p>
                 </div>
               ) : (
@@ -485,7 +486,7 @@ const Admin = () => {
                     .filter((a) => a.status === 'available')
                     .map((assassin) => (
                       <option key={assassin.id} value={assassin.id}>
-                        {assassin.name} (⭐ {assassin.rating.toFixed(1)})
+                        {assassin.name} (★ {assassin.rating.toFixed(1)})
                       </option>
                     ))}
                 </select>

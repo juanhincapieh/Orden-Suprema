@@ -1,5 +1,6 @@
 import { useRegister } from './useRegister';
 import { Captcha } from '../../components/Captcha';
+import { Eye, EyeOff, Briefcase, Sword, Crown } from 'lucide-react';
 import styles from './Register.module.css';
 
 const Register = () => {
@@ -94,7 +95,7 @@ const Register = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label="Toggle password visibility"
               >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
+                {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
             <p className={styles.hint}>
@@ -114,7 +115,7 @@ const Register = () => {
                 className={`${styles.roleOption} ${role === 'contractor' ? styles.roleActive : ''}`}
                 onClick={() => setRole('contractor')}
               >
-                <span className={styles.roleIcon}>🤵</span>
+                <Briefcase className={styles.roleIcon} size={32} />
                 <span className={styles.roleLabel}>
                   {isSpanish ? 'Contratista' : 'Contractor'}
                 </span>
@@ -128,7 +129,7 @@ const Register = () => {
                 className={`${styles.roleOption} ${role === 'assassin' ? styles.roleActive : ''}`}
                 onClick={() => setRole('assassin')}
               >
-                <span className={styles.roleIcon}>🗡️</span>
+                <Sword className={styles.roleIcon} size={32} />
                 <span className={styles.roleLabel}>
                   {isSpanish ? 'Asesino' : 'Assassin'}
                 </span>
@@ -142,7 +143,7 @@ const Register = () => {
                 className={`${styles.roleOption} ${role === 'admin' ? styles.roleActive : ''}`}
                 onClick={() => setRole('admin')}
               >
-                <span className={styles.roleIcon}>👑</span>
+                <Crown className={styles.roleIcon} size={32} />
                 <span className={styles.roleLabel}>
                   {isSpanish ? 'Administrador' : 'Admin'}
                 </span>

@@ -1,4 +1,5 @@
 import { Contract } from '../../types';
+import { Clock, Calendar, Check, Coins } from 'lucide-react';
 import styles from './Assassin.module.css';
 
 interface MissionCardProps {
@@ -34,7 +35,7 @@ export const MissionCard = ({
           
           {viewMode === 'active' ? (
             <span className={styles.missionDeadline}>
-              <span>⏰</span>
+              <Clock size={14} />
               <span>
                 {isSpanish ? 'Fecha límite: ' : 'Deadline: '}
                 {formatDate(mission.deadline)}
@@ -43,11 +44,11 @@ export const MissionCard = ({
           ) : (
             <>
               <span>
-                📅 {isSpanish ? 'Fecha: ' : 'Date: '}
+                <Calendar size={14} /> {isSpanish ? 'Fecha: ' : 'Date: '}
                 {formatDate(mission.createdAt)}
               </span>
               <span>
-                ⏰ {isSpanish ? 'Límite: ' : 'Deadline: '}
+                <Clock size={14} /> {isSpanish ? 'Límite: ' : 'Deadline: '}
                 {formatDate(mission.deadline)}
               </span>
             </>
@@ -64,7 +65,7 @@ export const MissionCard = ({
                 : styles.statusExpired
             }`}
           >
-            <span>{status === 'completed' ? '✓' : '⏰'}</span>
+            {status === 'completed' ? <Check size={14} /> : <Clock size={14} />}
             <span>
               {status === 'completed'
                 ? isSpanish
@@ -78,7 +79,7 @@ export const MissionCard = ({
         )}
         
         <span className={styles.missionReward}>
-          🪙 {formatCurrency(mission.reward)}
+          <Coins size={16} /> {formatCurrency(mission.reward)}
         </span>
         
         <button 

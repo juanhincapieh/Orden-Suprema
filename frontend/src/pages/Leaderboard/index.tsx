@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { authService } from '../../services/authService';
+import { Trophy, Star } from 'lucide-react';
 import styles from './Leaderboard.module.css';
 
 interface AssassinStats {
@@ -94,7 +95,7 @@ const Leaderboard = () => {
           <div className={styles.list}>
             {assassins.length === 0 ? (
               <div className={styles.emptyState}>
-                <span className={styles.emptyIcon}>🏆</span>
+                <Trophy className={styles.emptyIcon} size={48} />
                 <p>{isSpanish ? 'No hay asesinos registrados aún' : 'No assassins registered yet'}</p>
               </div>
             ) : (
@@ -112,7 +113,7 @@ const Leaderboard = () => {
                       {assassin.name}
                     </div>
                     <div className={styles.rating}>
-                      ⭐ {assassin.rating > 0 ? assassin.rating.toFixed(1) : 'N/A'}
+                      <Star size={16} /> {assassin.rating > 0 ? assassin.rating.toFixed(1) : 'N/A'}
                     </div>
                   </div>
                   
