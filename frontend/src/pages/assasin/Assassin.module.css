@@ -186,6 +186,9 @@
 }
 
 .missionReward {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   color: var(--primary-gold);
   font-weight: 700;
   font-size: 1.1rem;
@@ -199,6 +202,7 @@
 
 .missionActions {
   display: flex;
+  align-items: center;
   gap: 0.75rem;
 }
 
