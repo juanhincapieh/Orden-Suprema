@@ -25,6 +25,20 @@ const Header = () => {
   } = useHeader();
 
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  // Wrapper para prevenir clicks múltiples
+  const handleNavigation = (path: string) => {
+    if (isNavigating) return;
+    
+    setIsNavigating(true);
+    navigate(path);
+    
+    // Resetear después de un tiempo
+    setTimeout(() => {
+      setIsNavigating(false);
+    }, 300);
+  };
 
   const navItems = [
     { id: 'home', Icon: Home, label: isSpanish ? 'Inicio' : 'Home', path: '/' },
@@ -37,7 +51,12 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <button className={styles.logo} onClick={() => navigate('/')} aria-label="Home">
+      <button 
+        className={styles.logo} 
+        onClick={() => handleNavigation('/')} 
+        aria-label="Home"
+        disabled={isNavigating}
+      >
         <div className={styles.logoCircle}>
           <span className={styles.logoSymbol}>⟨A⟩</span>
         </div>
@@ -49,9 +68,10 @@ const Header = () => {
             key={id}
             className={styles.navButton}
             aria-label={label}
-            onClick={() => navigate(path)}
+            onClick={() => handleNavigation(path)}
             onMouseEnter={() => setHoveredIcon(id)}
             onMouseLeave={() => setHoveredIcon(null)}
+            disabled={isNavigating}
           >
             <Icon className={styles.navIcon} />
             <span className={styles.navTooltip}>{label}</span>
@@ -73,7 +93,8 @@ const Header = () => {
           <>
             <button 
               className={styles.personalPageButton}
-              onClick={() => navigate(getPersonalPageRoute())}
+              onClick={() => handleNavigation(getPersonalPageRoute())}
+              disabled={isNavigating}
             >
               <User className={styles.personalPageIcon} size={20} />
               <span className={styles.personalPageText}>{getPersonalPageLabel()}</span>
@@ -162,7 +183,11 @@ const Header = () => {
             </div>
           </>
         ) : (
-          <button className={styles.loginButton} onClick={() => navigate('/login')}>
+          <button 
+            className={styles.loginButton} 
+            onClick={() => handleNavigation('/login')}
+            disabled={isNavigating}
+          >
             {isSpanish ? 'INICIAR SESIÓN' : 'LOG IN'}
           </button>
         )}

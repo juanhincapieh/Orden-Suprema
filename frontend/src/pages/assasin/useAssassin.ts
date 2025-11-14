@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Contract } from '../../types';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface MissionFilters {
   searchTerm: string;
@@ -15,6 +16,7 @@ type ViewMode = 'active' | 'history';
 
 export const useAssassin = () => {
   const navigate = useNavigate();
+  const { isSpanish } = useLanguage();
   const [userEmail, setUserEmail] = useState<string>('');
   const [userName, setUserName] = useState<string>('');
   const [userCoins, setUserCoins] = useState<number>(0);
@@ -24,7 +26,6 @@ export const useAssassin = () => {
   const [historyMissions, setHistoryMissions] = useState<Contract[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>('active');
   const [showFilters, setShowFilters] = useState(false);
-  const [isSpanish, setIsSpanish] = useState(true);
   const [selectedMission, setSelectedMission] = useState<Contract | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
 
@@ -38,37 +39,7 @@ export const useAssassin = () => {
     sortOrder: 'desc'
   });
 
-  useEffect(() => {
-    // Verificar autenticación
-    const currentUserStr = localStorage.getItem('currentUser');
-    if (!currentUserStr) {
-      navigate('/login');
-      return;
-    }
-
-    const currentUser = JSON.parse(currentUserStr);
-    const email = currentUser.email;
-
-    // Verificar rol
-    if (currentUser.role !== 'assassin') {
-      navigate('/');
-      return;
-    }
-
-    // Cargar datos del usuario
-    setUserEmail(email);
-    setUserName(currentUser.nickname || currentUser.name || 'Asesino');
-    setUserCoins(currentUser.coins || 0);
-
-    // Detectar idioma
-    const language = localStorage.getItem('language');
-    setIsSpanish(language === 'es' || navigator.language.toLowerCase().startsWith('es'));
-
-    // Cargar misiones
-    loadMissions(email);
-  }, [navigate]);
-
-  const loadMissions = (email: string) => {
+  const loadMissions = useCallback((email: string) => {
     const encodedEmail = btoa(email);
     
     // Cargar misiones públicas
@@ -145,7 +116,33 @@ export const useAssassin = () => {
     
     console.log('Misiones activas encontradas:', activeMissionsList.length);
     console.log('Misiones en historial:', historyMissionsList.length);
-  };
+  }, []);
+
+  useEffect(() => {
+    // Verificar autenticación
+    const currentUserStr = localStorage.getItem('currentUser');
+    if (!currentUserStr) {
+      navigate('/login');
+      return;
+    }
+
+    const currentUser = JSON.parse(currentUserStr);
+    const email = currentUser.email;
+
+    // Verificar rol
+    if (currentUser.role !== 'assassin') {
+      navigate('/');
+      return;
+    }
+
+    // Cargar datos del usuario
+    setUserEmail(email);
+    setUserName(currentUser.nickname || currentUser.name || 'Asesino');
+    setUserCoins(currentUser.coins || 0);
+
+    // Cargar misiones
+    loadMissions(email);
+  }, [navigate, loadMissions]);
 
   const isExpired = (deadline: string): boolean => {
     if (!deadline) return false;
