@@ -64,6 +64,30 @@ export interface Assassin {
   status: 'available' | 'busy' | 'inactive';
 }
 
+export interface AssassinProfile {
+  id: string;
+  email: string;
+  name: string;
+  nickname: string;
+  minContractValue: number;
+  specialties: string[];
+  status: 'available' | 'busy' | 'inactive';
+  location?: {
+    lat: number;
+    lng: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AssassinStats {
+  averageRatingAllTime: number;
+  averageRatingLastMonth: number;
+  completedContracts: number;
+  totalEarnings: number;
+  activeContracts: number;
+}
+
 export interface Transaction {
   id: string;
   userId: string;

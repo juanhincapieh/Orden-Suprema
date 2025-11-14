@@ -447,5 +447,172 @@ export const authService = {
     const suspended = localStorage.getItem('suspendedUsers');
     const suspendedList = suspended ? JSON.parse(suspended) : [];
     return suspendedList.includes(email);
+  },
+
+  // Assassin Profile Management
+  updateAssassinProfile: (email: string, updates: any): { success: boolean; error?: string } => {
+    // Get assassin profiles
+    const stored = localStorage.getItem('assassinProfiles');
+    const profiles = stored ? JSON.parse(stored) : {};
+    
+    const existingProfile = profiles[email];
+    if (!existingProfile) {
+      return { success: false, error: 'Profile not found' };
+    }
+
+    // Email uniqueness validation
+    if (updates.email && updates.email !== email) {
+      const allUsers = authService.getAllUsers();
+      const emailExists = allUsers.some(user => user.email === updates.email);
+      if (emailExists) {
+        return { success: false, error: 'Email already exists' };
+      }
+    }
+
+    // Update profile
+    const updatedProfile = {
+      ...existingProfile,
+      ...updates,
+      updatedAt: new Date().toISOString()
+    };
+
+    // If email changed, handle the migration
+    if (updates.email && updates.email !== email) {
+      const oldEmail = email;
+      const newEmail = updates.email;
+
+      // Update profile with new email
+      delete profiles[oldEmail];
+      profiles[newEmail] = {
+        ...updatedProfile,
+        email: newEmail,
+        id: btoa(newEmail)
+      };
+
+      // Update related data in other storage locations
+      // Update users dict
+      const users = getUsersDict();
+      if (users[oldEmail]) {
+        users[newEmail] = users[oldEmail];
+        delete users[oldEmail];
+        setUsersDict(users);
+      }
+
+      // Update roles dict
+      const roles = getRolesDict();
+      if (roles[oldEmail]) {
+        roles[newEmail] = roles[oldEmail];
+        delete roles[oldEmail];
+        setRolesDict(roles);
+      }
+
+      // Update nicknames dict
+      const nicknames = getNicknamesDict();
+      if (updates.nickname) {
+        nicknames[newEmail] = updates.nickname;
+      } else if (nicknames[oldEmail]) {
+        nicknames[newEmail] = nicknames[oldEmail];
+      }
+      delete nicknames[oldEmail];
+      setNicknamesDict(nicknames);
+
+      // Update coins dict
+      const coins = getCoinsDict();
+      if (coins[oldEmail] !== undefined) {
+        coins[newEmail] = coins[oldEmail];
+        delete coins[oldEmail];
+        setCoinsDict(coins);
+      }
+
+      // Update missions dict
+      const missions = getMissionsDict();
+      if (missions[oldEmail]) {
+        missions[newEmail] = missions[oldEmail];
+        delete missions[oldEmail];
+        setMissionsDict(missions);
+      }
+    } else {
+      // Just update the profile
+      profiles[email] = updatedProfile;
+
+      // Update nickname if changed
+      if (updates.nickname) {
+        const nicknames = getNicknamesDict();
+        nicknames[email] = updates.nickname;
+        setNicknamesDict(nicknames);
+      }
+
+      // Update name if changed
+      if (updates.name) {
+        const nicknames = getNicknamesDict();
+        // If name is updated but nickname isn't in updates, keep existing nickname
+        if (!updates.nickname && nicknames[email]) {
+          // Keep existing nickname
+        } else if (!nicknames[email]) {
+          // If no nickname exists, use name as nickname
+          nicknames[email] = updates.name;
+          setNicknamesDict(nicknames);
+        }
+      }
+    }
+
+    // Save updated profiles
+    localStorage.setItem('assassinProfiles', JSON.stringify(profiles));
+
+    return { success: true };
+  },
+
+  getAssassinProfile: (email: string): any | null => {
+    const stored = localStorage.getItem('assassinProfiles');
+    const profiles = stored ? JSON.parse(stored) : {};
+    return profiles[email] || null;
+  },
+
+  calculateAssassinStats: (email: string): any => {
+    const assassinId = btoa(email);
+    const allMissions = authService.getAllMissions();
+    
+    // Filter missions for this assassin
+    const assassinMissions = allMissions.filter(m => m.assassinId === assassinId);
+    
+    // Calculate completed contracts
+    const completedMissions = assassinMissions.filter(m => m.status === 'completed');
+    const completedContracts = completedMissions.length;
+    
+    // Calculate total earnings
+    const totalEarnings = completedMissions.reduce((sum, m) => sum + (m.reward || 0), 0);
+    
+    // Calculate active contracts
+    const activeContracts = assassinMissions.filter(m => 
+      m.status === 'in_progress' || m.status === 'negotiating'
+    ).length;
+    
+    // Calculate average rating (all time)
+    const missionsWithReviews = completedMissions.filter(m => m.review && m.review.rating);
+    const averageRatingAllTime = missionsWithReviews.length > 0
+      ? missionsWithReviews.reduce((sum, m) => sum + m.review.rating, 0) / missionsWithReviews.length
+      : 0;
+    
+    // Calculate average rating (last month)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const recentMissionsWithReviews = completedMissions.filter(m => {
+      if (!m.review || !m.review.rating) return false;
+      const completedDate = new Date(m.updatedAt);
+      return completedDate >= thirtyDaysAgo;
+    });
+    
+    const averageRatingLastMonth = recentMissionsWithReviews.length > 0
+      ? recentMissionsWithReviews.reduce((sum, m) => sum + m.review.rating, 0) / recentMissionsWithReviews.length
+      : 0;
+    
+    return {
+      averageRatingAllTime,
+      averageRatingLastMonth,
+      completedContracts,
+      totalEarnings,
+      activeContracts
+    };
   }
 };
