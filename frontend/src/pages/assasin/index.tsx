@@ -57,7 +57,7 @@ const Assassin = () => {
       const nicknamesDict = nicknames ? JSON.parse(nicknames) : {};
       
       const assassins = Object.entries(rolesDict)
-        .filter(([email, role]) => role === 'assassin')
+        .filter(([, role]) => role === 'assassin')
         .map(([email]) => ({
           email,
           name: email.split('@')[0],
@@ -145,7 +145,7 @@ const Assassin = () => {
       const creditorId = btoa(creditorEmail); // A QUIEN LE DEBO
       
       // Crear la solicitud de favor - YO solicito registrar que LE DEBO al otro
-      const result = debtService.createFavorRequest(
+      debtService.createFavorRequest(
         debtorId, // YO (quien debe)
         creditorId, // EL OTRO (quien me hizo el favor)
         description,

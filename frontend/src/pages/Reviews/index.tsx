@@ -64,7 +64,7 @@ const Reviews = () => {
     }
   ];
 
-  const renderStars = (rating) => {
+  const renderStars = (rating: number) => {
     return (
       <div className={styles.stars}>
         {[...Array(5)].map((_, index) => (
