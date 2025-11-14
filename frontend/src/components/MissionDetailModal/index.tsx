@@ -267,9 +267,12 @@ const MissionDetailModal = ({
               }}
             >
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
               <span className={styles.buttonIcon}>✅</span>
               {isSpanish ? 'Completar Misión' : 'Complete Mission'}
 =======
+=======
+>>>>>>> Stashed changes
               <CheckCircle className={styles.buttonIcon} size={18} />
               {isSpanish ? 'Marcar como Completada' : 'Mark as Completed'}
 >>>>>>> Stashed changes
