@@ -78,7 +78,7 @@ const Login = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label="Toggle password visibility"
                 >
-                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                  {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                 </button>
               </div>
             </div>
@@ -87,7 +87,7 @@ const Login = () => {
               {/* Sección 2FA */}
               <div className={styles.twoFactorSection}>
                 <div className={styles.twoFactorHeader}>
-                  <span className={styles.twoFactorIcon}>🔐</span>
+                  <span className={styles.twoFactorIcon}><Target size={24} /></span>
                   <h2 className={styles.twoFactorTitle}>
                     {isSpanish ? 'Autenticación de Dos Factores' : 'Two-Factor Authentication'}
                   </h2>
@@ -108,7 +108,7 @@ const Login = () => {
                     {generatedCode}
                   </div>
                   <span className={styles.generatedCodeHint}>
-                    {isSpanish ? '☝️ Copia este código' : '☝️ Copy this code'}
+                    {isSpanish ? 'Copia este código' : 'Copy this code'}
                   </span>
                 </div>
 
