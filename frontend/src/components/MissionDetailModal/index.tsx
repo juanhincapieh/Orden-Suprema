@@ -266,8 +266,6 @@ const MissionDetailModal = ({
                 }
               }}
             >
-              <span className={styles.buttonIcon}>✅</span>
-              {isSpanish ? 'Completar Misión' : 'Complete Mission'}
               <CheckCircle className={styles.buttonIcon} size={18} />
               {isSpanish ? 'Marcar como Completada' : 'Mark as Completed'}
             </button>
