@@ -89,8 +89,8 @@ export const RegisterDebtModal = ({
 
         <p className={styles.modalDescription}>
           {isSpanish 
-            ? 'Registra un favor que otro asesino te hizo. Reconoces que LE DEBES un favor y deberás pagarlo cuando te lo solicite.'
-            : 'Register a favor another assassin did for you. You acknowledge that YOU OWE them a favor and must pay it when requested.'}
+            ? 'Registra un favor que otro asesino te hizo. Reconoces que le debes un favor y deberás pagarlo cuando te lo solicite.'
+            : 'Register a favor another assassin did for you. You acknowledge that you owe them a favor and must pay it when requested.'}
         </p>
 
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -118,8 +118,8 @@ export const RegisterDebtModal = ({
             </select>
             <span className={styles.hint}>
               {isSpanish 
-                ? 'El asesino que te hizo el favor y al que LE DEBES'
-                : 'The assassin who did you the favor and who YOU OWE'}
+                ? 'El asesino que te hizo el favor'
+                : 'The assassin who did you the favor'}
             </span>
           </div>
 
