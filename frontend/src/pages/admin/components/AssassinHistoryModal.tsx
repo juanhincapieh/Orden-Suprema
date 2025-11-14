@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { X, Star, CheckCircle, Coins, RefreshCw, ClipboardList, Calendar } from 'lucide-react';
 import { AssassinProfile } from '../../../types';
 import { authService } from '../../../services/authService';
 import styles from './AssassinHistoryModal.module.css';
@@ -113,7 +114,7 @@ export const AssassinHistoryModal = ({
           onClick={onClose}
           aria-label={translations.close}
         >
-          ✕
+          <X size={24} />
         </button>
 
         <h2 className={styles.modalTitle}>
@@ -125,7 +126,7 @@ export const AssassinHistoryModal = ({
           <h3 className={styles.sectionTitle}>{translations.performanceStats}</h3>
           <div className={styles.statsGrid}>
             <div className={styles.statCard}>
-              <div className={styles.statIcon}>⭐</div>
+              <div className={styles.statIcon}><Star size={24} /></div>
               <div className={styles.statValue}>
                 {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : 'N/A'}
               </div>
@@ -133,13 +134,13 @@ export const AssassinHistoryModal = ({
             </div>
 
             <div className={styles.statCard}>
-              <div className={styles.statIcon}>✓</div>
+              <div className={styles.statIcon}><CheckCircle size={24} /></div>
               <div className={styles.statValue}>{stats.completed}</div>
               <div className={styles.statLabel}>{translations.completedMissions}</div>
             </div>
 
             <div className={styles.statCard}>
-              <div className={styles.statIcon}>💰</div>
+              <div className={styles.statIcon}><Coins size={24} /></div>
               <div className={styles.statValue}>
                 {stats.totalEarnings.toLocaleString()}
               </div>
@@ -147,7 +148,7 @@ export const AssassinHistoryModal = ({
             </div>
 
             <div className={styles.statCard}>
-              <div className={styles.statIcon}>🔄</div>
+              <div className={styles.statIcon}><RefreshCw size={24} /></div>
               <div className={styles.statValue}>{stats.inProgress}</div>
               <div className={styles.statLabel}>{translations.inProgress}</div>
             </div>
@@ -160,7 +161,7 @@ export const AssassinHistoryModal = ({
           
           {missions.length === 0 ? (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>📋</div>
+              <div className={styles.emptyIcon}><ClipboardList size={48} /></div>
               <h4 className={styles.emptyTitle}>{translations.noMissions}</h4>
               <p className={styles.emptyDescription}>{translations.noMissionsDesc}</p>
             </div>
@@ -207,14 +208,14 @@ export const AssassinHistoryModal = ({
 
                         <div className={styles.missionDetail}>
                           <span className={styles.detailLabel}>{translations.reward}:</span>
-                          <span className={styles.detailValue}>💰 {mission.reward.toLocaleString()}</span>
+                          <span className={styles.detailValue}><Coins size={16} /> {mission.reward.toLocaleString()}</span>
                         </div>
 
                         {mission.status === 'completed' && mission.review && (
                           <div className={styles.missionDetail}>
                             <span className={styles.detailLabel}>Rating:</span>
                             <span className={styles.detailValue}>
-                              ⭐ {mission.review.rating.toFixed(1)}
+                              <Star size={16} /> {mission.review.rating.toFixed(1)}
                             </span>
                           </div>
                         )}
@@ -223,7 +224,7 @@ export const AssassinHistoryModal = ({
                           <span className={styles.detailLabel}>
                             {mission.status === 'completed' ? translations.completedOn : translations.status}:
                           </span>
-                          <span className={styles.detailValue}>📅 {formattedDate}</span>
+                          <span className={styles.detailValue}><Calendar size={16} /> {formattedDate}</span>
                         </div>
                       </div>
                     </div>
