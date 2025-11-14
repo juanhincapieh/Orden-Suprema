@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useMissions } from './useMissions';
 import MissionDetailModal from '../../components/MissionDetailModal';
-import { Search, Coins, MapPin, Clock, Calendar, MessageCircle, X, PartyPopper, Lock, Key, Sparkles, ClipboardList, Lightbulb } from 'lucide-react';
+import { Search, Coins, MapPin, Clock, Calendar, MessageCircle, X, PartyPopper, Lock, Key, Sparkles, ClipboardList, Lightbulb, CircleCheck } from 'lucide-react';
 import styles from './Missions.module.css';
 
 const Missions = () => {
@@ -282,7 +282,7 @@ const Missions = () => {
                   className={styles.acceptTermsButton}
                   onClick={() => handleAcceptCurrentTerms(selectedMission)}
                 >
-                  <span className={styles.optionIcon}>✅</span>
+                  <span className={styles.optionIcon}><CircleCheck size={24} style={{ color: '#10b981' }} /></span>
                   <div className={styles.optionText}>
                     <strong>
                       {isSpanish ? 'Aceptar términos actuales' : 'Accept current terms'}

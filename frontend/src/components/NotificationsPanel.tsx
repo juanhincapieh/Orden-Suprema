@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, Mailbox, Coins, Banknote, Mail } from 'lucide-react';
+import { Bell, Mailbox, Coins, Banknote, Mail, CheckCircle } from 'lucide-react';
 import { DebtNotification, debtService } from '../services/debtService';
 import { Notification, notificationService } from '../services/notificationService';
 import styles from './NotificationsPanel.module.css';
@@ -323,7 +323,7 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
                   {notification.type === 'completion_request' && (
                     <>
                       <div className={styles.notificationHeader}>
-                        <span className={styles.notificationIcon}>✅</span>
+                        <span className={styles.notificationIcon}><CheckCircle size={20} style={{ color: '#10b981' }} /></span>
                         <span className={styles.notificationTitle}>
                           {isSpanish ? 'Pago Completado' : 'Payment Completed'}
                         </span>

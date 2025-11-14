@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { CircleCheck } from 'lucide-react';
 import styles from './Captcha.module.css';
 
 interface CaptchaProps {
@@ -168,13 +169,13 @@ export const Captcha = ({ onVerify, isSpanish = false }: CaptchaProps) => {
             onClick={handleVerify}
             disabled={userInput.length !== 6}
           >
-            {isVerified ? '✓' : isSpanish ? 'Verificar' : 'Verify'}
+            {isVerified ? <CircleCheck size={18} /> : isSpanish ? 'Verificar' : 'Verify'}
           </button>
         </div>
 
         {isVerified && (
           <div className={styles.successMessage}>
-            <span className={styles.successIcon}>✓</span>
+            <span className={styles.successIcon}><CircleCheck size={20} style={{ color: '#10b981' }} /></span>
             <span>{isSpanish ? 'Verificación exitosa' : 'Verification successful'}</span>
           </div>
         )}

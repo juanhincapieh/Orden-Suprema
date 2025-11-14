@@ -122,7 +122,7 @@ export const AssassinMap = ({
           <strong style="font-size: 16px;">${assassin.name}</strong><br/>
           <span style="color: ${iconColor}; font-weight: 600;">● ${statusText}</span><br/>
           <span style="font-size: 14px;">⭐ ${assassin.rating.toFixed(1)}</span><br/>
-          <span style="font-size: 12px; color: #666;">✓ ${assassin.completedContracts} ${isSpanish ? 'contratos' : 'contracts'}</span>
+          <span style="font-size: 12px; color: #10b981; font-weight: 600;">✓ ${assassin.completedContracts} ${isSpanish ? 'contratos' : 'contracts'}</span>
         </div>
       `);
 
