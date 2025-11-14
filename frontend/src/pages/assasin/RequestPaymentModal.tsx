@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Lightbulb, X } from 'lucide-react';
 import { Debt } from '../../services/debtService';
 import styles from '../Assassins/RequestFavorModal.module.css'; // Reutilizar estilos
 
@@ -69,7 +70,7 @@ export const RequestPaymentModal = ({
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.closeButton} onClick={onClose} disabled={isSubmitting}>
-          ✕
+          <X size={20} />
         </button>
 
         <h2 className={styles.modalTitle}>
@@ -131,7 +132,7 @@ export const RequestPaymentModal = ({
           )}
 
           <div className={styles.warning}>
-            <span className={styles.warningIcon}>💡</span>
+            <span className={styles.warningIcon}><Lightbulb size={18} /></span>
             <span>
               {isSpanish 
                 ? 'El deudor puede aceptar o rechazar. Si rechaza, será marcado como objetivo.' 

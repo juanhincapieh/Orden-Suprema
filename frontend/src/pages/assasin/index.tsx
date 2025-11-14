@@ -276,7 +276,7 @@ const Assassin = () => {
           onClick={() => setShowRegisterDebtModal(true)}
           title={isSpanish ? 'Registrar nueva deuda' : 'Register new debt'}
         >
-          <span className={styles.registerDebtIcon}>💰</span>
+          <Coins className={styles.registerDebtIcon} size={20} />
           <span className={styles.registerDebtText}>
             {isSpanish ? 'Registrar Deuda' : 'Register Debt'}
           </span>
