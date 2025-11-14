@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { X, CircleDollarSign } from 'lucide-react';
 import { AssassinProfile } from '../../../types';
-import { assassinProfileService } from '../../../services/assassinProfileService';
+// import { assassinProfileService } from '../../../services/assassinProfileService';
 import styles from './AssassinEditModal.module.css';
 
 export interface AssassinEditModalProps {

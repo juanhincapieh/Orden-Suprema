@@ -17,7 +17,6 @@ const Register = () => {
     setShowPassword,
     acceptTerms,
     setAcceptTerms,
-    isCaptchaVerified,
     setIsCaptchaVerified,
     navigate,
     isSpanish,

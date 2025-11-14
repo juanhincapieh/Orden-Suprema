@@ -82,7 +82,7 @@ const MissionDetailModal = ({
   const isAssassin = currentUser && currentUser.role === 'assassin' && mission.assassinId === currentUser.id;
   const shouldShowNegotiationDetails = showNegotiation && mission.negotiation && isOwner;
   const shouldShowNegotiationMessage = showNegotiation && mission.negotiation && !isOwner;
-  const canComplete = isAssassin && (mission.status === 'in_progress' || mission.status === 'in-progress') && !mission.terminado && onCompleteMission;
+  const canComplete = isAssassin && mission.status === 'in_progress' && !mission.terminado && onCompleteMission;
 
   // Debug logs
   console.log('🔍 Modal Debug:', {
