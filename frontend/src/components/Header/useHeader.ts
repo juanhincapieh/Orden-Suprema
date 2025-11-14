@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const useHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isSpanish = navigator.language.toLowerCase().startsWith('es');
+  const { isSpanish, toggleLanguage } = useLanguage();
   const [currentUser, setCurrentUser] = useState(authService.getCurrentUser());
   
   const [showBuyModal, setShowBuyModal] = useState(false);
@@ -89,6 +90,7 @@ export const useHeader = () => {
   return {
     navigate,
     isSpanish,
+    toggleLanguage,
     currentUser,
     showBuyModal,
     setShowBuyModal,
