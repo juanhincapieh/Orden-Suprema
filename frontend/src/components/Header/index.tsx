@@ -2,6 +2,8 @@ import BuyCoinsModal from '../BuyCoinsModal';
 import { NotificationsPanel } from '../NotificationsPanel';
 import { useTheme } from '../../context/ThemeContext';
 import { useHeader } from './useHeader';
+import { Home, FileText, Sword, Users, Star, Trophy } from 'lucide-react';
+import { useState } from 'react';
 import styles from './Header.module.css';
 
 const Header = () => {
@@ -21,6 +23,17 @@ const Header = () => {
     refreshUser
   } = useHeader();
 
+  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+
+  const navItems = [
+    { id: 'home', Icon: Home, label: isSpanish ? 'Inicio' : 'Home', path: '/' },
+    { id: 'missions', Icon: FileText, label: isSpanish ? 'Misiones' : 'Missions', path: '/missions' },
+    { id: 'assassins', Icon: Sword, label: isSpanish ? 'Asesinos' : 'Assassins', path: '/assassins' },
+    { id: 'aboutus', Icon: Users, label: isSpanish ? 'Nosotros' : 'About Us', path: '/aboutus' },
+    { id: 'reviews', Icon: Star, label: isSpanish ? 'Reseñas' : 'Reviews', path: '/reviews' },
+    { id: 'leaderboard', Icon: Trophy, label: isSpanish ? 'Clasificación' : 'Leaderboard', path: '/leaderboard' },
+  ];
+
   return (
     <header className={styles.header}>
       <button className={styles.logo} onClick={() => navigate('/')} aria-label="Home">
@@ -30,54 +43,20 @@ const Header = () => {
       </button>
       
       <nav className={styles.nav}>
-        <button 
-          className={styles.navButton} 
-          aria-label={isSpanish ? "Inicio" : "Home"}
-          onClick={() => navigate('/')}
-        >
-          <span className={styles.navIcon}>🏠</span>
-          <span className={styles.navTooltip}>{isSpanish ? "Inicio" : "Home"}</span>
-        </button>
-        <button 
-          className={styles.navButton} 
-          aria-label={isSpanish ? "Misiones" : "Missions"}
-          onClick={() => navigate('/missions')}
-        >
-          <span className={styles.navIcon}>📋</span>
-          <span className={styles.navTooltip}>{isSpanish ? "Misiones" : "Missions"}</span>
-        </button>
-        <button 
-          className={styles.navButton} 
-          aria-label={isSpanish ? "Asesinos" : "Assassins"}
-          onClick={() => navigate('/assassins')}
-        >
-          <span className={styles.navIcon}>🗡️</span>
-          <span className={styles.navTooltip}>{isSpanish ? "Asesinos" : "Assassins"}</span>
-        </button>
-        <button 
-          className={styles.navButton} 
-          aria-label={isSpanish ? "Nosotros" : "About Us"}
-          onClick={() => navigate('/aboutus')}
-        >
-          <span className={styles.navIcon}>👥</span>
-          <span className={styles.navTooltip}>{isSpanish ? "Nosotros" : "About Us"}</span>
-        </button>
-        <button 
-          className={styles.navButton} 
-          aria-label={isSpanish ? "Reseñas" : "Reviews"}
-          onClick={() => navigate('/reviews')}
-        >
-          <span className={styles.navIcon}>⭐</span>
-          <span className={styles.navTooltip}>{isSpanish ? "Reseñas" : "Reviews"}</span>
-        </button>
-        <button 
-          className={styles.navButton} 
-          aria-label={isSpanish ? "Clasificación" : "Leaderboard"} 
-          onClick={() => navigate('/leaderboard')}
-        >
-          <span className={styles.navIcon}>🏆</span>
-          <span className={styles.navTooltip}>{isSpanish ? "Clasificación" : "Leaderboard"}</span>
-        </button>
+        {navItems.map(({ id, Icon, label, path }) => (
+          <button
+            key={id}
+            className={styles.navButton}
+            aria-label={label}
+            onClick={() => navigate(path)}
+            onMouseEnter={() => setHoveredIcon(id)}
+            onMouseLeave={() => setHoveredIcon(null)}
+          >
+            <Icon className={styles.navIcon} />
+            <span className={styles.navTooltip}>{label}</span>
+            {hoveredIcon === id && <span className={styles.navGlow}></span>}
+          </button>
+        ))}
       </nav>
 
       <div className={styles.authSection}>
