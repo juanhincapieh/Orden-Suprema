@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Debt } from '../../services/debtService';
 import { DebtCard } from './DebtCard';
-import { Coins, Sparkles, CheckCircle, Inbox, Send, Download } from 'lucide-react';
+import { Coins, Sparkles, CheckCircle, Inbox, Send, Download, FileClock } from 'lucide-react';
 import styles from './DebtsSection.module.css';
 
 interface User {
@@ -89,7 +89,7 @@ export const DebtsSection = ({
           className={`${styles.tab} ${activeTab === 'pending' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('pending')}
         >
-          <span className={styles.tabIcon}>⏳</span>
+          <FileClock className={styles.tabIcon} size={18} />
           <span className={styles.tabLabel}>
             {isSpanish ? 'Pendientes' : 'Pending'}
           </span>
@@ -146,7 +146,7 @@ export const DebtsSection = ({
         ) : (
           pendingDebts.length === 0 ? (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>⏳</div>
+              <div className={styles.emptyIcon}><FileClock size={48} /></div>
               <p>{isSpanish ? 'No tienes deudas pendientes de aprobación' : 'You have no pending debts'}</p>
             </div>
           ) : (
@@ -154,7 +154,7 @@ export const DebtsSection = ({
               {pendingDebts.map((debt) => (
                 <div key={debt.id} className={styles.pendingDebtCard}>
                   <div className={styles.pendingHeader}>
-                    <div className={styles.pendingIcon}>⏳</div>
+                    <div className={styles.pendingIcon}><FileClock size={24} /></div>
                     <div className={styles.pendingInfo}>
                       <p className={styles.pendingLabel}>
                         {isSpanish ? 'Esperando aprobación de:' : 'Waiting approval from:'}
