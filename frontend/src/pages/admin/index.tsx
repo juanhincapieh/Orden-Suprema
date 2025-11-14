@@ -1,5 +1,6 @@
 import { useAdmin } from './useAdmin';
 import { AssassinMap } from '../../components/AssassinMap';
+import { AssassinEditModal, AssassinHistoryModal } from './components';
 import styles from './Admin.module.css';
 
 const Admin = () => {
@@ -28,12 +29,21 @@ const Admin = () => {
     setNewMissionLocation,
     newMissionDeadline,
     setNewMissionDeadline,
+    showEditModal,
+    setShowEditModal,
+    showHistoryModal,
+    setShowHistoryModal,
+    selectedAssassinProfile,
+    setSelectedAssassinProfile,
     isSpanish,
     handleAssignContract,
     handlePenalizeReport,
     handleCancelReport,
     handleSuspendAssassin,
     handleDeleteAssassin,
+    handleEditAssassin,
+    handleViewHistory,
+    handleSaveAssassinProfile,
     getStatusColor,
     getStatusText,
     loadTransactions
@@ -207,6 +217,20 @@ const Admin = () => {
                   </div>
 
                   <div className={styles.manageActions}>
+                    <button 
+                      className={styles.editButton}
+                      onClick={() => handleEditAssassin(assassin.email)}
+                      title={isSpanish ? 'Editar perfil' : 'Edit profile'}
+                    >
+                      ✏️ {isSpanish ? 'Editar' : 'Edit'}
+                    </button>
+                    <button 
+                      className={styles.historyButton}
+                      onClick={() => handleViewHistory(assassin.email)}
+                      title={isSpanish ? 'Ver historial' : 'View history'}
+                    >
+                      📜 {isSpanish ? 'Historial' : 'History'}
+                    </button>
                     <button 
                       className={styles.suspendButton}
                       onClick={() => handleSuspendAssassin(assassin.email)}
@@ -474,6 +498,29 @@ const Admin = () => {
           </div>
         </div>
       )}
+
+      {/* Assassin Edit Modal */}
+      <AssassinEditModal
+        isOpen={showEditModal}
+        assassin={selectedAssassinProfile}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedAssassinProfile(null);
+        }}
+        onSave={handleSaveAssassinProfile}
+        isSpanish={isSpanish}
+      />
+
+      {/* Assassin History Modal */}
+      <AssassinHistoryModal
+        isOpen={showHistoryModal}
+        assassin={selectedAssassinProfile}
+        onClose={() => {
+          setShowHistoryModal(false);
+          setSelectedAssassinProfile(null);
+        }}
+        isSpanish={isSpanish}
+      />
     </div>
   );
 };

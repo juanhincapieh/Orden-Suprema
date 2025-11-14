@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Contract, Assassin, Transaction, Report, User } from '../../types';
+import { Contract, Assassin, Transaction, Report, User, AssassinProfile } from '../../types';
 import { authService } from '../../services/authService';
 import { transactionService } from '../../services/transactionService';
+import { assassinProfileService } from '../../services/assassinProfileService';
+import { useLanguage } from '../../context/LanguageContext';
 
 // Función para convertir User a Assassin
 const userToAssassin = (user: User): Assassin => {
@@ -40,6 +42,8 @@ const getAvailableMissions = (): Contract[] => {
 };
 
 export const useAdmin = () => {
+  const { isSpanish } = useLanguage();
+  
   const [activeTab, setActiveTab] = useState<'assign' | 'manage' | 'transactions' | 'reports'>('assign');
   const [assassins, setAssassins] = useState<Assassin[]>([]);
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -57,7 +61,10 @@ export const useAdmin = () => {
   const [newMissionLocation, setNewMissionLocation] = useState('');
   const [newMissionDeadline, setNewMissionDeadline] = useState('');
 
-  const isSpanish = navigator.language.toLowerCase().startsWith('es');
+  // Estados para modales de edición e historial
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [selectedAssassinProfile, setSelectedAssassinProfile] = useState<AssassinProfile | null>(null);
 
   const loadTransactions = () => {
     const realTransactions = transactionService.getAll();
@@ -66,6 +73,10 @@ export const useAdmin = () => {
   };
 
   useEffect(() => {
+    // Migrar usuarios asesinos existentes a perfiles si no existen
+    const migrationResult = assassinProfileService.migrateExistingUsers();
+    console.log('📋 Perfiles migrados:', migrationResult);
+
     // Cargar asesinos reales del sistema
     const realAssassins = authService.getAllAssassins();
     const assassinsList = realAssassins.map(user => userToAssassin(user));
@@ -278,6 +289,54 @@ export const useAdmin = () => {
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
+  const handleEditAssassin = (email: string) => {
+    const profile = assassinProfileService.getProfile(email);
+    if (profile) {
+      setSelectedAssassinProfile(profile);
+      setShowEditModal(true);
+    } else {
+      alert(isSpanish 
+        ? 'No se encontró el perfil del asesino' 
+        : 'Assassin profile not found');
+    }
+  };
+
+  const handleViewHistory = (email: string) => {
+    const profile = assassinProfileService.getProfile(email);
+    if (profile) {
+      setSelectedAssassinProfile(profile);
+      setShowHistoryModal(true);
+    } else {
+      alert(isSpanish 
+        ? 'No se encontró el perfil del asesino' 
+        : 'Assassin profile not found');
+    }
+  };
+
+  const handleSaveAssassinProfile = async (updatedProfile: Partial<AssassinProfile>) => {
+    if (!selectedAssassinProfile) return;
+
+    try {
+      const result = assassinProfileService.updateProfile(selectedAssassinProfile.email, updatedProfile);
+      
+      if (result.success) {
+        // Reload assassins list
+        const realAssassins = authService.getAllAssassins();
+        const assassinsList = realAssassins.map(user => userToAssassin(user));
+        setAssassins(assassinsList);
+
+        alert(isSpanish 
+          ? 'Perfil actualizado exitosamente' 
+          : 'Profile updated successfully');
+      } else {
+        throw new Error(result.error || 'Update failed');
+      }
+    } catch (error: any) {
+      console.error('Error updating assassin profile:', error);
+      throw error;
+    }
+  };
+
   return {
     activeTab,
     setActiveTab,
@@ -303,12 +362,21 @@ export const useAdmin = () => {
     setNewMissionLocation,
     newMissionDeadline,
     setNewMissionDeadline,
+    showEditModal,
+    setShowEditModal,
+    showHistoryModal,
+    setShowHistoryModal,
+    selectedAssassinProfile,
+    setSelectedAssassinProfile,
     isSpanish,
     handleAssignContract,
     handlePenalizeReport,
     handleCancelReport,
     handleSuspendAssassin,
     handleDeleteAssassin,
+    handleEditAssassin,
+    handleViewHistory,
+    handleSaveAssassinProfile,
     getStatusColor,
     getStatusText,
     loadTransactions

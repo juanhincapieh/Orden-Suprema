@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import './styles/App.css';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
 import Header from './components/Header';
 import AppRoutes from './routes';
 import { initializeMockData } from './data/mockData';
@@ -14,12 +15,14 @@ function App() {
 
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <Header />
-        <div className="App">
-          <AppRoutes />
-        </div>
-      </BrowserRouter>
+      <LanguageProvider>
+        <BrowserRouter>
+          <Header />
+          <div className="App">
+            <AppRoutes />
+          </div>
+        </BrowserRouter>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }
