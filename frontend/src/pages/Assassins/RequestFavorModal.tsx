@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { X, TriangleAlert, CheckCircle } from 'lucide-react';
 import { AssassinProfile } from './useAssassins';
 import { debtService } from '../../services/debtService';
 import styles from './RequestFavorModal.module.css';
@@ -84,7 +85,7 @@ export const RequestFavorModal = ({
     <div className={styles.modalOverlay} onClick={handleOverlayClick}>
       <div className={styles.modal}>
         <button className={styles.closeButton} onClick={onClose} type="button">
-          ✕
+          <X size={20} />
         </button>
 
         <h2 className={styles.modalTitle}>
@@ -103,7 +104,7 @@ export const RequestFavorModal = ({
 
         {success ? (
           <div className={styles.successMessage}>
-            <span className={styles.successIcon}>✅</span>
+            <span className={styles.successIcon}><CheckCircle size={48} /></span>
             <p>
               {isSpanish
                 ? '¡Solicitud enviada con éxito!'
@@ -139,13 +140,13 @@ export const RequestFavorModal = ({
 
             {error && (
               <div className={styles.errorMessage}>
-                <span className={styles.errorIcon}>⚠️</span>
+                <span className={styles.errorIcon}><TriangleAlert size={20} /></span>
                 <p>{error}</p>
               </div>
             )}
 
             <div className={styles.warningBox}>
-              <span className={styles.warningIcon}>⚠️</span>
+              <span className={styles.warningIcon}><TriangleAlert size={20} /></span>
               <p>
                 {isSpanish
                   ? 'Esto creará una deuda que deberás pagar cuando te lo soliciten'

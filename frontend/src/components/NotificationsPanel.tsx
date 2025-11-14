@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, Mailbox } from 'lucide-react';
+import { Bell, Mailbox, Coins, Banknote, Mail } from 'lucide-react';
 import { DebtNotification, debtService } from '../services/debtService';
 import { Notification, notificationService } from '../services/notificationService';
 import styles from './NotificationsPanel.module.css';
@@ -208,7 +208,7 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
                 {transferNotifications.map((notification) => (
                   <div key={notification.id} className={styles.notificationCard}>
                     <div className={styles.notificationHeader}>
-                      <span className={styles.notificationIcon}>💸</span>
+                      <span className={styles.notificationIcon}><Banknote size={20} /></span>
                       <span className={styles.notificationTitle}>
                         {isSpanish ? 'Transferencia Recibida' : 'Transfer Received'}
                       </span>
@@ -223,7 +223,7 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
                           {isSpanish ? 'Cantidad:' : 'Amount:'}
                         </span>
                         <span className={styles.amountValue}>
-                          🪙 {notification.amount?.toLocaleString()}
+                          <Coins size={16} /> {notification.amount?.toLocaleString()}
                         </span>
                       </p>
                       {notification.message && (
@@ -250,7 +250,7 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
                   {notification.type === 'favor_request' && (
                     <>
                       <div className={styles.notificationHeader}>
-                        <span className={styles.notificationIcon}>📨</span>
+                        <span className={styles.notificationIcon}><Mail size={20} /></span>
                         <span className={styles.notificationTitle}>
                           {isSpanish ? 'Solicitud de Favor' : 'Favor Request'}
                         </span>
@@ -284,7 +284,7 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
                   {notification.type === 'payment_request' && (
                     <>
                       <div className={styles.notificationHeader}>
-                        <span className={styles.notificationIcon}>💰</span>
+                        <span className={styles.notificationIcon}><Coins size={20} /></span>
                         <span className={styles.notificationTitle}>
                           {isSpanish ? 'Solicitud de Pago' : 'Payment Request'}
                         </span>
