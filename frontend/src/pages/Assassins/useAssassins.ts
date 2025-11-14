@@ -142,8 +142,28 @@ export const useAssassins = () => {
   const isSpanish = navigator.language.toLowerCase().startsWith('es');
 
   const loadAssassins = () => {
-    // Simular carga de datos
-    setAssassins(mockAssassins);
+    // Cargar asesinos reales del sistema
+    const realAssassins = authService.getAllAssassins();
+    
+    // Convertir usuarios a perfiles de asesinos
+    const assassinProfiles: AssassinProfile[] = realAssassins.map(user => {
+      const stats = authService.calculateAssassinStats(user.email);
+      
+      return {
+        id: user.id,
+        name: user.name,
+        nickname: user.nickname || user.name,
+        minContractValue: 50000,
+        averageRatingAllTime: stats.averageRatingAllTime || 0,
+        averageRatingLastMonth: stats.averageRatingLastMonth || 0,
+        completedContracts: stats.completedContracts || 0,
+        specialties: ['Sigilo', 'Combate', 'Precisión'],
+        status: stats.activeContracts > 0 ? 'busy' : 'available'
+      };
+    });
+    
+    // Combinar asesinos reales con mock
+    setAssassins([...assassinProfiles, ...mockAssassins]);
     
     // Cargar misiones del usuario si es contratista
     if (currentUser && currentUser.role === 'contractor') {
@@ -160,41 +180,28 @@ export const useAssassins = () => {
   }, [currentUser]);
 
   const filteredAssassins = useMemo(() => {
-    console.log('🔍 Recalculando asesinos filtrados:', { searchTerm, searchBy, filterStatus, sortBy });
-    console.log('📋 Array fuente:', assassins.length, 'asesinos');
     let filtered = [...assassins];
 
     // Filtrar por búsqueda
     if (searchTerm && searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase().trim();
-      console.log('Buscando:', searchLower, 'en campo:', searchBy);
       
       filtered = filtered.filter((assassin) => {
         if (searchBy === 'name') {
-          const matches = assassin.name.toLowerCase().includes(searchLower);
-          console.log(`  ${assassin.name}: ${matches ? '✓' : '✗'} (nombre)`);
-          return matches;
+          return assassin.name.toLowerCase().includes(searchLower);
         } else if (searchBy === 'nickname') {
-          const matches = assassin.nickname.toLowerCase().includes(searchLower);
-          console.log(`  ${assassin.nickname}: ${matches ? '✓' : '✗'} (apodo)`);
-          return matches;
+          return assassin.nickname.toLowerCase().includes(searchLower);
         } else {
-          // 'both' o default
           const nameMatch = assassin.name.toLowerCase().includes(searchLower);
           const nicknameMatch = assassin.nickname.toLowerCase().includes(searchLower);
-          const matches = nameMatch || nicknameMatch;
-          console.log(`  ${assassin.name} / ${assassin.nickname}: ${matches ? '✓' : '✗'} (ambos)`);
-          return matches;
+          return nameMatch || nicknameMatch;
         }
       });
-      
-      console.log('Resultados después de búsqueda:', filtered.length);
     }
 
     // Filtrar por estado
     if (filterStatus !== 'all') {
       filtered = filtered.filter((assassin) => assassin.status === filterStatus);
-      console.log('Resultados después de filtro de estado:', filtered.length);
     }
 
     // Ordenar
@@ -211,7 +218,6 @@ export const useAssassins = () => {
       }
     });
 
-    console.log('✅ Total de asesinos filtrados:', filtered.length, 'IDs:', filtered.map(a => a.id));
     return filtered;
   }, [searchTerm, searchBy, filterStatus, sortBy, assassins]);
 
