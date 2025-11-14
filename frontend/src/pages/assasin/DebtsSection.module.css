@@ -140,3 +140,106 @@
     font-size: 1.5rem;
   }
 }
+
+/* Pending Debt Card */
+.pendingDebtCard {
+  background: rgba(30, 30, 30, 0.8);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  animation: slideIn 0.3s ease-out;
+}
+
+.pendingDebtCard:hover {
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+  transform: translateY(-2px);
+}
+
+.pendingHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.pendingIcon {
+  font-size: 2rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pendingInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.pendingLabel {
+  font-size: 0.85rem;
+  color: rgba(245, 245, 245, 0.7);
+  margin: 0;
+}
+
+.pendingAssassin {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #d4af37;
+  margin: 0;
+}
+
+.pendingStatus {
+  padding: 0.5rem 1rem;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 20px;
+  color: #f59e0b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pendingBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pendingDescription {
+  font-size: 0.95rem;
+  color: #f5f5f5;
+  line-height: 1.6;
+  margin: 0;
+  font-style: italic;
+}
+
+.pendingDate {
+  font-size: 0.85rem;
+  color: rgba(245, 245, 245, 0.6);
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pendingHeader {
+    flex-wrap: wrap;
+  }
+
+  .pendingStatus {
+    width: 100%;
+    text-align: center;
+  }
+}
