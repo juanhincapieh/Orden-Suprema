@@ -344,6 +344,18 @@ export const useAssassin = () => {
     setShowDetailModal(true);
   };
 
+  const reloadMissions = () => {
+    if (userEmail) {
+      loadMissions(userEmail);
+      
+      // Actualizar monedas del usuario actual
+      const coins = localStorage.getItem('coins');
+      const coinsDict = coins ? JSON.parse(coins) : {};
+      const updatedCoins = coinsDict[userEmail] || 0;
+      setUserCoins(updatedCoins);
+    }
+  };
+
   return {
     userEmail,
     userName,
@@ -371,6 +383,7 @@ export const useAssassin = () => {
     selectedMission,
     showDetailModal,
     setShowDetailModal,
-    handleViewDetails
+    handleViewDetails,
+    reloadMissions
   };
 };

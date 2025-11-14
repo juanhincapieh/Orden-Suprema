@@ -78,9 +78,22 @@ const MissionDetailModal = ({
   };
 
   const isOwner = currentUser && mission.contractorId === currentUser.id;
+  const isAssassin = currentUser && currentUser.role === 'assassin' && mission.assassinId === currentUser.id;
   const shouldShowNegotiationDetails = showNegotiation && mission.negotiation && isOwner;
   const shouldShowNegotiationMessage = showNegotiation && mission.negotiation && !isOwner;
-  const canComplete = isOwner && mission.status === 'in_progress' && !mission.terminado && onCompleteMission;
+  const canComplete = isAssassin && (mission.status === 'in_progress' || mission.status === 'in-progress') && !mission.terminado && onCompleteMission;
+
+  // Debug logs
+  console.log('🔍 Modal Debug:', {
+    isAssassin,
+    missionStatus: mission.status,
+    terminado: mission.terminado,
+    hasCompleteFn: !!onCompleteMission,
+    canComplete,
+    currentUserRole: currentUser?.role,
+    missionAssassinId: mission.assassinId,
+    currentUserId: currentUser?.id
+  });
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
@@ -238,16 +251,18 @@ const MissionDetailModal = ({
             <button
               className={styles.completeButton}
               onClick={() => {
-                if (confirm(isSpanish 
-                  ? '¿Confirmas que esta misión ha sido completada exitosamente? Se le pagarán las monedas al asesino.'
-                  : 'Do you confirm that this mission has been completed successfully? The assassin will be paid.')) {
+                const confirmMessage = isSpanish 
+                  ? `¿Confirmas que has completado esta misión exitosamente? Recibirás ${mission.reward.toLocaleString()} monedas.`
+                  : `Do you confirm that you have completed this mission successfully? You will receive ${mission.reward.toLocaleString()} coins.`;
+                
+                if (confirm(confirmMessage)) {
                   onCompleteMission!(mission);
                   onClose();
                 }
               }}
             >
               <span className={styles.buttonIcon}>✅</span>
-              {isSpanish ? 'Marcar como Completada' : 'Mark as Completed'}
+              {isSpanish ? 'Completar Misión' : 'Complete Mission'}
             </button>
           </div>
         )}
