@@ -84,7 +84,7 @@ export const RegisterDebtModal = ({
         </button>
 
         <h2 className={styles.modalTitle}>
-          {isSpanish ? '📝 Registrar Deuda que Debo' : '📝 Register Debt I Owe'}
+          {isSpanish ? '📝 Registrar deuda que debo' : '📝 Register debt I owe'}
         </h2>
 
         <p className={styles.modalDescription}>
