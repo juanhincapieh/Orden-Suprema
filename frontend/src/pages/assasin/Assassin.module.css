@@ -816,3 +816,88 @@
     justify-content: center;
   }
 }
+
+/* Register Debt Button (Floating Action Button) */
+.registerDebtButton {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  border: none;
+  border-radius: 50px;
+  color: #1a1a1a;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+  transition: all 0.3s ease;
+  z-index: 100;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+  }
+  50% {
+    box-shadow: 0 8px 32px rgba(212, 175, 55, 0.6);
+  }
+}
+
+.registerDebtButton:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 32px rgba(212, 175, 55, 0.6);
+  animation: none;
+}
+
+.registerDebtButton:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.registerDebtIcon {
+  font-size: 1.5rem;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.registerDebtText {
+  letter-spacing: 0.5px;
+}
+
+/* Responsive adjustments for register debt button */
+@media (max-width: 768px) {
+  .registerDebtButton {
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .registerDebtIcon {
+    font-size: 1.25rem;
+  }
+
+  .registerDebtText {
+    display: none;
+  }
+
+  .registerDebtButton {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    justify-content: center;
+  }
+}

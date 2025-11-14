@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAssassin } from './useAssassin';
 import { MissionListSection } from './MissionListSection';
 import { DebtsSection } from './DebtsSection';
+import { RegisterDebtModal } from './RegisterDebtModal';
 import { debtService } from '../../services/debtService';
 import MissionDetailModal from '../../components/MissionDetailModal';
 import styles from './Assassin.module.css';
@@ -38,15 +39,55 @@ const Assassin = () => {
   // Estado para deudas
   const [debtsIOwe, setDebtsIOwe] = useState<any[]>([]);
   const [debtsOwedToMe, setDebtsOwedToMe] = useState<any[]>([]);
+  const [pendingDebts, setPendingDebts] = useState<any[]>([]);
+  const [showRegisterDebtModal, setShowRegisterDebtModal] = useState(false);
+  const [availableAssassins, setAvailableAssassins] = useState<any[]>([]);
+
+  // Cargar asesinos disponibles
+  const loadAssassins = () => {
+    try {
+      const users = localStorage.getItem('roles');
+      const nicknames = localStorage.getItem('nicknames');
+      
+      if (!users) return;
+      
+      const rolesDict = JSON.parse(users);
+      const nicknamesDict = nicknames ? JSON.parse(nicknames) : {};
+      
+      const assassins = Object.entries(rolesDict)
+        .filter(([email, role]) => role === 'assassin')
+        .map(([email]) => ({
+          email,
+          name: email.split('@')[0],
+          nickname: nicknamesDict[email] || email.split('@')[0]
+        }));
+      
+      setAvailableAssassins(assassins);
+      console.log('🗡️ Asesinos disponibles:', assassins);
+    } catch (error) {
+      console.error('Error loading assassins:', error);
+    }
+  };
 
   // Cargar deudas
   const loadDebts = () => {
     try {
       const userIdEncoded = btoa(userEmail);
       const debts = debtService.getDebtsForAssassin(userIdEncoded);
+      
+      // Obtener todas las deudas del localStorage
+      const allDebtsStored = localStorage.getItem('assassinDebts');
+      const allDebts = allDebtsStored ? JSON.parse(allDebtsStored) : [];
+      
+      // Filtrar deudas pendientes que este usuario creó
+      const pending = allDebts.filter((debt: any) => 
+        debt.debtorId === userIdEncoded && debt.status === 'pending'
+      );
+      
       setDebtsIOwe(debts.debtsIOwe);
       setDebtsOwedToMe(debts.debtsOwedToMe);
-      console.log('💰 Deudas cargadas:', debts);
+      setPendingDebts(pending);
+      console.log('💰 Deudas cargadas:', { ...debts, pending });
     } catch (error) {
       console.error('Error loading debts:', error);
     }
@@ -54,6 +95,7 @@ const Assassin = () => {
 
   useEffect(() => {
     if (userEmail) {
+      loadAssassins();
       loadDebts();
     }
   }, [userEmail]);
@@ -91,6 +133,32 @@ const Assassin = () => {
       return nicknamesDict[email] || email;
     } catch {
       return 'Unknown';
+    }
+  };
+
+  const handleRegisterDebt = (creditorEmail: string, description: string) => {
+    try {
+      // YO soy el deudor (quien debe), el otro es el acreedor (a quien le debo)
+      const debtorId = btoa(userEmail); // YO
+      const creditorId = btoa(creditorEmail); // A QUIEN LE DEBO
+      
+      // Crear la solicitud de favor - YO solicito registrar que LE DEBO al otro
+      const result = debtService.createFavorRequest(
+        debtorId, // YO (quien debe)
+        creditorId, // EL OTRO (quien me hizo el favor)
+        description,
+        isSpanish ? 'es' : 'en'
+      );
+      
+      alert(isSpanish 
+        ? '¡Deuda registrada! El otro asesino debe aceptar que te hizo el favor.'
+        : 'Debt registered! The other assassin must accept that they did you the favor.');
+      
+      setShowRegisterDebtModal(false);
+      loadDebts();
+    } catch (error: any) {
+      console.error('Error registering debt:', error);
+      alert(error.message);
     }
   };
 
@@ -191,6 +259,7 @@ const Assassin = () => {
         <DebtsSection
           debtsIOwe={debtsIOwe}
           debtsOwedToMe={debtsOwedToMe}
+          pendingDebts={pendingDebts}
           currentUser={{ email: userEmail, role: 'assassin', name: userName }}
           isSpanish={isSpanish}
           onRequestPayment={handleRequestPayment}
@@ -198,6 +267,18 @@ const Assassin = () => {
           getAssassinName={getAssassinName}
           onRefresh={loadDebts}
         />
+
+        {/* Botón flotante para registrar deuda */}
+        <button
+          className={styles.registerDebtButton}
+          onClick={() => setShowRegisterDebtModal(true)}
+          title={isSpanish ? 'Registrar nueva deuda' : 'Register new debt'}
+        >
+          <span className={styles.registerDebtIcon}>💰</span>
+          <span className={styles.registerDebtText}>
+            {isSpanish ? 'Registrar Deuda' : 'Register Debt'}
+          </span>
+        </button>
 
         {/* Modal de detalles de misión */}
         <MissionDetailModal
@@ -207,6 +288,16 @@ const Assassin = () => {
           currentUser={{ email: userEmail, role: 'assassin', nickname: userName }}
           isSpanish={isSpanish}
           showNegotiation={false}
+        />
+
+        {/* Modal de registro de deuda */}
+        <RegisterDebtModal
+          isOpen={showRegisterDebtModal}
+          onClose={() => setShowRegisterDebtModal(false)}
+          onSubmit={handleRegisterDebt}
+          isSpanish={isSpanish}
+          currentUserEmail={userEmail}
+          availableAssassins={availableAssassins}
         />
       </div>
     </div>

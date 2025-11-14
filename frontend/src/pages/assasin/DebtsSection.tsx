@@ -13,6 +13,7 @@ interface User {
 interface DebtsSectionProps {
   debtsIOwe: Debt[];
   debtsOwedToMe: Debt[];
+  pendingDebts: Debt[];
   currentUser: User;
   isSpanish: boolean;
   onRequestPayment: (debtId: string, description: string) => void;
@@ -24,6 +25,7 @@ interface DebtsSectionProps {
 export const DebtsSection = ({
   debtsIOwe,
   debtsOwedToMe,
+  pendingDebts,
   currentUser,
   isSpanish,
   onRequestPayment,
@@ -31,9 +33,9 @@ export const DebtsSection = ({
   getAssassinName,
   onRefresh
 }: DebtsSectionProps) => {
-  const [activeTab, setActiveTab] = useState<'owe' | 'owed'>('owe');
+  const [activeTab, setActiveTab] = useState<'owe' | 'owed' | 'pending'>('owe');
 
-  const totalDebts = debtsIOwe.length + debtsOwedToMe.length;
+  const totalDebts = debtsIOwe.length + debtsOwedToMe.length + pendingDebts.length;
 
   if (totalDebts === 0) {
     return (
@@ -82,6 +84,16 @@ export const DebtsSection = ({
           </span>
           <span className={styles.tabCount}>({debtsOwedToMe.length})</span>
         </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'pending' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('pending')}
+        >
+          <span className={styles.tabIcon}>⏳</span>
+          <span className={styles.tabLabel}>
+            {isSpanish ? 'Pendientes' : 'Pending'}
+          </span>
+          <span className={styles.tabCount}>({pendingDebts.length})</span>
+        </button>
       </div>
 
       {/* Content */}
@@ -108,7 +120,7 @@ export const DebtsSection = ({
               ))}
             </div>
           )
-        ) : (
+        ) : activeTab === 'owed' ? (
           debtsOwedToMe.length === 0 ? (
             <div className={styles.emptyState}>
               <div className={styles.emptyIcon}>📭</div>
@@ -127,6 +139,41 @@ export const DebtsSection = ({
                   getAssassinName={getAssassinName}
                   onRefresh={onRefresh}
                 />
+              ))}
+            </div>
+          )
+        ) : (
+          pendingDebts.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>⏳</div>
+              <p>{isSpanish ? 'No tienes deudas pendientes de aprobación' : 'You have no pending debts'}</p>
+            </div>
+          ) : (
+            <div className={styles.debtsList}>
+              {pendingDebts.map((debt) => (
+                <div key={debt.id} className={styles.pendingDebtCard}>
+                  <div className={styles.pendingHeader}>
+                    <div className={styles.pendingIcon}>⏳</div>
+                    <div className={styles.pendingInfo}>
+                      <p className={styles.pendingLabel}>
+                        {isSpanish ? 'Esperando aprobación de:' : 'Waiting approval from:'}
+                      </p>
+                      <p className={styles.pendingAssassin}>
+                        {getAssassinName(debt.creditorId)}
+                      </p>
+                    </div>
+                    <div className={styles.pendingStatus}>
+                      {isSpanish ? 'Pendiente' : 'Pending'}
+                    </div>
+                  </div>
+                  <div className={styles.pendingBody}>
+                    <p className={styles.pendingDescription}>"{debt.favorDescription}"</p>
+                    <p className={styles.pendingDate}>
+                      {isSpanish ? 'Registrada: ' : 'Registered: '}
+                      {new Date(debt.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
           )
