@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { X, FileText, AlertTriangle, Coins } from 'lucide-react';
 import styles from './RegisterDebtModal.module.css';
 
 interface Assassin {
@@ -80,11 +81,12 @@ export const RegisterDebtModal = ({
     <div className={styles.modalOverlay} onClick={handleClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button className={styles.closeButton} onClick={handleClose}>
-          ✕
+          <X size={20} />
         </button>
 
         <h2 className={styles.modalTitle}>
-          {isSpanish ? '📝 Registrar deuda que debo' : '📝 Register debt I owe'}
+          <FileText size={20} />
+          {isSpanish ? ' Registrar deuda que debo' : ' Register debt I owe'}
         </h2>
 
         <p className={styles.modalDescription}>
@@ -145,7 +147,7 @@ export const RegisterDebtModal = ({
 
           {error && (
             <div className={styles.error}>
-              <span>⚠️</span>
+              <AlertTriangle size={18} />
               <span>{error}</span>
             </div>
           )}
@@ -162,7 +164,7 @@ export const RegisterDebtModal = ({
               type="submit"
               className={styles.submitButton}
             >
-              <span>💰</span>
+              <Coins size={18} />
               <span>{isSpanish ? 'Registrar Deuda' : 'Register Debt'}</span>
             </button>
           </div>
