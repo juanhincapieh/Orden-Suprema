@@ -107,6 +107,8 @@ export const useContractor = () => {
       createdAt: new Date().toISOString()
     };
 
+    // 
+
     authService.addReport(newReport);
 
     alert(
