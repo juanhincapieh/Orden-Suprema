@@ -201,7 +201,7 @@ const MissionDetailModal = ({
                   <strong>{mission.negotiation!.proposedByName}</strong>{' '}
                   {isSpanish ? 'propone' : 'proposes'}:{' '}
                   <span className={styles.negotiationReward}>
-                    🪙 {mission.negotiation!.proposedReward.toLocaleString()}
+                    <Coins size={16} /> {mission.negotiation!.proposedReward.toLocaleString()}
                   </span>
                 </p>
                 {mission.negotiation!.message && (

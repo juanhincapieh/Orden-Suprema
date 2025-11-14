@@ -585,7 +585,7 @@ const Assassins = () => {
                       />
                       <p className={styles.hint}>
                         {isSpanish ? 'Monedas disponibles:' : 'Available coins:'}{' '}
-                        🪙 {currentUser.coins.toLocaleString()}
+                        <Coins size={16} /> {currentUser.coins.toLocaleString()}
                       </p>
                     </div>
 

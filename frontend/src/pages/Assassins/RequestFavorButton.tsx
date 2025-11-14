@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Handshake } from 'lucide-react';
 import { AssassinProfile } from './useAssassins';
 import { RequestFavorModal } from './RequestFavorModal';
 import styles from './Assassins.module.css';
@@ -50,7 +51,7 @@ export const RequestFavorButton = ({
         onClick={handleClick}
         title={isSpanish ? 'Solicitar un favor a este asesino' : 'Request a favor from this assassin'}
       >
-        <span className={styles.requestFavorIcon}>🤝</span>
+        <span className={styles.requestFavorIcon}><Handshake size={18} /></span>
         <span>{isSpanish ? 'Pedir Favor' : 'Request Favor'}</span>
       </button>
 
