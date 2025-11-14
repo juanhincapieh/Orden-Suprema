@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { X, CircleDollarSign } from 'lucide-react';
 import { AssassinProfile } from '../../../types';
 import { assassinProfileService } from '../../../services/assassinProfileService';
 import styles from './AssassinEditModal.module.css';
@@ -250,7 +251,7 @@ export const AssassinEditModal = ({
           disabled={isLoading}
           aria-label={isSpanish ? 'Cerrar' : 'Close'}
         >
-          ✕
+          <X size={24} />
         </button>
 
         <h2 className={styles.modalTitle}>{translations.title}</h2>
@@ -347,7 +348,7 @@ export const AssassinEditModal = ({
                 disabled={isLoading}
                 aria-describedby={errors.minContractValue ? 'minContractValue-error' : undefined}
               />
-              <span className={styles.inputIcon}>🪙</span>
+              <span className={styles.inputIcon}><CircleDollarSign size={20} /></span>
             </div>
             {errors.minContractValue && (
               <span id="minContractValue-error" className={styles.errorMessage}>
@@ -424,7 +425,7 @@ export const AssassinEditModal = ({
                       disabled={isLoading}
                       aria-label={`${isSpanish ? 'Eliminar' : 'Remove'} ${specialty}`}
                     >
-                      ✕
+                      <X size={14} />
                     </button>
                   </div>
                 ))}

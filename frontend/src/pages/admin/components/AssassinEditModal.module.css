@@ -207,6 +207,10 @@
   right: 1rem;
   font-size: 1.25rem;
   pointer-events: none;
+  color: #d4af37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Select Dropdown */
