@@ -61,51 +61,46 @@
 }
 
 .navButton {
-  background: var(--gold-alpha-15);
-  border: 1px solid var(--gold-alpha-30);
-  border-radius: 12px;
-  padding: 0.75rem 1.25rem;
   color: var(--primary-gold);
   font-size: 1.5rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.5s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
-}
-
-
-
-.navButton::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 12px;
-  background: var(--gold-alpha-20);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 0;
-}
-
-.navButton:hover::before {
-  opacity: 1;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .navButton:hover {
-  background: var(--gold-alpha-25);
-  border-color: var(--primary-gold);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-gold-md);
+  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(212, 175, 55, 0.1);
 }
 
-.navButton:active {
-  transform: translateY(-1px);
+.navIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #cd853f;
+  transition: color 0.3s ease;
 }
+
+.navButton:hover .navIcon {
+  color: #d4af37;
+}
+
+.navGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.5rem;
+  background: rgba(212, 175, 55, 0.1);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
 
 .authSection {
   display: flex;
@@ -532,7 +527,7 @@
   overflow: hidden;
   white-space: nowrap;
   opacity: 0;
-  transition: max-width 0.3s ease, opacity 0.3s ease;
+  transition: max-width 2s ease-in, 0.3s ease-out, opacity 0.3s ease;
   font-size: 0.95rem;
   font-weight: 600;
   position: relative;
