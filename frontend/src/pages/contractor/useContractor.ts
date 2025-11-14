@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Contract, Review } from '../../types';
 import { authService } from '../../services/authService';
 import { transactionService } from '../../services/transactionService';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const useContractor = () => {
-  const currentUser = authService.getCurrentUser();
+  const { isSpanish } = useLanguage();
+  const [currentUser] = useState(() => authService.getCurrentUser());
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -24,14 +26,16 @@ export const useContractor = () => {
   const [isPrivate, setIsPrivate] = useState(false);
   const [targetAssassinId, setTargetAssassinId] = useState('');
 
-  const isSpanish = navigator.language.toLowerCase().startsWith('es');
-
-  useEffect(() => {
+  const loadContracts = useCallback(() => {
     if (currentUser) {
       const userMissions = authService.getUserMissions(currentUser.email);
       setContracts(userMissions);
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    loadContracts();
+  }, [loadContracts]);
 
   const handleReviewClick = (contract: Contract) => {
     setSelectedContract(contract);
