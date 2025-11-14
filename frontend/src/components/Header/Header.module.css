@@ -591,3 +591,24 @@
   max-width: 200px;
   opacity: 1;
 }
+
+/* Label visible para tab activo */
+.navLabel {
+  white-space: nowrap;
+  font-size: 0.95rem;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+  margin-left: 0.5rem;
+  color: #d4af37;
+}
+
+/* Estado activo del botón */
+.navButtonActive {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.6);
+}
+
+.navButtonActive .navIcon {
+  color: #d4af37;
+}

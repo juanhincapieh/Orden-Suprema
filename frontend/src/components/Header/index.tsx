@@ -63,21 +63,28 @@ const Header = () => {
       </button>
       
       <nav className={styles.nav}>
-        {navItems.map(({ id, Icon, label, path }) => (
-          <button
-            key={id}
-            className={styles.navButton}
-            aria-label={label}
-            onClick={() => handleNavigation(path)}
-            onMouseEnter={() => setHoveredIcon(id)}
-            onMouseLeave={() => setHoveredIcon(null)}
-            disabled={isNavigating}
-          >
-            <Icon className={styles.navIcon} />
-            <span className={styles.navTooltip}>{label}</span>
-            {hoveredIcon === id && <span className={styles.navGlow}></span>}
-          </button>
-        ))}
+        {navItems.map(({ id, Icon, label, path }) => {
+          const isActive = window.location.pathname === path;
+          return (
+            <button
+              key={id}
+              className={`${styles.navButton} ${isActive ? styles.navButtonActive : ''}`}
+              aria-label={label}
+              onClick={() => handleNavigation(path)}
+              onMouseEnter={() => setHoveredIcon(id)}
+              onMouseLeave={() => setHoveredIcon(null)}
+              disabled={isNavigating}
+            >
+              <Icon className={styles.navIcon} />
+              {isActive ? (
+                <span className={styles.navLabel}>{label}</span>
+              ) : (
+                <span className={styles.navTooltip}>{label}</span>
+              )}
+              {hoveredIcon === id && <span className={styles.navGlow}></span>}
+            </button>
+          );
+        })}
       </nav>
 
       <div className={styles.authSection}>
