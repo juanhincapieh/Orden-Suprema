@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Bell, Mailbox } from 'lucide-react';
 import { DebtNotification, debtService } from '../services/debtService';
 import { Notification, notificationService } from '../services/notificationService';
 import styles from './NotificationsPanel.module.css';
@@ -174,7 +175,7 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
         onClick={() => setIsOpen(!isOpen)}
         title={isSpanish ? 'Notificaciones de deudas' : 'Debt notifications'}
       >
-        <span className={styles.bellIcon}>🔔</span>
+        <span className={styles.bellIcon}><Bell size={20} /></span>
         {pendingCount > 0 && (
           <span className={styles.badge}>{pendingCount}</span>
         )}
@@ -198,7 +199,7 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
           <div className={styles.content}>
             {pendingCount === 0 ? (
               <div className={styles.empty}>
-                <span className={styles.emptyIcon}>📭</span>
+                <span className={styles.emptyIcon}><Mailbox size={48} /></span>
                 <p>{isSpanish ? 'No tienes notificaciones' : 'No notifications'}</p>
               </div>
             ) : (
