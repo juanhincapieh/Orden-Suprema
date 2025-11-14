@@ -1,8 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { authService } from '../../services/authService';
 import { debtService } from '../../services/debtService';
 import { transactionService } from '../../services/transactionService';
 import { notificationService } from '../../services/notificationService';
+import { useLanguage } from '../../context/LanguageContext';
 
 export interface AssassinProfile {
   id: string;
@@ -111,7 +112,8 @@ const mockAssassins: AssassinProfile[] = [
 ];
 
 export const useAssassins = () => {
-  const currentUser = authService.getCurrentUser();
+  const { isSpanish } = useLanguage();
+  const [currentUser] = useState(() => authService.getCurrentUser());
   const [assassins, setAssassins] = useState<AssassinProfile[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState<'both' | 'name' | 'nickname'>('both');
@@ -139,9 +141,7 @@ export const useAssassins = () => {
   const [coinsToSend, setCoinsToSend] = useState('');
   const [transferMessage, setTransferMessage] = useState('');
 
-  const isSpanish = navigator.language.toLowerCase().startsWith('es');
-
-  const loadAssassins = () => {
+  const loadAssassins = useCallback(() => {
     // Cargar asesinos reales del sistema
     const realAssassins = authService.getAllAssassins();
     
@@ -173,11 +173,11 @@ export const useAssassins = () => {
       );
       setUserMissions([...missions, ...publicMissions]);
     }
-  };
+  }, [currentUser]);
 
   useEffect(() => {
     loadAssassins();
-  }, [currentUser]);
+  }, [loadAssassins]);
 
   const filteredAssassins = useMemo(() => {
     let filtered = [...assassins];

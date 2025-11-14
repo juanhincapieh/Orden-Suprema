@@ -22,8 +22,14 @@
   transition: transform 0.3s ease;
 }
 
-.logo:hover {
+.logo:hover:not(:disabled) {
   transform: scale(1.05);
+}
+
+.logo:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .logoCircle {
@@ -76,9 +82,15 @@
   border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
-.navButton:hover {
+.navButton:hover:not(:disabled) {
   border-color: rgba(212, 175, 55, 0.5);
   background: rgba(212, 175, 55, 0.1);
+}
+
+.navButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .navIcon {
@@ -192,17 +204,23 @@
   transition: left 0.5s ease;
 }
 
-.loginButton:hover::before {
+.loginButton:hover:not(:disabled)::before {
   left: 100%;
 }
 
-.loginButton:hover {
+.loginButton:hover:not(:disabled) {
   transform: translateY(-3px);
   box-shadow: var(--shadow-gold-xl);
 }
 
-.loginButton:active {
+.loginButton:active:not(:disabled) {
   transform: translateY(-1px);
+}
+
+.loginButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .personalPageButton {
