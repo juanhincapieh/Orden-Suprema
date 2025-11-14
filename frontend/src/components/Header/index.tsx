@@ -11,6 +11,7 @@ const Header = () => {
   const {
     navigate,
     isSpanish,
+    toggleLanguage,
     currentUser,
     showBuyModal,
     setShowBuyModal,
@@ -60,7 +61,14 @@ const Header = () => {
       </nav>
 
       <div className={styles.authSection}>
-        <div className={styles.flag}>🇪🇸</div>
+        <button 
+          className={styles.flag}
+          onClick={toggleLanguage}
+          aria-label={isSpanish ? 'Cambiar a inglés' : 'Switch to Spanish'}
+          title={isSpanish ? 'Cambiar a inglés' : 'Switch to Spanish'}
+        >
+          {isSpanish ? '🇪🇸' : '🇺🇸'}
+        </button>
         {currentUser ? (
           <>
             <button 
