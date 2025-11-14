@@ -517,3 +517,175 @@
   padding-top: 1rem;
   border-top: 1px solid rgba(212, 175, 55, 0.1);
 }
+
+/* Two-Factor Authentication Section */
+.twoFactorSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(212, 175, 55, 0.05);
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  border-radius: 12px;
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.twoFactorHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.twoFactorIcon {
+  font-size: 2.5rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.twoFactorTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #d4af37;
+  margin: 0;
+  text-align: center;
+}
+
+.twoFactorDescription {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Generated Code Box */
+.generatedCodeBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+  border: 2px dashed rgba(212, 175, 55, 0.5);
+  border-radius: 12px;
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+  }
+}
+
+.generatedCodeLabel {
+  font-size: 0.9rem;
+  color: #d4af37;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.generatedCode {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 8px;
+  padding: 0.75rem 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  border: 2px solid rgba(212, 175, 55, 0.4);
+  user-select: all;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.generatedCode:hover {
+  background: rgba(0, 0, 0, 0.7);
+  border-color: #d4af37;
+  transform: scale(1.05);
+}
+
+.generatedCodeHint {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+/* Code Input */
+.codeInput {
+  text-align: center;
+  font-size: 1.5rem;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 8px;
+  font-weight: 700;
+}
+
+/* Cancel Button */
+.cancelButton {
+  padding: 0.75rem 1.5rem;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  color: #d4af37;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: center;
+}
+
+.cancelButton:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #d4af37;
+  transform: translateX(-5px);
+}
+
+/* Responsive adjustments for 2FA */
+@media (max-width: 768px) {
+  .twoFactorSection {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .twoFactorIcon {
+    font-size: 2rem;
+  }
+
+  .twoFactorTitle {
+    font-size: 1.1rem;
+  }
+
+  .generatedCode {
+    font-size: 2rem;
+    letter-spacing: 6px;
+    padding: 0.5rem 1rem;
+  }
+
+  .codeInput {
+    font-size: 1.25rem;
+    letter-spacing: 6px;
+  }
+}

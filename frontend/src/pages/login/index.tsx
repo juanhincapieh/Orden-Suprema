@@ -10,9 +10,14 @@ const Login = () => {
     setPassword,
     showPassword,
     setShowPassword,
+    show2FA,
+    twoFactorCode,
+    setTwoFactorCode,
+    generatedCode,
     navigate,
     isSpanish,
     handleSubmit,
+    handleCancel2FA,
     getButtonText
   } = useLogin();
 
@@ -53,29 +58,88 @@ const Login = () => {
             />
           </div>
 
-          <div className={styles.inputGroup}>
-            <label htmlFor="password" className={styles.label}>
-              {isSpanish ? 'Contraseña' : 'Password'}
-            </label>
-            <div className={styles.passwordWrapper}>
-              <input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={styles.input}
-                required
-              />
-              <button
-                type="button"
-                className={styles.togglePassword}
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label="Toggle password visibility"
-              >
-                {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
-              </button>
+          {!show2FA ? (
+            <div className={styles.inputGroup}>
+              <label htmlFor="password" className={styles.label}>
+                {isSpanish ? 'Contraseña' : 'Password'}
+              </label>
+              <div className={styles.passwordWrapper}>
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={styles.input}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.togglePassword}
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label="Toggle password visibility"
+                >
+                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                </button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Sección 2FA */}
+              <div className={styles.twoFactorSection}>
+                <div className={styles.twoFactorHeader}>
+                  <span className={styles.twoFactorIcon}>🔐</span>
+                  <h2 className={styles.twoFactorTitle}>
+                    {isSpanish ? 'Autenticación de Dos Factores' : 'Two-Factor Authentication'}
+                  </h2>
+                </div>
+                
+                <p className={styles.twoFactorDescription}>
+                  {isSpanish 
+                    ? 'Ingresa el código de verificación que aparece a continuación:'
+                    : 'Enter the verification code shown below:'}
+                </p>
+
+                {/* Código generado visible */}
+                <div className={styles.generatedCodeBox}>
+                  <span className={styles.generatedCodeLabel}>
+                    {isSpanish ? 'Tu código de verificación:' : 'Your verification code:'}
+                  </span>
+                  <div className={styles.generatedCode}>
+                    {generatedCode}
+                  </div>
+                  <span className={styles.generatedCodeHint}>
+                    {isSpanish ? '☝️ Copia este código' : '☝️ Copy this code'}
+                  </span>
+                </div>
+
+                {/* Input para ingresar el código */}
+                <div className={styles.inputGroup}>
+                  <label htmlFor="twoFactorCode" className={styles.label}>
+                    {isSpanish ? 'Ingresa el código' : 'Enter the code'}
+                  </label>
+                  <input
+                    id="twoFactorCode"
+                    type="text"
+                    value={twoFactorCode}
+                    onChange={(e) => setTwoFactorCode(e.target.value)}
+                    className={`${styles.input} ${styles.codeInput}`}
+                    placeholder="000000"
+                    maxLength={6}
+                    required
+                    autoFocus
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  className={styles.cancelButton}
+                  onClick={handleCancel2FA}
+                >
+                  {isSpanish ? '← Volver' : '← Back'}
+                </button>
+              </div>
+            </>
+          )}
 
           <button type="submit" className={styles.submitButton}>
             {getButtonText()}
@@ -95,6 +159,7 @@ const Login = () => {
           </div>
 
           {/* Panel de credenciales demo */}
+          {!show2FA && (
           <div className={styles.demoPanel}>
             <h3 className={styles.demoTitle}>
               <Target size={20} /> {isSpanish ? 'Perfiles de Prueba' : 'Test Profiles'}
@@ -131,6 +196,7 @@ const Login = () => {
                 : 'Each profile has access to different system features'}
             </p>
           </div>
+          )}
         </form>
       </div>
     </div>
