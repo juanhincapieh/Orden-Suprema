@@ -1,5 +1,5 @@
 import { useLogin } from './useLogin';
-import { Eye, EyeOff, Target, Crown, Sword, Briefcase, Lightbulb } from 'lucide-react';
+import { Eye, EyeOff, Target, Crown, Sword, Briefcase, Lightbulb, ShieldCheck } from 'lucide-react';
 import styles from './Login.module.css';
 
 const Login = () => {
@@ -87,7 +87,7 @@ const Login = () => {
               {/* Sección 2FA */}
               <div className={styles.twoFactorSection}>
                 <div className={styles.twoFactorHeader}>
-                  <span className={styles.twoFactorIcon}><Target size={24} /></span>
+                  <span className={styles.twoFactorIcon}><ShieldCheck size={24} /></span>
                   <h2 className={styles.twoFactorTitle}>
                     {isSpanish ? 'Autenticación de Dos Factores' : 'Two-Factor Authentication'}
                   </h2>
