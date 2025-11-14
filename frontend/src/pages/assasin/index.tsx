@@ -33,7 +33,8 @@ const Assassin = () => {
     selectedMission,
     showDetailModal,
     setShowDetailModal,
-    handleViewDetails
+    handleViewDetails,
+    reloadMissions
   } = useAssassin();
 
   // Estado para deudas
@@ -285,9 +286,104 @@ const Assassin = () => {
           mission={selectedMission}
           isOpen={showDetailModal}
           onClose={() => setShowDetailModal(false)}
-          currentUser={{ email: userEmail, role: 'assassin', nickname: userName }}
+          currentUser={{ 
+            email: userEmail, 
+            role: 'assassin', 
+            nickname: userName,
+            id: btoa(userEmail)
+          }}
           isSpanish={isSpanish}
           showNegotiation={false}
+          onCompleteMission={(mission) => {
+            console.log('💰 Iniciando completar misión:', mission);
+            console.log('💰 Email del asesino:', userEmail);
+            console.log('💰 Recompensa de la misión:', mission.reward);
+            
+            // Obtener saldo actual antes del pago
+            const coinsBeforeStr = localStorage.getItem('coins');
+            const coinsBefore = coinsBeforeStr ? JSON.parse(coinsBeforeStr) : {};
+            console.log('💰 Saldo ANTES del pago:', coinsBefore[userEmail] || 0);
+            
+            // Marcar misión como completada
+            const publicMissions = JSON.parse(localStorage.getItem('publicMissions') || '[]');
+            const userMissions = JSON.parse(localStorage.getItem('userMissions') || '{}');
+            
+            let missionFound = false;
+            
+            // Buscar en misiones públicas
+            const publicIndex = publicMissions.findIndex((m: any) => m.id === mission.id);
+            if (publicIndex !== -1) {
+              console.log('✅ Misión encontrada en publicMissions');
+              publicMissions[publicIndex] = {
+                ...publicMissions[publicIndex],
+                status: 'completed',
+                terminado: true,
+                updatedAt: new Date().toISOString()
+              };
+              localStorage.setItem('publicMissions', JSON.stringify(publicMissions));
+              missionFound = true;
+            } else {
+              // Buscar en misiones privadas
+              const contractorEmail = atob(mission.contractorId);
+              console.log('🔍 Buscando en misiones privadas del contratista:', contractorEmail);
+              
+              if (userMissions[contractorEmail]) {
+                const missionIndex = userMissions[contractorEmail].findIndex((m: any) => m.id === mission.id);
+                if (missionIndex !== -1) {
+                  console.log('✅ Misión encontrada en userMissions');
+                  userMissions[contractorEmail][missionIndex] = {
+                    ...userMissions[contractorEmail][missionIndex],
+                    status: 'completed',
+                    terminado: true,
+                    updatedAt: new Date().toISOString()
+                  };
+                  localStorage.setItem('userMissions', JSON.stringify(userMissions));
+                  missionFound = true;
+                } else {
+                  console.log('❌ Misión NO encontrada en userMissions del contratista');
+                }
+              } else {
+                console.log('❌ No hay misiones para el contratista:', contractorEmail);
+              }
+            }
+            
+            if (!missionFound) {
+              console.error('❌ ERROR: Misión no encontrada en ningún lugar');
+            }
+            
+            // Pagar al asesino
+            const coins = JSON.parse(localStorage.getItem('coins') || '{}');
+            const oldBalance = coins[userEmail] || 0;
+            const newBalance = oldBalance + mission.reward;
+            
+            console.log('💰 Calculando pago:');
+            console.log('   - Saldo anterior:', oldBalance);
+            console.log('   - Recompensa:', mission.reward);
+            console.log('   - Nuevo saldo:', newBalance);
+            
+            coins[userEmail] = newBalance;
+            localStorage.setItem('coins', JSON.stringify(coins));
+            console.log('💾 Guardado en localStorage coins:', coins[userEmail]);
+            
+            // Actualizar usuario actual
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            console.log('👤 Usuario actual antes:', currentUser.coins);
+            currentUser.coins = newBalance;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            console.log('👤 Usuario actual después:', currentUser.coins);
+            
+            // Verificar que se guardó correctamente
+            const coinsAfterStr = localStorage.getItem('coins');
+            const coinsAfter = coinsAfterStr ? JSON.parse(coinsAfterStr) : {};
+            console.log('💰 Saldo DESPUÉS del pago (verificación):', coinsAfter[userEmail]);
+            
+            alert(isSpanish 
+              ? `¡Misión completada! Has recibido ${mission.reward.toLocaleString()} monedas.\n\nSaldo anterior: ${oldBalance.toLocaleString()}\nNuevo saldo: ${newBalance.toLocaleString()}`
+              : `Mission completed! You received ${mission.reward.toLocaleString()} coins.\n\nPrevious balance: ${oldBalance.toLocaleString()}\nNew balance: ${newBalance.toLocaleString()}`);
+            
+            // Recargar las misiones sin recargar toda la página
+            reloadMissions();
+          }}
         />
 
         {/* Modal de registro de deuda */}
