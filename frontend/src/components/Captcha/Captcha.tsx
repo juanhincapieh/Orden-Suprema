@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { CircleCheck } from 'lucide-react';
+import { CircleCheck, Lock } from 'lucide-react';
 import styles from './Captcha.module.css';
 
 interface CaptchaProps {
@@ -128,7 +128,7 @@ export const Captcha = ({ onVerify, isSpanish = false }: CaptchaProps) => {
   return (
     <div className={styles.captchaContainer}>
       <div className={styles.captchaHeader}>
-        <span className={styles.captchaIcon}>🔒</span>
+        <span className={styles.captchaIcon}><Lock size={20} /></span>
         <span className={styles.captchaTitle}>
           {isSpanish ? 'Verificación de seguridad' : 'Security Verification'}
         </span>
