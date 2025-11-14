@@ -1,5 +1,5 @@
 import { useLogin } from './useLogin';
-import { Eye, EyeOff, Target, Crown, Sword, Briefcase, Lightbulb, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Users, Crown, Sword, Briefcase, Lightbulb, ShieldCheck } from 'lucide-react';
 import styles from './Login.module.css';
 
 const Login = () => {
@@ -162,7 +162,7 @@ const Login = () => {
           {!show2FA && (
           <div className={styles.demoPanel}>
             <h3 className={styles.demoTitle}>
-              <Target size={20} /> {isSpanish ? 'Perfiles de Prueba' : 'Test Profiles'}
+              <Users size={20} /> {isSpanish ? 'Perfiles de Prueba' : 'Test Profiles'}
             </h3>
             <div className={styles.demoUsers}>
               <div className={styles.demoUser}>
