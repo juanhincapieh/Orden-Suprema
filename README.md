@@ -70,7 +70,7 @@ Asegúrate de tener instalado:
 ### 1. Clonar el repositorio
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/juanhincapieh/Orden-Suprema
 cd frontend
 ```
 
