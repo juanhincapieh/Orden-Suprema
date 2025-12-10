@@ -2,8 +2,22 @@ import BuyCoinsModal from '../BuyCoinsModal';
 import { NotificationsPanel } from '../NotificationsPanel';
 import { useTheme } from '../../context/ThemeContext';
 import { useHeader } from './useHeader';
-import { Home, FileText, Sword, Users, Star, Trophy, User, Coins, Moon, Sun, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import {
+  Home,
+  FileText,
+  Sword,
+  Users,
+  Star,
+  Trophy,
+  User,
+  Coins,
+  Moon,
+  Sun,
+  LogOut,
+  Menu,
+  X,
+} from 'lucide-react';
+import { useState, useEffect } from 'react';
 import styles from './Header.module.css';
 
 const Header = () => {
@@ -26,14 +40,38 @@ const Header = () => {
 
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Cerrar menú móvil al cambiar de tamaño de pantalla
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Cerrar menú móvil al hacer scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mobileMenuOpen]);
 
   // Wrapper para prevenir clicks múltiples
   const handleNavigation = (path: string) => {
     if (isNavigating) return;
     
     setIsNavigating(true);
+    setMobileMenuOpen(false);
     navigate(path);
-    
+
     // Resetear después de un tiempo
     setTimeout(() => {
       setIsNavigating(false);
@@ -51,9 +89,9 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <button 
-        className={styles.logo} 
-        onClick={() => handleNavigation('/')} 
+      <button
+        className={styles.logo}
+        onClick={() => handleNavigation('/')}
         aria-label="Home"
         disabled={isNavigating}
       >
@@ -61,30 +99,145 @@ const Header = () => {
           <span className={styles.logoSymbol}>⟨A⟩</span>
         </div>
       </button>
-      
-      <nav className={styles.nav}>
-        {navItems.map(({ id, Icon, label, path }) => {
-          const isActive = window.location.pathname === path;
-          return (
+
+      {/* Botón hamburguesa para móvil */}
+      <button
+        className={styles.mobileMenuButton}
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+        aria-expanded={mobileMenuOpen}
+      >
+        {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {/* Overlay para cerrar menú */}
+      {mobileMenuOpen && (
+        <div
+          className={styles.mobileOverlay}
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      <nav className={`${styles.nav} ${mobileMenuOpen ? styles.navOpen : ''}`}>
+        {/* Sección de usuario en móvil */}
+        {currentUser && (
+          <div className={styles.mobileUserSection}>
+            <div className={styles.mobileUserInfo}>
+              <div className={styles.mobileUserAvatar}>
+                {currentUser.nickname.charAt(0).toUpperCase()}
+              </div>
+              <div className={styles.mobileUserDetails}>
+                <span className={styles.mobileUserName}>{currentUser.nickname}</span>
+                <span className={styles.mobileUserCoins}>
+                  <Coins size={14} />
+                  {currentUser.coins.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Navegación principal */}
+        <div className={styles.mobileNavSection}>
+          <span className={styles.mobileNavTitle}>
+            {isSpanish ? 'Navegación' : 'Navigation'}
+          </span>
+          {navItems.map(({ id, Icon, label, path }) => {
+            const isActive = window.location.pathname === path;
+            return (
+              <button
+                key={id}
+                className={`${styles.navButton} ${isActive ? styles.navButtonActive : ''}`}
+                aria-label={label}
+                onClick={() => handleNavigation(path)}
+                onMouseEnter={() => setHoveredIcon(id)}
+                onMouseLeave={() => setHoveredIcon(null)}
+                disabled={isNavigating}
+              >
+                <Icon className={styles.navIcon} />
+                <span className={styles.navLabelMobile}>{label}</span>
+                {isActive ? (
+                  <span className={styles.navLabel}>{label}</span>
+                ) : (
+                  <span className={styles.navTooltip}>{label}</span>
+                )}
+                {hoveredIcon === id && <span className={styles.navGlow}></span>}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Sección de cuenta en móvil */}
+        {currentUser && (
+          <div className={styles.mobileAccountSection}>
+            <span className={styles.mobileNavTitle}>
+              {isSpanish ? 'Mi Cuenta' : 'My Account'}
+            </span>
             <button
-              key={id}
-              className={`${styles.navButton} ${isActive ? styles.navButtonActive : ''}`}
-              aria-label={label}
-              onClick={() => handleNavigation(path)}
-              onMouseEnter={() => setHoveredIcon(id)}
-              onMouseLeave={() => setHoveredIcon(null)}
+              className={styles.navButton}
+              onClick={() => handleNavigation(getPersonalPageRoute())}
               disabled={isNavigating}
             >
-              <Icon className={styles.navIcon} />
-              {isActive ? (
-                <span className={styles.navLabel}>{label}</span>
-              ) : (
-                <span className={styles.navTooltip}>{label}</span>
-              )}
-              {hoveredIcon === id && <span className={styles.navGlow}></span>}
+              <User className={styles.navIcon} />
+              <span className={styles.navLabelMobile}>{getPersonalPageLabel()}</span>
             </button>
-          );
-        })}
+            <button
+              className={styles.navButton}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setShowBuyModal(true);
+              }}
+            >
+              <Coins className={styles.navIcon} />
+              <span className={styles.navLabelMobile}>
+                {isSpanish ? 'Comprar Monedas' : 'Buy Coins'}
+              </span>
+            </button>
+            <button
+              className={styles.navButton}
+              onClick={() => {
+                toggleTheme();
+              }}
+            >
+              {theme === 'dark' ? (
+                <Moon className={styles.navIcon} />
+              ) : (
+                <Sun className={styles.navIcon} />
+              )}
+              <span className={styles.navLabelMobile}>
+                {isSpanish ? 'Cambiar Tema' : 'Toggle Theme'}
+              </span>
+            </button>
+            <button
+              className={`${styles.navButton} ${styles.navButtonDanger}`}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                handleLogout();
+              }}
+            >
+              <LogOut className={styles.navIcon} />
+              <span className={styles.navLabelMobile}>
+                {isSpanish ? 'Cerrar Sesión' : 'Logout'}
+              </span>
+            </button>
+          </div>
+        )}
+
+        {/* Botón de login en móvil si no hay usuario */}
+        {!currentUser && (
+          <div className={styles.mobileAccountSection}>
+            <button
+              className={`${styles.navButton} ${styles.navButtonPrimary}`}
+              onClick={() => handleNavigation('/login')}
+              disabled={isNavigating}
+            >
+              <User className={styles.navIcon} />
+              <span className={styles.navLabelMobile}>
+                {isSpanish ? 'Iniciar Sesión' : 'Log In'}
+              </span>
+            </button>
+          </div>
+        )}
       </nav>
 
       <div className={styles.authSection}>

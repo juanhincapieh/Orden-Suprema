@@ -433,66 +433,426 @@
   font-size: 1.3rem;
 }
 
+/* Mobile Menu Button */
+.mobileMenuButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 10px;
+  color: var(--primary-gold);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1002;
+}
+
+.mobileMenuButton:hover {
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
+  transform: scale(1.05);
+}
+
+.mobileMenuButton:active {
+  transform: scale(0.95);
+}
+
+/* Mobile Overlay */
+.mobileOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mobile nav label (hidden on desktop) */
+.navLabelMobile {
+  display: none;
+}
+
+/* Mobile User Section (hidden on desktop) */
+.mobileUserSection {
+  display: none;
+}
+
+.mobileNavSection {
+  display: contents;
+}
+
+.mobileAccountSection {
+  display: none;
+}
+
+.mobileNavTitle {
+  display: none;
+}
+
+/* Nav button variants */
+.navButtonDanger {
+  transition: all 0.3s ease;
+}
+
+.navButtonPrimary {
+  transition: all 0.3s ease;
+}
+
 @media (max-width: 768px) {
   .header {
     padding: 0.75rem 1rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    gap: 0.75rem;
   }
 
+  .mobileMenuButton {
+    display: flex;
+    order: 2;
+    margin-left: auto;
+  }
+
+  .mobileOverlay {
+    display: block;
+  }
+
+  /* Navigation - Mobile Drawer */
   .nav {
-    order: 3;
-    width: 100%;
-    margin-top: 0.75rem;
-    justify-content: space-around;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    height: 100vh;
+    background: var(--gradient-dark);
+    border-right: 2px solid var(--gold-alpha-40);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 5rem 1rem 2rem;
+    gap: 0.5rem;
+    z-index: 1000;
+    transition: left 0.3s ease;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+  }
+
+  .navOpen {
+    left: 0;
   }
 
   .navButton {
-    padding: 0.5rem 0.75rem;
+    width: 100%;
+    padding: 1rem 1.25rem;
+    justify-content: flex-start;
+    gap: 1rem;
+    border-radius: 12px;
+    background: var(--gold-alpha-10);
+    border: 1px solid var(--gold-alpha-20);
   }
 
-  .authSection {
-    gap: 0.5rem;
+  .navButton:hover {
+    background: var(--gold-alpha-20);
+    border-color: var(--gold-alpha-40);
+    transform: translateX(5px);
   }
 
-  .personalPageButton {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
+  .navButtonActive {
+    background: var(--gold-alpha-25);
+    border-color: var(--primary-gold);
   }
 
-  .personalPageText {
+  .navIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  /* Show mobile label, hide desktop tooltip/label */
+  .navLabelMobile {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .navTooltip,
+  .navLabel {
+    display: none !important;
+  }
+
+  .navGlow {
     display: none;
   }
 
-  .personalPageIcon {
-    font-size: 1.3rem;
+  .navButton:hover .navIcon {
+    margin-right: 0;
   }
 
-  .coinsDisplay {
-    padding: 0.4rem 0.75rem;
+  /* Mobile User Section */
+  .mobileUserSection {
+    display: block;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: var(--gold-alpha-15);
+    border: 1px solid var(--gold-alpha-30);
+    border-radius: 12px;
   }
 
-  .coinIcon {
-    font-size: 1rem;
+  .mobileUserInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
-  .coinAmount {
-    font-size: 0.85rem;
+  .mobileUserAvatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--gradient-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--bg-primary);
+    border: 2px solid var(--primary-gold);
+    flex-shrink: 0;
   }
 
-  .profileAvatar {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
+  .mobileUserDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
   }
 
-  .profileMenu {
-    right: -1rem;
-    min-width: 260px;
+  .mobileUserName {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobileUserCoins {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-gold);
+  }
+
+  /* Mobile Nav Sections */
+  .mobileNavSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .mobileAccountSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gold-alpha-20);
+  }
+
+  .mobileNavTitle {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.5rem 0.5rem 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Nav button variants for mobile */
+  .navButtonDanger {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+  }
+
+  .navButtonDanger:hover {
+    background: rgba(239, 68, 68, 0.25) !important;
+    border-color: rgba(239, 68, 68, 0.5) !important;
+  }
+
+  .navButtonDanger .navIcon {
+    color: #ef4444 !important;
+  }
+
+  .navButtonDanger .navLabelMobile {
+    color: #ef4444 !important;
+  }
+
+  .navButtonPrimary {
+    background: var(--gradient-gold) !important;
+    border-color: var(--primary-gold) !important;
+  }
+
+  .navButtonPrimary:hover {
+    transform: translateX(5px) scale(1.02);
+    box-shadow: var(--shadow-gold-md);
+  }
+
+  .navButtonPrimary .navIcon {
+    color: var(--bg-primary) !important;
+  }
+
+  .navButtonPrimary .navLabelMobile {
+    color: var(--bg-primary) !important;
+  }
+
+  /* Auth Section - Hide most items on mobile */
+  .authSection {
+    gap: 0.5rem;
+    order: 3;
+  }
+
+  .flag {
+    width: 36px;
+    height: 36px;
+    font-size: 0.7rem;
+  }
+
+  /* Hide these on mobile - they're in the drawer now */
+  .personalPageButton,
+  .coinsDisplay,
+  .profileContainer {
+    display: none;
   }
 
   .loginButton {
-    font-size: 0.8rem;
-    padding: 0.5rem 1rem;
+    display: none;
+  }
+
+  .profileMenu {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    min-width: 100%;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+    max-height: 70vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .profileMenuHeader {
+    padding: 1.5rem;
+  }
+
+  .profileMenuItem {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .loginButton {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.875rem;
+    border-radius: 20px;
+  }
+
+  .logoCircle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logoSymbol {
+    font-size: 18px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .header {
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .logoCircle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .logoSymbol {
+    font-size: 16px;
+  }
+
+  .mobileMenuButton {
+    width: 40px;
+    height: 40px;
+  }
+
+  .authSection {
+    gap: 0.35rem;
+  }
+
+  .flag {
+    width: 32px;
+    height: 32px;
+    font-size: 0.65rem;
+  }
+
+  .nav {
+    width: 260px;
+    padding: 4.5rem 0.75rem 1.5rem;
+  }
+
+  .navButton {
+    padding: 0.875rem 1rem;
+  }
+
+  .navLabelMobile {
+    font-size: 0.95rem;
+  }
+
+  .mobileUserSection {
+    padding: 0.875rem;
+  }
+
+  .mobileUserAvatar {
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
+  }
+
+  .mobileUserName {
+    font-size: 1rem;
+  }
+
+  .mobileUserCoins {
+    font-size: 0.85rem;
   }
 }
 
