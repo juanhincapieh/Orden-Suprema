@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { ProtectedRoute } from '../context/AuthContext';
 import Home from '../pages/Home';
 import AboutUs from '../pages/AboutUs';
 import Reviews from '../pages/Reviews';
@@ -14,17 +15,41 @@ import Admin from '../pages/admin';
 const AppRoutes = () => {
   return (
     <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/aboutus" element={<AboutUs />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/contractor" element={<Contractor />} />
-        <Route path="/assasin" element={<Assasin />} />
-        <Route path="/assassins" element={<Assassins />} />
-        <Route path="/missions" element={<Missions />} />
-        <Route path="/admin" element={<Admin />} />
+      {/* Rutas públicas */}
+      <Route path="/" element={<Home />} />
+      <Route path="/aboutus" element={<AboutUs />} />
+      <Route path="/reviews" element={<Reviews />} />
+      <Route path="/leaderboard" element={<Leaderboard />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/assassins" element={<Assassins />} />
+      <Route path="/missions" element={<Missions />} />
+
+      {/* Rutas protegidas por rol */}
+      <Route
+        path="/contractor"
+        element={
+          <ProtectedRoute allowedRoles={['contractor', 'admin']}>
+            <Contractor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/assasin"
+        element={
+          <ProtectedRoute allowedRoles={['assassin', 'admin']}>
+            <Assasin />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <Admin />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };

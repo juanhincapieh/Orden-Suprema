@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { authService } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 
 export const useHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isSpanish, toggleLanguage } = useLanguage();
-  const [currentUser, setCurrentUser] = useState(authService.getCurrentUser());
-  
+  const { user: currentUser, logout, refreshUser: authRefreshUser } = useAuth();
+
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -16,9 +16,8 @@ export const useHeader = () => {
   const lastNavigationRef = useRef<string>('');
 
   const refreshUser = useCallback(() => {
-    const user = authService.getCurrentUser();
-    setCurrentUser(user);
-  }, []);
+    authRefreshUser();
+  }, [authRefreshUser]);
 
   // Actualizar el usuario cuando cambie la ruta (con debounce)
   useEffect(() => {
@@ -75,11 +74,10 @@ export const useHeader = () => {
     }, 50);
   }, [navigate, location.pathname]);
 
-  const handleLogout = useCallback(() => {
-    authService.logout();
-    setCurrentUser(null);
+  const handleLogout = useCallback(async () => {
+    await logout();
     safeNavigate('/');
-  }, [safeNavigate]);
+  }, [logout, safeNavigate]);
 
   const getPersonalPageRoute = () => {
     if (!currentUser) return '/';

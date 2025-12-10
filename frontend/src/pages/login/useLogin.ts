@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { User } from '../../types';
 
 export const useLogin = () => {
   const [email, setEmail] = useState('');
@@ -10,9 +11,11 @@ export const useLogin = () => {
   const [show2FA, setShow2FA] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [generatedCode, setGeneratedCode] = useState('');
-  const [userPendingLogin, setUserPendingLogin] = useState<any>(null);
+  const [userPendingLogin, setUserPendingLogin] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const { login, getRedirectPath } = useAuth();
   const { isSpanish } = useLanguage();
 
   // Generar código 2FA de 6 dígitos
@@ -20,47 +23,63 @@ export const useLogin = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!show2FA) {
-      // Paso 1: Verificar credenciales
-      const user = authService.login(email, password);
-      
-      if (user) {
-        // Credenciales correctas, generar código 2FA
-        const code = generate2FACode();
-        setGeneratedCode(code);
-        setUserPendingLogin(user);
-        setShow2FA(true);
-        
-        // Cerrar sesión temporalmente hasta que se complete 2FA
-        authService.logout();
-      } else {
-        alert(isSpanish ? 'Credenciales incorrectas' : 'Invalid credentials');
-      }
-    } else {
-      // Paso 2: Verificar código 2FA
-      if (twoFactorCode === generatedCode) {
-        // Código correcto, completar login
-        authService.login(email, password); // Re-login para establecer sesión
-        
-        switch (userPendingLogin.role) {
-          case 'admin':
-            navigate('/admin');
-            break;
-          case 'contractor':
-            navigate('/contractor');
-            break;
-          case 'assassin':
-            navigate('/assasin');
-            break;
-          default:
-            navigate('/');
+    setIsLoading(true);
+
+    try {
+      if (!show2FA) {
+        // Paso 1: Verificar credenciales con JWT
+        const success = await login({ email, password });
+
+        if (success) {
+          // Credenciales correctas, generar código 2FA
+          const code = generate2FACode();
+          setGeneratedCode(code);
+
+          // Obtener usuario del contexto para guardar temporalmente
+          const storedUser = localStorage.getItem('currentUser');
+          if (storedUser) {
+            setUserPendingLogin(JSON.parse(storedUser));
+          }
+
+          setShow2FA(true);
+
+          // Nota: En producción, el 2FA debería manejarse en el backend
+          // Por ahora, simulamos el flujo en el frontend
+        } else {
+          alert(isSpanish ? 'Credenciales incorrectas' : 'Invalid credentials');
         }
       } else {
-        alert(isSpanish ? 'Código 2FA incorrecto' : 'Incorrect 2FA code');
+        // Paso 2: Verificar código 2FA
+        if (twoFactorCode === generatedCode) {
+          // Código correcto, redirigir según rol
+          if (userPendingLogin) {
+            switch (userPendingLogin.role) {
+              case 'admin':
+                navigate('/admin');
+                break;
+              case 'contractor':
+                navigate('/contractor');
+                break;
+              case 'assassin':
+                navigate('/assasin');
+                break;
+              default:
+                navigate(getRedirectPath());
+            }
+          } else {
+            navigate(getRedirectPath());
+          }
+        } else {
+          alert(isSpanish ? 'Código 2FA incorrecto' : 'Incorrect 2FA code');
+        }
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert(isSpanish ? 'Error al iniciar sesión' : 'Login error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -72,6 +91,9 @@ export const useLogin = () => {
   };
 
   const getButtonText = () => {
+    if (isLoading) {
+      return isSpanish ? 'Cargando...' : 'Loading...';
+    }
     if (show2FA) {
       return isSpanish ? 'Verificar Código' : 'Verify Code';
     }
@@ -91,8 +113,9 @@ export const useLogin = () => {
     generatedCode,
     navigate,
     isSpanish,
+    isLoading,
     handleSubmit,
     handleCancel2FA,
-    getButtonText
+    getButtonText,
   };
 };
