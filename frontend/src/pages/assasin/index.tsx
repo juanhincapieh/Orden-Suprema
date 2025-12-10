@@ -255,6 +255,7 @@ const Assassin = () => {
           getMissionStatus={getMissionStatus}
           navigate={navigate}
           onViewDetails={handleViewDetails}
+          onRefresh={reloadMissions}
         />
 
         {/* Debts Section */}

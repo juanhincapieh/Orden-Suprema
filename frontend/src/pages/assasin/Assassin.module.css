@@ -564,6 +564,30 @@
   opacity: 0.7;
 }
 
+.refreshMissionsButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
+  border-radius: 8px;
+  color: var(--primary-gold);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: auto;
+}
+
+.refreshMissionsButton:hover {
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
+  transform: rotate(180deg);
+}
+
+.refreshMissionsButton:active {
+  transform: rotate(360deg);
+}
+
 /* Filter Toggle Button */
 .filterToggleButton {
   display: flex;

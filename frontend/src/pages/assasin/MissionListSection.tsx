@@ -1,7 +1,7 @@
 import { Contract } from '../../types';
 import { MissionCard } from './MissionCard';
 import { FilterPanel } from './FilterPanel';
-import { Target, Inbox } from 'lucide-react';
+import { Target, Inbox, RefreshCw } from 'lucide-react';
 import styles from './Assassin.module.css';
 
 interface MissionFilters {
@@ -31,6 +31,7 @@ interface MissionListSectionProps {
   getMissionStatus: (mission: Contract) => 'completed' | 'expired' | 'active';
   navigate: (path: string) => void;
   onViewDetails: (mission: Contract) => void;
+  onRefresh?: () => void;
 }
 
 export const MissionListSection = ({
@@ -50,7 +51,8 @@ export const MissionListSection = ({
   formatCurrency,
   getMissionStatus,
   navigate,
-  onViewDetails
+  onViewDetails,
+  onRefresh
 }: MissionListSectionProps) => {
   console.log('🎨 MissionListSection render:', {
     viewMode,
@@ -78,6 +80,15 @@ export const MissionListSection = ({
           {isSpanish ? 'Historial' : 'History'}
           <span className={styles.viewTabCounter}>({historyMissionsCount})</span>
         </button>
+        {onRefresh && (
+          <button
+            className={styles.refreshMissionsButton}
+            onClick={onRefresh}
+            title={isSpanish ? 'Actualizar misiones' : 'Refresh missions'}
+          >
+            <RefreshCw size={18} />
+          </button>
+        )}
       </div>
 
       {/* Filter Toggle Button */}
