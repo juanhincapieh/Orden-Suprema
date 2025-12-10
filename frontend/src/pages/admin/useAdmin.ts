@@ -32,12 +32,24 @@ const getAvailableMissions = (): Contract[] => {
   const allMissions = authService.getAllMissions();
   const publicMissions = authService.getPublicMissions();
   
-  // Combinar y filtrar misiones que están abiertas o en negociación
-  const combinedMissions = [...allMissions, ...publicMissions];
+  // Combinar misiones, evitando duplicados por ID
+  const missionMap = new Map<string, Contract>();
+  [...allMissions, ...publicMissions].forEach(mission => {
+    if (!missionMap.has(mission.id)) {
+      missionMap.set(mission.id, mission);
+    }
+  });
   
-  // Filtrar misiones que pueden ser asignadas (open, negotiating)
+  const combinedMissions = Array.from(missionMap.values());
+  
+  // Filtrar misiones que pueden ser asignadas:
+  // - Status open o negotiating
+  // - No tienen asesino asignado (assassinId vacío o undefined)
+  // - No están completadas ni en progreso
   return combinedMissions.filter(mission => 
-    mission.status === 'open' || mission.status === 'negotiating'
+    (mission.status === 'open' || mission.status === 'negotiating') &&
+    !mission.assassinId &&
+    !mission.terminado
   );
 };
 
@@ -116,14 +128,27 @@ export const useAdmin = () => {
           return;
         }
 
-        // Actualizar la misión con el asesino asignado
-        const missionOwnerEmail = atob(selectedContract.contractorId);
-        authService.updateMission(missionOwnerEmail, selectedContract.id, {
-          assassinId: selectedAssassin,
+        const updateData = {
+          assassinId: selectedAssassin, // Este es btoa(email) del asesino
           assassinName: assassin.name,
-          status: 'in_progress',
+          status: 'in_progress' as const,
           updatedAt: new Date().toISOString()
-        });
+        };
+
+        // Intentar actualizar en misiones públicas primero
+        const publicMissions = authService.getPublicMissions();
+        const publicIndex = publicMissions.findIndex(m => m.id === selectedContract.id);
+        
+        if (publicIndex !== -1) {
+          // Actualizar en misiones públicas
+          authService.updatePublicMission(selectedContract.id, updateData);
+          console.log('✅ Misión actualizada en publicMissions');
+        } else {
+          // Actualizar en misiones privadas del contratista
+          const missionOwnerEmail = atob(selectedContract.contractorId);
+          authService.updateMission(missionOwnerEmail, selectedContract.id, updateData);
+          console.log('✅ Misión actualizada en userMissions');
+        }
 
         alert(
           isSpanish
