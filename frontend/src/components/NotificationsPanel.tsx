@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, Mailbox, Coins, Banknote, Mail, CheckCircle } from 'lucide-react';
+import { Bell, Mailbox, Coins, Banknote, Mail, CheckCircle, Target, Check, X } from 'lucide-react';
 import { DebtNotification, debtService } from '../services/debtService';
 import { Notification, notificationService } from '../services/notificationService';
 import styles from './NotificationsPanel.module.css';
@@ -34,13 +34,22 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
         setDebtNotifications(userDebtNotifications);
       }
 
-      // Cargar notificaciones de transferencias (para todos)
-      const userTransferNotifications = notificationService.getForUser(currentUser.email);
-      setTransferNotifications(userTransferNotifications);
+      // Cargar notificaciones generales (transferencias y asignaciones de misión)
+      const userNotifications = notificationService.getForUser(currentUser.email);
+      // También incluir notificaciones de asignación de misión pendientes
+      const pendingMissionAssignments = notificationService.getPendingMissionAssignments(currentUser.email);
+      // Combinar y evitar duplicados
+      const allNotifications = [...userNotifications];
+      pendingMissionAssignments.forEach(n => {
+        if (!allNotifications.find(existing => existing.id === n.id)) {
+          allNotifications.push(n);
+        }
+      });
+      setTransferNotifications(allNotifications);
       
       console.log('📬 Notificaciones cargadas:', {
         deudas: debtNotifications.length,
-        transferencias: userTransferNotifications.length
+        generales: allNotifications.length
       });
     } catch (error) {
       console.error('Error loading notifications:', error);
@@ -166,6 +175,113 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
     loadNotifications();
   };
 
+  // Manejar aceptación de misión
+  const handleAcceptMission = async (notification: Notification) => {
+    if (!notification.missionId || !currentUser) return;
+    
+    setIsLoading(true);
+    try {
+      // Buscar la misión en publicMissions y userMissions
+      const publicMissionsStr = localStorage.getItem('publicMissions');
+      const publicMissions = publicMissionsStr ? JSON.parse(publicMissionsStr) : [];
+      const userMissionsStr = localStorage.getItem('userMissions');
+      const userMissionsDict = userMissionsStr ? JSON.parse(userMissionsStr) : {};
+      
+      let mission = publicMissions.find((m: any) => m.id === notification.missionId);
+      let missionLocation: 'public' | 'private' | null = mission ? 'public' : null;
+      let contractorEmail = '';
+      
+      // Si no está en públicas, buscar en privadas
+      if (!mission) {
+        for (const email of Object.keys(userMissionsDict)) {
+          const found = userMissionsDict[email].find((m: any) => m.id === notification.missionId);
+          if (found) {
+            mission = found;
+            missionLocation = 'private';
+            contractorEmail = email;
+            break;
+          }
+        }
+      }
+      
+      if (!mission) {
+        alert(isSpanish ? 'La misión ya no existe' : 'Mission no longer exists');
+        notificationService.updateMissionNotificationStatus(notification.id, 'expired');
+        loadNotifications();
+        setIsLoading(false);
+        return;
+      }
+
+      if (mission.assassinId && mission.status === 'in_progress') {
+        alert(isSpanish 
+          ? 'Lo sentimos, esta misión ya ha sido asignada a otro asesino' 
+          : 'Sorry, this mission has already been assigned to another assassin');
+        notificationService.updateMissionNotificationStatus(notification.id, 'expired');
+        loadNotifications();
+        setIsLoading(false);
+        return;
+      }
+
+      // Asignar la misión
+      const assassinId = btoa(currentUser.email);
+      const nicknames = localStorage.getItem('nicknames');
+      const nicknamesDict = nicknames ? JSON.parse(nicknames) : {};
+      const assassinName = nicknamesDict[currentUser.email] || currentUser.email.split('@')[0];
+
+      const updateData = {
+        assassinId,
+        assassinName,
+        status: 'in_progress',
+        updatedAt: new Date().toISOString()
+      };
+
+      if (missionLocation === 'public') {
+        const publicIndex = publicMissions.findIndex((m: any) => m.id === notification.missionId);
+        if (publicIndex !== -1) {
+          publicMissions[publicIndex] = { ...publicMissions[publicIndex], ...updateData };
+          localStorage.setItem('publicMissions', JSON.stringify(publicMissions));
+        }
+      } else if (missionLocation === 'private' && contractorEmail) {
+        const missionIndex = userMissionsDict[contractorEmail].findIndex(
+          (m: any) => m.id === notification.missionId
+        );
+        if (missionIndex !== -1) {
+          userMissionsDict[contractorEmail][missionIndex] = {
+            ...userMissionsDict[contractorEmail][missionIndex],
+            ...updateData
+          };
+          localStorage.setItem('userMissions', JSON.stringify(userMissionsDict));
+        }
+      }
+
+      notificationService.updateMissionNotificationStatus(notification.id, 'accepted');
+      
+      alert(isSpanish 
+        ? `¡Has aceptado la misión "${notification.missionTitle}"!` 
+        : `You have accepted the mission "${notification.missionTitle}"!`);
+      
+      loadNotifications();
+    } catch (error) {
+      console.error('Error accepting mission:', error);
+      alert(isSpanish ? 'Error al aceptar la misión' : 'Error accepting mission');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Manejar rechazo de misión
+  const handleRejectMission = (notification: Notification) => {
+    if (confirm(isSpanish 
+      ? `¿Estás seguro de rechazar la misión "${notification.missionTitle}"?` 
+      : `Are you sure you want to reject the mission "${notification.missionTitle}"?`)) {
+      notificationService.updateMissionNotificationStatus(notification.id, 'rejected');
+      alert(isSpanish 
+        ? 'Misión rechazada. La misión quedará disponible para otros asesinos.' 
+        : 'Mission rejected. The mission will be available for other assassins.');
+      loadNotifications();
+    }
+  };
+
   const pendingCount = debtNotifications.length + transferNotifications.length;
 
   return (
@@ -204,43 +320,102 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
               </div>
             ) : (
               <>
-                {/* Notificaciones de transferencias */}
+                {/* Notificaciones generales (transferencias y asignaciones de misión) */}
                 {transferNotifications.map((notification) => (
-                  <div key={notification.id} className={styles.notificationCard}>
-                    <div className={styles.notificationHeader}>
-                      <span className={styles.notificationIcon}><Banknote size={20} /></span>
-                      <span className={styles.notificationTitle}>
-                        {isSpanish ? 'Transferencia Recibida' : 'Transfer Received'}
-                      </span>
-                    </div>
-                    <div className={styles.notificationBody}>
-                      <p className={styles.sender}>
-                        {isSpanish ? 'De: ' : 'From: '}
-                        <strong>{notification.senderName}</strong>
-                      </p>
-                      <p className={styles.amount}>
-                        <span className={styles.amountLabel}>
-                          {isSpanish ? 'Cantidad:' : 'Amount:'}
-                        </span>
-                        <span className={styles.amountValue}>
-                          <Coins size={16} /> {notification.amount?.toLocaleString()}
-                        </span>
-                      </p>
-                      {notification.message && (
-                        <p className={styles.description}>"{notification.message}"</p>
-                      )}
-                      <p className={styles.timestamp}>
-                        {new Date(notification.createdAt).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className={styles.notificationActions}>
-                      <button
-                        className={styles.dismissButton}
-                        onClick={() => handleDismissTransfer(notification.id)}
-                      >
-                        {isSpanish ? 'Entendido' : 'Got it'}
-                      </button>
-                    </div>
+                  <div 
+                    key={notification.id} 
+                    className={`${styles.notificationCard} ${notification.type === 'mission_assignment' ? styles.missionAssignmentCard : ''}`}
+                  >
+                    {notification.type === 'mission_assignment' ? (
+                      <>
+                        <div className={styles.notificationHeader}>
+                          <span className={styles.notificationIcon} style={{ color: '#f59e0b' }}>
+                            <Target size={20} />
+                          </span>
+                          <span className={styles.notificationTitle} style={{ color: '#f59e0b' }}>
+                            {isSpanish ? 'Solicitud de Misión' : 'Mission Request'}
+                          </span>
+                        </div>
+                        <div className={styles.notificationBody}>
+                          <p className={styles.missionTitle}>
+                            <strong>{notification.missionTitle}</strong>
+                          </p>
+                          <p className={styles.sender}>
+                            {isSpanish ? 'Solicitado por: ' : 'Requested by: '}
+                            <strong>{notification.senderName}</strong>
+                          </p>
+                          <p className={styles.amount}>
+                            <span className={styles.amountLabel}>
+                              {isSpanish ? 'Recompensa:' : 'Reward:'}
+                            </span>
+                            <span className={styles.amountValue}>
+                              <Coins size={16} /> {notification.missionReward?.toLocaleString()}
+                            </span>
+                          </p>
+                          <p className={styles.warning} style={{ color: '#f59e0b', fontSize: '0.85rem' }}>
+                            ⚠️ {isSpanish 
+                              ? 'Esta misión puede ser asignada a otro si no respondes pronto' 
+                              : 'This mission may be assigned to another if you don\'t respond soon'}
+                          </p>
+                          <p className={styles.timestamp}>
+                            {new Date(notification.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                        <div className={styles.notificationActions}>
+                          <button
+                            className={styles.acceptButton}
+                            onClick={() => handleAcceptMission(notification)}
+                            disabled={isLoading}
+                          >
+                            <Check size={16} /> {isSpanish ? 'Aceptar' : 'Accept'}
+                          </button>
+                          <button
+                            className={styles.rejectButton}
+                            onClick={() => handleRejectMission(notification)}
+                            disabled={isLoading}
+                          >
+                            <X size={16} /> {isSpanish ? 'Rechazar' : 'Reject'}
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className={styles.notificationHeader}>
+                          <span className={styles.notificationIcon}><Banknote size={20} /></span>
+                          <span className={styles.notificationTitle}>
+                            {isSpanish ? 'Transferencia Recibida' : 'Transfer Received'}
+                          </span>
+                        </div>
+                        <div className={styles.notificationBody}>
+                          <p className={styles.sender}>
+                            {isSpanish ? 'De: ' : 'From: '}
+                            <strong>{notification.senderName}</strong>
+                          </p>
+                          <p className={styles.amount}>
+                            <span className={styles.amountLabel}>
+                              {isSpanish ? 'Cantidad:' : 'Amount:'}
+                            </span>
+                            <span className={styles.amountValue}>
+                              <Coins size={16} /> {notification.amount?.toLocaleString()}
+                            </span>
+                          </p>
+                          {notification.message && (
+                            <p className={styles.description}>"{notification.message}"</p>
+                          )}
+                          <p className={styles.timestamp}>
+                            {new Date(notification.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                        <div className={styles.notificationActions}>
+                          <button
+                            className={styles.dismissButton}
+                            onClick={() => handleDismissTransfer(notification.id)}
+                          >
+                            {isSpanish ? 'Entendido' : 'Got it'}
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))}
 

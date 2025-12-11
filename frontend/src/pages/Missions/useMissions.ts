@@ -1,37 +1,50 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Contract, Negotiation } from '../../types';
-import { authService } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
+import { missionsApi } from '../../services/api';
 
 export const useMissions = () => {
-  const currentUser = authService.getCurrentUser();
+  const { user: currentUser } = useAuth();
   const [missions, setMissions] = useState<Contract[]>([]);
   const [filteredMissions, setFilteredMissions] = useState<Contract[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'open' | 'negotiating'>('all');
   const [sortBy, setSortBy] = useState<'recent' | 'reward' | 'deadline'>('recent');
-  
+  const [isLoading, setIsLoading] = useState(true);
+
   const [selectedMission, setSelectedMission] = useState<Contract | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showNegotiateModal, setShowNegotiateModal] = useState(false);
-  
+
   const [proposedReward, setProposedReward] = useState('');
   const [negotiationMessage, setNegotiationMessage] = useState('');
-  
+
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [acceptedMission, setAcceptedMission] = useState<Contract | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const isSpanish = navigator.language.toLowerCase().startsWith('es');
 
-  useEffect(() => {
-    loadMissions();
+  const loadMissions = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const publicMissions = await missionsApi.getPublicMissions();
+      // Filtrar misiones completadas y en progreso - solo mostrar disponibles
+      const availableMissions = publicMissions.filter(
+        (m: Contract) => !m.terminado && m.status !== 'completed' && m.status !== 'in_progress'
+      );
+      setMissions(availableMissions);
+      setFilteredMissions(availableMissions);
+    } catch (error) {
+      console.error('Error loading missions:', error);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  const loadMissions = () => {
-    const publicMissions = authService.getPublicMissions();
-    setMissions(publicMissions);
-    setFilteredMissions(publicMissions);
-  };
+  useEffect(() => {
+    loadMissions();
+  }, [loadMissions]);
 
   useEffect(() => {
     let filtered = [...missions];
@@ -84,7 +97,7 @@ export const useMissions = () => {
     setShowNegotiateModal(true);
   };
 
-  const handleSubmitNegotiation = (e: React.FormEvent) => {
+  const handleSubmitNegotiation = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedMission || !currentUser) {
@@ -98,40 +111,31 @@ export const useMissions = () => {
       return;
     }
 
-    const negotiation: Negotiation = {
-      id: Date.now().toString(),
-      contractId: selectedMission.id,
-      proposedBy: currentUser.role === 'contractor' ? 'contractor' : 'assassin',
-      proposedByEmail: currentUser.email,
-      proposedByName: currentUser.nickname,
-      proposedReward: reward,
-      message: negotiationMessage,
-      status: 'pending',
-      createdAt: new Date().toISOString()
-    };
+    try {
+      const negotiation: Partial<Negotiation> = {
+        proposedBy: currentUser.role === 'contractor' ? 'contractor' : 'assassin',
+        proposedByEmail: currentUser.email,
+        proposedByName: currentUser.nickname,
+        proposedReward: reward,
+        message: negotiationMessage,
+      };
 
-    authService.addNegotiation(negotiation);
+      await missionsApi.createNegotiation(selectedMission.id, negotiation);
 
-    // Actualizar estado de la misión
-    authService.updatePublicMission(selectedMission.id, {
-      status: 'negotiating',
-      negotiation
-    });
+      alert(isSpanish ? '¡Propuesta enviada exitosamente!' : 'Proposal sent successfully!');
 
-    alert(
-      isSpanish
-        ? '¡Propuesta enviada exitosamente!'
-        : 'Proposal sent successfully!'
-    );
-
-    setShowNegotiateModal(false);
-    setSelectedMission(null);
-    setProposedReward('');
-    setNegotiationMessage('');
-    loadMissions();
+      setShowNegotiateModal(false);
+      setSelectedMission(null);
+      setProposedReward('');
+      setNegotiationMessage('');
+      await loadMissions();
+    } catch (error) {
+      console.error('Error submitting negotiation:', error);
+      alert(isSpanish ? 'Error al enviar propuesta' : 'Error sending proposal');
+    }
   };
 
-  const handleAcceptMission = (mission: Contract) => {
+  const handleAcceptMission = async (mission: Contract) => {
     if (!currentUser) {
       setShowAuthModal(true);
       return;
@@ -142,34 +146,23 @@ export const useMissions = () => {
       return;
     }
 
-    // Actualizar la misión pública
-    authService.updatePublicMission(mission.id, {
-      status: 'in_progress',
-      assassinId: currentUser.id,
-      assassinName: currentUser.nickname,
-      updatedAt: new Date()
-    });
+    try {
+      // Asignar la misión al asesino
+      const updatedMission = await missionsApi.assignMission(mission.id, currentUser.id);
 
-    // Agregar la misión a las misiones del asesino
-    const assignedMission: Contract = {
-      ...mission,
-      status: 'in_progress' as const,
-      assassinId: currentUser.id,
-      assassinName: currentUser.nickname,
-      updatedAt: new Date()
-    };
+      // Mostrar modal de éxito
+      setAcceptedMission(updatedMission.mission || { ...mission, status: 'in_progress' as const });
+      setShowSuccessModal(true);
 
-    authService.addMission(currentUser.email, assignedMission);
-
-    // Mostrar modal de éxito
-    setAcceptedMission(assignedMission);
-    setShowSuccessModal(true);
-
-    // Recargar misiones
-    loadMissions();
+      // Recargar misiones
+      await loadMissions();
+    } catch (error) {
+      console.error('Error accepting mission:', error);
+      alert(isSpanish ? 'Error al aceptar misión' : 'Error accepting mission');
+    }
   };
 
-  const handleAcceptCurrentTerms = (mission: Contract) => {
+  const handleAcceptCurrentTerms = async (mission: Contract) => {
     if (!currentUser) {
       setShowAuthModal(true);
       return;
@@ -180,34 +173,23 @@ export const useMissions = () => {
       return;
     }
 
-    // Actualizar la misión pública
-    authService.updatePublicMission(mission.id, {
-      status: 'in_progress',
-      assassinId: currentUser.id,
-      assassinName: currentUser.nickname,
-      updatedAt: new Date()
-    });
+    try {
+      // Asignar la misión al asesino
+      const updatedMission = await missionsApi.assignMission(mission.id, currentUser.id);
 
-    // Agregar la misión a las misiones del asesino
-    const assignedMission: Contract = {
-      ...mission,
-      status: 'in_progress' as const,
-      assassinId: currentUser.id,
-      assassinName: currentUser.nickname,
-      updatedAt: new Date()
-    };
+      // Cerrar modal de negociación
+      setShowNegotiateModal(false);
 
-    authService.addMission(currentUser.email, assignedMission);
+      // Mostrar modal de éxito
+      setAcceptedMission(updatedMission.mission || { ...mission, status: 'in_progress' as const });
+      setShowSuccessModal(true);
 
-    // Cerrar modal de negociación
-    setShowNegotiateModal(false);
-
-    // Mostrar modal de éxito
-    setAcceptedMission(assignedMission);
-    setShowSuccessModal(true);
-
-    // Recargar misiones
-    loadMissions();
+      // Recargar misiones
+      await loadMissions();
+    } catch (error) {
+      console.error('Error accepting mission:', error);
+      alert(isSpanish ? 'Error al aceptar misión' : 'Error accepting mission');
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -244,7 +226,7 @@ export const useMissions = () => {
           return status;
       }
     }
-    
+
     switch (status) {
       case 'open':
         return 'Open';
@@ -291,6 +273,7 @@ export const useMissions = () => {
     handleAcceptCurrentTerms,
     getStatusColor,
     getStatusText,
-    isSpanish
+    isSpanish,
+    isLoading,
   };
 };

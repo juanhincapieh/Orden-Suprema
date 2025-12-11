@@ -11,6 +11,7 @@ export const Captcha = ({ onVerify, isSpanish = false }: CaptchaProps) => {
   const [captchaText, setCaptchaText] = useState('');
   const [userInput, setUserInput] = useState('');
   const [isVerified, setIsVerified] = useState(false);
+  const [hasAttempted, setHasAttempted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const generateCaptcha = () => {
@@ -23,6 +24,7 @@ export const Captcha = ({ onVerify, isSpanish = false }: CaptchaProps) => {
     setCaptchaText(text);
     setUserInput('');
     setIsVerified(false);
+    setHasAttempted(false);
     onVerify(false);
     return text;
   };
@@ -104,23 +106,27 @@ export const Captcha = ({ onVerify, isSpanish = false }: CaptchaProps) => {
   };
 
   const handleVerify = () => {
-    const isValid = userInput.toLowerCase() === captchaText.toLowerCase();
+    // Comparación exacta (case-sensitive)
+    const isValid = userInput === captchaText;
+    setHasAttempted(true);
     setIsVerified(isValid);
     onVerify(isValid);
     
     if (!isValid) {
-      // Si es incorrecto, generar nuevo captcha
+      // Si es incorrecto, generar nuevo captcha después de mostrar el error
       setTimeout(() => {
         const text = generateCaptcha();
         drawCaptcha(text);
-      }, 1000);
+      }, 1500);
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserInput(e.target.value);
-    if (isVerified) {
+    // Resetear estados cuando el usuario escribe
+    if (isVerified || hasAttempted) {
       setIsVerified(false);
+      setHasAttempted(false);
       onVerify(false);
     }
   };
@@ -159,7 +165,7 @@ export const Captcha = ({ onVerify, isSpanish = false }: CaptchaProps) => {
             onChange={handleInputChange}
             placeholder={isSpanish ? 'Ingresa el código' : 'Enter the code'}
             className={`${styles.input} ${
-              isVerified ? styles.inputSuccess : userInput && !isVerified ? styles.inputError : ''
+              isVerified ? styles.inputSuccess : hasAttempted && !isVerified ? styles.inputError : ''
             }`}
             maxLength={6}
           />
@@ -180,7 +186,7 @@ export const Captcha = ({ onVerify, isSpanish = false }: CaptchaProps) => {
           </div>
         )}
 
-        {userInput && !isVerified && userInput.length === 6 && (
+        {hasAttempted && !isVerified && (
           <div className={styles.errorMessage}>
             <span className={styles.errorIcon}>✗</span>
             <span>{isSpanish ? 'Código incorrecto' : 'Incorrect code'}</span>

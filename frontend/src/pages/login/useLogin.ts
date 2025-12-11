@@ -23,38 +23,61 @@ export const useLogin = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
   };
 
+  // Verificar credenciales sin iniciar sesión completa
+  const verifyCredentials = (): { valid: boolean; user?: User } => {
+    const users = localStorage.getItem('users');
+    const usersDict = users ? JSON.parse(users) : {};
+    
+    if (usersDict[email] && usersDict[email] === password) {
+      const roles = localStorage.getItem('roles');
+      const rolesDict = roles ? JSON.parse(roles) : {};
+      const nicknames = localStorage.getItem('nicknames');
+      const nicknamesDict = nicknames ? JSON.parse(nicknames) : {};
+      const coins = localStorage.getItem('coins');
+      const coinsDict = coins ? JSON.parse(coins) : {};
+      
+      const user: User = {
+        id: btoa(email),
+        email,
+        name: email.split('@')[0],
+        nickname: nicknamesDict[email] || email.split('@')[0],
+        role: rolesDict[email] || 'assassin',
+        coins: coinsDict[email] || 0
+      };
+      
+      return { valid: true, user };
+    }
+    
+    return { valid: false };
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       if (!show2FA) {
-        // Paso 1: Verificar credenciales con JWT
-        const success = await login({ email, password });
+        // Paso 1: Solo verificar credenciales (sin iniciar sesión)
+        const result = verifyCredentials();
 
-        if (success) {
+        if (result.valid && result.user) {
           // Credenciales correctas, generar código 2FA
           const code = generate2FACode();
           setGeneratedCode(code);
-
-          // Obtener usuario del contexto para guardar temporalmente
-          const storedUser = localStorage.getItem('currentUser');
-          if (storedUser) {
-            setUserPendingLogin(JSON.parse(storedUser));
-          }
-
+          setUserPendingLogin(result.user);
           setShow2FA(true);
-
-          // Nota: En producción, el 2FA debería manejarse en el backend
-          // Por ahora, simulamos el flujo en el frontend
+          
+          // NO iniciar sesión todavía - esperar verificación 2FA
         } else {
           alert(isSpanish ? 'Credenciales incorrectas' : 'Invalid credentials');
         }
       } else {
         // Paso 2: Verificar código 2FA
         if (twoFactorCode === generatedCode) {
-          // Código correcto, redirigir según rol
-          if (userPendingLogin) {
+          // Código correcto, ahora sí iniciar sesión
+          const success = await login({ email, password });
+          
+          if (success && userPendingLogin) {
             switch (userPendingLogin.role) {
               case 'admin':
                 navigate('/admin');

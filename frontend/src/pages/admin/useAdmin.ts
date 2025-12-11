@@ -1,61 +1,17 @@
-import { useState, useEffect } from 'react';
-import { Contract, Assassin, Transaction, Report, User, AssassinProfile } from '../../types';
-import { authService } from '../../services/authService';
-import { transactionService } from '../../services/transactionService';
-import { assassinProfileService } from '../../services/assassinProfileService';
+import { useState, useEffect, useCallback } from 'react';
+import { Contract, Assassin, Transaction, Report, AssassinProfile } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
-
-// Función para convertir User a Assassin
-const userToAssassin = (user: User): Assassin => {
-  // Generar ubicación aleatoria en Bogotá
-  const baseLatBogota = 4.6097;
-  const baseLngBogota = -74.0817;
-  const randomOffset = () => (Math.random() - 0.5) * 0.1;
-
-  return {
-    id: btoa(user.email),
-    name: user.nickname || user.email.split('@')[0],
-    email: user.email,
-    rating: 4.5 + Math.random() * 0.5, // Rating entre 4.5 y 5.0
-    completedContracts: Math.floor(Math.random() * 100) + 20, // Entre 20 y 120 contratos
-    location: {
-      lat: baseLatBogota + randomOffset(),
-      lng: baseLngBogota + randomOffset()
-    },
-    status: Math.random() > 0.3 ? 'available' : 'busy' // 70% disponibles
-  };
-};
-
-// Función para obtener misiones disponibles para asignar
-const getAvailableMissions = (): Contract[] => {
-  // Obtener todas las misiones del sistema
-  const allMissions = authService.getAllMissions();
-  const publicMissions = authService.getPublicMissions();
-  
-  // Combinar misiones, evitando duplicados por ID
-  const missionMap = new Map<string, Contract>();
-  [...allMissions, ...publicMissions].forEach(mission => {
-    if (!missionMap.has(mission.id)) {
-      missionMap.set(mission.id, mission);
-    }
-  });
-  
-  const combinedMissions = Array.from(missionMap.values());
-  
-  // Filtrar misiones que pueden ser asignadas:
-  // - Status open o negotiating
-  // - No tienen asesino asignado (assassinId vacío o undefined)
-  // - No están completadas ni en progreso
-  return combinedMissions.filter(mission => 
-    (mission.status === 'open' || mission.status === 'negotiating') &&
-    !mission.assassinId &&
-    !mission.terminado
-  );
-};
+import {
+  usersApi,
+  missionsApi,
+  coinsApi,
+  reportsApi,
+  notificationsApi,
+} from '../../services/api';
 
 export const useAdmin = () => {
   const { isSpanish } = useLanguage();
-  
+
   const [activeTab, setActiveTab] = useState<'assign' | 'manage' | 'transactions' | 'reports'>('assign');
   const [assassins, setAssassins] = useState<Assassin[]>([]);
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -65,7 +21,8 @@ export const useAdmin = () => {
   const [selectedAssassin, setSelectedAssassin] = useState<string>('');
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedAssassinOnMap, setSelectedAssassinOnMap] = useState<string>('');
-  
+  const [isLoading, setIsLoading] = useState(true);
+
   // Estados para nueva misión
   const [newMissionTitle, setNewMissionTitle] = useState('');
   const [newMissionDescription, setNewMissionDescription] = useState('');
@@ -78,123 +35,164 @@ export const useAdmin = () => {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [selectedAssassinProfile, setSelectedAssassinProfile] = useState<AssassinProfile | null>(null);
 
-  const loadTransactions = () => {
-    const realTransactions = transactionService.getAll();
-    console.log('💰 Transacciones cargadas:', realTransactions.length, realTransactions);
-    setTransactions(realTransactions);
-  };
-
-  useEffect(() => {
-    // Migrar usuarios asesinos existentes a perfiles si no existen
-    const migrationResult = assassinProfileService.migrateExistingUsers();
-    console.log('📋 Perfiles migrados:', migrationResult);
-
-    // Cargar asesinos reales del sistema
-    const realAssassins = authService.getAllAssassins();
-    const assassinsList = realAssassins.map(user => userToAssassin(user));
-    setAssassins(assassinsList);
-
-    // Cargar misiones disponibles
-    const availableMissions = getAvailableMissions();
-    setContracts(availableMissions);
-
-    // Cargar transacciones reales
-    loadTransactions();
-
-    // Cargar reportes
-    const loadedReports = authService.getReports();
-    setReports(loadedReports);
+  // Cargar asesinos
+  const loadAssassins = useCallback(async () => {
+    try {
+      const assassinsList = await usersApi.getAllAssassins();
+      const mapped: Assassin[] = assassinsList.map((a) => ({
+        id: a.id,
+        name: a.nickname || a.name,
+        email: a.email,
+        rating: a.averageRatingAllTime || 0,
+        completedContracts: a.completedContracts || 0,
+        location: a.location,
+        status: a.status,
+      }));
+      setAssassins(mapped);
+    } catch (error) {
+      console.error('Error loading assassins:', error);
+    }
   }, []);
 
-  // Recargar transacciones cuando se cambia a la pestaña de transacciones
+  // Cargar misiones disponibles
+  const loadAvailableMissions = useCallback(async () => {
+    try {
+      const publicMissions = await missionsApi.getPublicMissions();
+      // Filtrar misiones que pueden ser asignadas
+      const available = publicMissions.filter(
+        (m) => (m.status === 'open' || m.status === 'negotiating') && !m.assassinId && !m.terminado
+      );
+      setContracts(available);
+    } catch (error) {
+      console.error('Error loading missions:', error);
+    }
+  }, []);
+
+  // Cargar transacciones
+  const loadTransactions = useCallback(async () => {
+    try {
+      const txs = await coinsApi.getAllTransactions();
+      setTransactions(txs);
+    } catch (error) {
+      console.error('Error loading transactions:', error);
+    }
+  }, []);
+
+  // Cargar reportes
+  const loadReports = useCallback(async () => {
+    try {
+      const reps = await reportsApi.getAll();
+      setReports(reps);
+    } catch (error) {
+      console.error('Error loading reports:', error);
+    }
+  }, []);
+
+  // Cargar datos iniciales
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      await Promise.all([loadAssassins(), loadAvailableMissions(), loadTransactions(), loadReports()]);
+      setIsLoading(false);
+    };
+    loadData();
+  }, [loadAssassins, loadAvailableMissions, loadTransactions, loadReports]);
+
+  // Recargar transacciones cuando se cambia a la pestaña
   useEffect(() => {
     if (activeTab === 'transactions') {
       loadTransactions();
     }
-  }, [activeTab]);
+  }, [activeTab, loadTransactions]);
 
-  const handleAssignContract = () => {
+  const handleAssignContract = async () => {
     if (!selectedAssassin) {
       alert(isSpanish ? 'Selecciona un asesino' : 'Select an assassin');
       return;
     }
 
     try {
+      const assassin = assassins.find((a) => a.id === selectedAssassin);
+      if (!assassin) {
+        alert(isSpanish ? 'Asesino no encontrado' : 'Assassin not found');
+        return;
+      }
+
+      const isAssassinBusy = assassin.status === 'busy';
+
       if (selectedContract) {
         // Asignar misión existente
-        const assassin = assassins.find(a => a.id === selectedAssassin);
-        if (!assassin) {
-          alert(isSpanish ? 'Asesino no encontrado' : 'Assassin not found');
-          return;
-        }
+        if (isAssassinBusy) {
+          // Enviar notificación
+          await notificationsApi.createMissionAssignment(
+            assassin.email,
+            'admin@hightable.com',
+            'High Table Admin',
+            selectedContract.id,
+            selectedContract.title,
+            selectedContract.reward
+          );
 
-        const updateData = {
-          assassinId: selectedAssassin, // Este es btoa(email) del asesino
-          assassinName: assassin.name,
-          status: 'in_progress' as const,
-          updatedAt: new Date().toISOString()
-        };
-
-        // Intentar actualizar en misiones públicas primero
-        const publicMissions = authService.getPublicMissions();
-        const publicIndex = publicMissions.findIndex(m => m.id === selectedContract.id);
-        
-        if (publicIndex !== -1) {
-          // Actualizar en misiones públicas
-          authService.updatePublicMission(selectedContract.id, updateData);
-          console.log('✅ Misión actualizada en publicMissions');
+          alert(
+            isSpanish
+              ? `${assassin.name} está ocupado. Se ha enviado una solicitud de asignación.`
+              : `${assassin.name} is busy. An assignment request has been sent.`
+          );
         } else {
-          // Actualizar en misiones privadas del contratista
-          const missionOwnerEmail = atob(selectedContract.contractorId);
-          authService.updateMission(missionOwnerEmail, selectedContract.id, updateData);
-          console.log('✅ Misión actualizada en userMissions');
-        }
+          // Asignar directamente
+          await missionsApi.assignMission(selectedContract.id, selectedAssassin);
 
-        alert(
-          isSpanish
-            ? `Misión "${selectedContract.title}" asignada a ${assassin.name}`
-            : `Mission "${selectedContract.title}" assigned to ${assassin.name}`
-        );
+          alert(
+            isSpanish
+              ? `Misión "${selectedContract.title}" asignada a ${assassin.name}`
+              : `Mission "${selectedContract.title}" assigned to ${assassin.name}`
+          );
+        }
       } else {
         // Crear nueva misión
         if (!newMissionTitle || !newMissionDescription || !newMissionReward) {
-          alert(isSpanish 
-            ? 'Completa todos los campos requeridos' 
-            : 'Fill all required fields');
+          alert(isSpanish ? 'Completa todos los campos requeridos' : 'Fill all required fields');
           return;
         }
 
-        const assassin = assassins.find(a => a.id === selectedAssassin);
-        if (!assassin) {
-          alert(isSpanish ? 'Asesino no encontrado' : 'Assassin not found');
-          return;
-        }
+        const reward = parseInt(newMissionReward);
 
-        // Crear la nueva misión
-        const newMission: Contract = {
-          id: `admin_${Date.now()}`,
+        // Crear la misión
+        const newMission = await missionsApi.createMission({
           title: newMissionTitle,
           description: newMissionDescription,
-          reward: parseInt(newMissionReward),
-          status: 'in_progress',
-          terminado: false,
-          contractorId: btoa('admin@system.com'), // Admin como contratista
-          assassinId: selectedAssassin,
-          assassinName: assassin.name,
+          reward,
           location: newMissionLocation || undefined,
           deadline: newMissionDeadline || undefined,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
+          isPrivate: false,
+        });
 
-        // Agregar a misiones públicas
-        authService.addPublicMission(newMission);
+        if (isAssassinBusy) {
+          // Enviar notificación
+          await notificationsApi.createMissionAssignment(
+            assassin.email,
+            'admin@hightable.com',
+            'High Table Admin',
+            newMission.id,
+            newMissionTitle,
+            reward
+          );
 
-        alert(
-          isSpanish
-            ? `Nueva misión "${newMissionTitle}" creada y asignada a ${assassin.name}`
-            : `New mission "${newMissionTitle}" created and assigned to ${assassin.name}`
-        );
+          alert(
+            isSpanish
+              ? `${assassin.name} está ocupado. La misión ha sido creada y se envió solicitud.`
+              : `${assassin.name} is busy. Mission created and request sent.`
+          );
+        } else {
+          // Asignar directamente
+          await missionsApi.assignMission(newMission.id, selectedAssassin);
+
+          alert(
+            isSpanish
+              ? `Nueva misión creada y asignada a ${assassin.name}`
+              : `New mission created and assigned to ${assassin.name}`
+          );
+        }
 
         // Limpiar campos
         setNewMissionTitle('');
@@ -204,9 +202,9 @@ export const useAdmin = () => {
         setNewMissionDeadline('');
       }
 
-      // Recargar misiones disponibles
-      const availableMissions = getAvailableMissions();
-      setContracts(availableMissions);
+      // Recargar datos
+      await loadAvailableMissions();
+      await loadAssassins();
 
       setShowAssignModal(false);
       setSelectedContract(null);
@@ -217,71 +215,81 @@ export const useAdmin = () => {
     }
   };
 
-  const handlePenalizeReport = (reportId: string) => {
-    if (confirm(isSpanish 
-      ? '¿Estás seguro de que quieres penalizar este reporte?' 
-      : 'Are you sure you want to penalize this report?')) {
-      
-      authService.updateReport(reportId, { status: 'resolved' });
-      setReports(reports.map(r => 
-        r.id === reportId ? { ...r, status: 'resolved' } : r
-      ));
-
-      alert(isSpanish 
-        ? 'Reporte penalizado exitosamente' 
-        : 'Report penalized successfully');
+  const handlePenalizeReport = async (reportId: string) => {
+    if (
+      confirm(
+        isSpanish
+          ? '¿Estás seguro de que quieres penalizar este reporte?'
+          : 'Are you sure you want to penalize this report?'
+      )
+    ) {
+      try {
+        await reportsApi.penalize(reportId);
+        setReports(reports.map((r) => (r.id === reportId ? { ...r, status: 'resolved' as const } : r)));
+        alert(isSpanish ? 'Reporte penalizado exitosamente' : 'Report penalized successfully');
+      } catch (error) {
+        console.error('Error penalizing report:', error);
+      }
     }
   };
 
-  const handleCancelReport = (reportId: string) => {
-    if (confirm(isSpanish 
-      ? '¿Estás seguro de que quieres cancelar este reporte?' 
-      : 'Are you sure you want to cancel this report?')) {
-      
-      authService.updateReport(reportId, { status: 'cancelled' });
-      setReports(reports.map(r => 
-        r.id === reportId ? { ...r, status: 'cancelled' } : r
-      ));
-
-      alert(isSpanish 
-        ? 'Reporte cancelado exitosamente' 
-        : 'Report cancelled successfully');
+  const handleCancelReport = async (reportId: string) => {
+    if (
+      confirm(
+        isSpanish
+          ? '¿Estás seguro de que quieres cancelar este reporte?'
+          : 'Are you sure you want to cancel this report?'
+      )
+    ) {
+      try {
+        await reportsApi.cancel(reportId);
+        setReports(reports.map((r) => (r.id === reportId ? { ...r, status: 'cancelled' as const } : r)));
+        alert(isSpanish ? 'Reporte cancelado exitosamente' : 'Report cancelled successfully');
+      } catch (error) {
+        console.error('Error cancelling report:', error);
+      }
     }
   };
 
-  const handleSuspendAssassin = (email: string) => {
-    if (confirm(isSpanish 
-      ? '¿Estás seguro de que quieres suspender esta cuenta?' 
-      : 'Are you sure you want to suspend this account?')) {
-      
-      authService.suspendUser(email);
-      
-      // Actualizar la lista de asesinos
-      const realAssassins = authService.getAllAssassins();
-      const assassinsList = realAssassins.map(user => userToAssassin(user));
-      setAssassins(assassinsList);
-
-      alert(isSpanish 
-        ? 'Cuenta suspendida exitosamente' 
-        : 'Account suspended successfully');
+  const handleSuspendAssassin = async (email: string) => {
+    if (
+      confirm(
+        isSpanish
+          ? '¿Estás seguro de que quieres suspender esta cuenta?'
+          : 'Are you sure you want to suspend this account?'
+      )
+    ) {
+      try {
+        const assassin = assassins.find((a) => a.email === email);
+        if (assassin) {
+          await usersApi.suspendUser(assassin.id);
+          await loadAssassins();
+          alert(isSpanish ? 'Cuenta suspendida exitosamente' : 'Account suspended successfully');
+        }
+      } catch (error) {
+        console.error('Error suspending user:', error);
+      }
     }
   };
 
-  const handleDeleteAssassin = (email: string) => {
-    if (confirm(isSpanish 
-      ? '¿Estás seguro de que quieres eliminar esta cuenta? Esta acción no se puede deshacer.' 
-      : 'Are you sure you want to delete this account? This action cannot be undone.')) {
-      
-      authService.deleteUser(email);
-      
-      // Actualizar la lista de asesinos
-      const realAssassins = authService.getAllAssassins();
-      const assassinsList = realAssassins.map(user => userToAssassin(user));
-      setAssassins(assassinsList);
-
-      alert(isSpanish 
-        ? 'Cuenta eliminada exitosamente' 
-        : 'Account deleted successfully');
+  const handleDeleteAssassin = async (email: string) => {
+    if (
+      confirm(
+        isSpanish
+          ? '¿Estás seguro de que quieres eliminar esta cuenta? Esta acción no se puede deshacer.'
+          : 'Are you sure you want to delete this account? This action cannot be undone.'
+      )
+    ) {
+      try {
+        const assassin = assassins.find((a) => a.email === email);
+        if (assassin) {
+          await usersApi.deleteUser(assassin.id);
+          await loadAssassins();
+          alert(isSpanish ? 'Cuenta eliminada exitosamente' : 'Account deleted successfully');
+        }
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
     }
   };
 
@@ -314,27 +322,31 @@ export const useAdmin = () => {
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
-  const handleEditAssassin = (email: string) => {
-    const profile = assassinProfileService.getProfile(email);
-    if (profile) {
-      setSelectedAssassinProfile(profile);
-      setShowEditModal(true);
-    } else {
-      alert(isSpanish 
-        ? 'No se encontró el perfil del asesino' 
-        : 'Assassin profile not found');
+  const handleEditAssassin = async (email: string) => {
+    try {
+      const profile = await usersApi.getAssassinProfile(email);
+      if (profile) {
+        setSelectedAssassinProfile(profile);
+        setShowEditModal(true);
+      } else {
+        alert(isSpanish ? 'No se encontró el perfil del asesino' : 'Assassin profile not found');
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
     }
   };
 
-  const handleViewHistory = (email: string) => {
-    const profile = assassinProfileService.getProfile(email);
-    if (profile) {
-      setSelectedAssassinProfile(profile);
-      setShowHistoryModal(true);
-    } else {
-      alert(isSpanish 
-        ? 'No se encontró el perfil del asesino' 
-        : 'Assassin profile not found');
+  const handleViewHistory = async (email: string) => {
+    try {
+      const profile = await usersApi.getAssassinProfile(email);
+      if (profile) {
+        setSelectedAssassinProfile(profile);
+        setShowHistoryModal(true);
+      } else {
+        alert(isSpanish ? 'No se encontró el perfil del asesino' : 'Assassin profile not found');
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
     }
   };
 
@@ -342,21 +354,10 @@ export const useAdmin = () => {
     if (!selectedAssassinProfile) return;
 
     try {
-      const result = assassinProfileService.updateProfile(selectedAssassinProfile.email, updatedProfile);
-      
-      if (result.success) {
-        // Reload assassins list
-        const realAssassins = authService.getAllAssassins();
-        const assassinsList = realAssassins.map(user => userToAssassin(user));
-        setAssassins(assassinsList);
-
-        alert(isSpanish 
-          ? 'Perfil actualizado exitosamente' 
-          : 'Profile updated successfully');
-      } else {
-        throw new Error(result.error || 'Update failed');
-      }
-    } catch (error: any) {
+      await usersApi.updateAssassinProfile(selectedAssassinProfile.email, updatedProfile);
+      await loadAssassins();
+      alert(isSpanish ? 'Perfil actualizado exitosamente' : 'Profile updated successfully');
+    } catch (error: unknown) {
       console.error('Error updating assassin profile:', error);
       throw error;
     }
@@ -394,6 +395,7 @@ export const useAdmin = () => {
     selectedAssassinProfile,
     setSelectedAssassinProfile,
     isSpanish,
+    isLoading,
     handleAssignContract,
     handlePenalizeReport,
     handleCancelReport,
@@ -404,6 +406,6 @@ export const useAdmin = () => {
     handleSaveAssassinProfile,
     getStatusColor,
     getStatusText,
-    loadTransactions
+    loadTransactions,
   };
 };

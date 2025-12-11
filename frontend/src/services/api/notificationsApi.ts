@@ -1,138 +1,232 @@
-// Servicio API para Notificaciones
-import api from '../apiService';
+// Notifications API Service - Supports both mock and real backend
+import { api, USE_MOCK, getCurrentUserEmail } from './index';
 
-// Tipos
 export interface Notification {
   id: string;
-  type: 'transfer' | 'debt_request' | 'payment_request' | 'completion_request' | 'mission_assigned' | 'negotiation';
-  senderEmail: string;
-  senderName: string;
+  recipientEmail?: string;
+  userId?: string;
+  type: 'transfer' | 'debt_request' | 'payment_request' | 'completion_request' | 'mission_assignment' | 'negotiation';
+  senderEmail?: string;
+  senderId?: string;
+  senderName?: string;
   amount?: number;
   message?: string;
   debtId?: string;
   missionId?: string;
-  read: boolean;
+  missionTitle?: string;
+  missionReward?: number;
+  status?: 'pending' | 'accepted' | 'rejected' | 'expired';
   createdAt: string;
+  read: boolean;
 }
 
-export interface NotificationsResponse {
-  notifications: Notification[];
-}
+const NOTIFICATIONS_KEY = 'notifications';
 
-// Servicio de notificaciones con API real
-export const notificationsApiService = {
-  // Obtener notificaciones del usuario
-  getNotifications: async (): Promise<Notification[]> => {
-    const response = await api.get<NotificationsResponse>('/notifications');
+// ============================================
+// MOCK IMPLEMENTATION
+// ============================================
+
+const mockNotificationsService = {
+  getAll: async (): Promise<Notification[]> => {
+    const email = getCurrentUserEmail();
+    if (!email) return [];
+    
+    const stored = localStorage.getItem(NOTIFICATIONS_KEY);
+    const notifications: Notification[] = stored ? JSON.parse(stored) : [];
+    return notifications.filter(n => n.recipientEmail === email);
+  },
+
+  getUnreadCount: async (): Promise<number> => {
+    const notifications = await mockNotificationsService.getAll();
+    return notifications.filter(n => !n.read).length;
+  },
+
+  getPendingMissionAssignments: async (): Promise<Notification[]> => {
+    const notifications = await mockNotificationsService.getAll();
+    return notifications.filter(
+      n => n.type === 'mission_assignment' && n.status === 'pending'
+    );
+  },
+
+  create: async (notification: Omit<Notification, 'id' | 'createdAt' | 'read'>): Promise<Notification> => {
+    const stored = localStorage.getItem(NOTIFICATIONS_KEY);
+    const notifications: Notification[] = stored ? JSON.parse(stored) : [];
+    
+    const newNotification: Notification = {
+      ...notification,
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      createdAt: new Date().toISOString(),
+      read: false,
+    };
+    
+    notifications.unshift(newNotification);
+    localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(notifications));
+    
+    return newNotification;
+  },
+
+  createMissionAssignment: async (
+    recipientEmail: string,
+    senderEmail: string,
+    senderName: string,
+    missionId: string,
+    missionTitle: string,
+    missionReward: number
+  ): Promise<Notification> => {
+    return mockNotificationsService.create({
+      recipientEmail,
+      type: 'mission_assignment',
+      senderEmail,
+      senderName,
+      missionId,
+      missionTitle,
+      missionReward,
+      status: 'pending',
+    });
+  },
+
+  createTransferNotification: async (
+    recipientEmail: string,
+    senderEmail: string,
+    senderName: string,
+    amount: number,
+    message?: string
+  ): Promise<Notification> => {
+    return mockNotificationsService.create({
+      recipientEmail,
+      type: 'transfer',
+      senderEmail,
+      senderName,
+      amount,
+      message,
+    });
+  },
+
+  markAsRead: async (notificationId: string): Promise<void> => {
+    const stored = localStorage.getItem(NOTIFICATIONS_KEY);
+    const notifications: Notification[] = stored ? JSON.parse(stored) : [];
+    
+    const updated = notifications.map(n =>
+      n.id === notificationId ? { ...n, read: true } : n
+    );
+    
+    localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(updated));
+  },
+
+  markAllAsRead: async (): Promise<void> => {
+    const email = getCurrentUserEmail();
+    if (!email) return;
+    
+    const stored = localStorage.getItem(NOTIFICATIONS_KEY);
+    const notifications: Notification[] = stored ? JSON.parse(stored) : [];
+    
+    const updated = notifications.map(n =>
+      n.recipientEmail === email ? { ...n, read: true } : n
+    );
+    
+    localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(updated));
+  },
+
+  updateMissionAssignmentStatus: async (
+    notificationId: string,
+    status: 'accepted' | 'rejected' | 'expired'
+  ): Promise<void> => {
+    const stored = localStorage.getItem(NOTIFICATIONS_KEY);
+    const notifications: Notification[] = stored ? JSON.parse(stored) : [];
+    
+    const updated = notifications.map(n =>
+      n.id === notificationId ? { ...n, status, read: true } : n
+    );
+    
+    localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(updated));
+  },
+
+  delete: async (notificationId: string): Promise<void> => {
+    const stored = localStorage.getItem(NOTIFICATIONS_KEY);
+    const notifications: Notification[] = stored ? JSON.parse(stored) : [];
+    
+    const filtered = notifications.filter(n => n.id !== notificationId);
+    localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(filtered));
+  },
+};
+
+// ============================================
+// REAL API IMPLEMENTATION
+// ============================================
+
+const realNotificationsService = {
+  getAll: async (): Promise<Notification[]> => {
+    const response = await api.get<{ notifications: Notification[] }>('/notifications');
     return response.notifications;
   },
 
-  // Obtener cantidad de notificaciones no leídas
   getUnreadCount: async (): Promise<number> => {
     const response = await api.get<{ count: number }>('/notifications/unread-count');
     return response.count;
   },
 
-  // Marcar notificación como leída
+  getPendingMissionAssignments: async (): Promise<Notification[]> => {
+    const response = await api.get<{ notifications: Notification[] }>('/notifications/mission-assignments/pending');
+    return response.notifications;
+  },
+
+  create: async (_notification: Omit<Notification, 'id' | 'createdAt' | 'read'>): Promise<Notification> => {
+    // El backend crea notificaciones internamente, este método es solo para mock
+    throw new Error('Use specific notification creation methods');
+  },
+
+  createMissionAssignment: async (
+    recipientEmail: string,
+    _senderEmail: string,
+    _senderName: string,
+    missionId: string,
+    missionTitle: string,
+    missionReward: number
+  ): Promise<Notification> => {
+    // Necesitamos obtener el ID del usuario por email
+    const response = await api.post<{ notification: Notification }>('/notifications/mission-assignment', {
+      recipientId: recipientEmail, // El backend debería resolver esto
+      missionId,
+      missionTitle,
+      missionReward,
+    });
+    return response.notification;
+  },
+
+  createTransferNotification: async (
+    _recipientEmail: string,
+    _senderEmail: string,
+    _senderName: string,
+    _amount: number,
+    _message?: string
+  ): Promise<Notification> => {
+    // Las notificaciones de transferencia se crean automáticamente en el backend
+    throw new Error('Transfer notifications are created automatically by the backend');
+  },
+
   markAsRead: async (notificationId: string): Promise<void> => {
     await api.put(`/notifications/${notificationId}/read`);
   },
 
-  // Marcar todas como leídas
   markAllAsRead: async (): Promise<void> => {
     await api.put('/notifications/read-all');
   },
 
-  // Eliminar notificación
-  deleteNotification: async (notificationId: string): Promise<void> => {
+  updateMissionAssignmentStatus: async (
+    notificationId: string,
+    status: 'accepted' | 'rejected' | 'expired'
+  ): Promise<void> => {
+    await api.put(`/notifications/mission-assignment/${notificationId}/status`, { status });
+  },
+
+  delete: async (notificationId: string): Promise<void> => {
     await api.delete(`/notifications/${notificationId}`);
   },
 };
 
 // ============================================
-// MODO MOCK - Para desarrollo sin backend
+// EXPORT
 // ============================================
 
-import { notificationService as legacyNotificationService } from '../notificationService';
-import { debtService } from '../debtService';
-
-export const notificationsMockService = {
-  getNotifications: async (): Promise<Notification[]> => {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-
-    // Combinar notificaciones de transferencias y deudas
-    const transferNotifications = legacyNotificationService.getForUser(currentUser.email);
-    const debtNotifications = debtService.getNotificationsForAssassin(btoa(currentUser.email));
-
-    const combined: Notification[] = [
-      ...transferNotifications.map((n) => ({
-        id: n.id,
-        type: n.type as Notification['type'],
-        senderEmail: n.senderEmail,
-        senderName: n.senderName,
-        amount: n.amount,
-        message: n.message,
-        debtId: n.debtId,
-        read: n.read,
-        createdAt: n.createdAt,
-      })),
-      ...debtNotifications.map((n) => ({
-        id: n.id,
-        type: n.type as Notification['type'],
-        senderEmail: atob(n.senderId),
-        senderName: getNameFromId(n.senderId),
-        debtId: n.debtId,
-        message: n.description,
-        read: n.status !== 'pending',
-        createdAt: n.createdAt,
-      })),
-    ];
-
-    // Ordenar por fecha
-    return combined.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  },
-
-  getUnreadCount: async (): Promise<number> => {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-
-    const transferNotifications = legacyNotificationService.getForUser(currentUser.email);
-    const debtNotifications = debtService.getNotificationsForAssassin(btoa(currentUser.email));
-
-    return transferNotifications.filter((n) => !n.read).length + debtNotifications.length;
-  },
-
-  markAsRead: async (notificationId: string): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    legacyNotificationService.markAsRead(notificationId);
-  },
-
-  markAllAsRead: async (): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    legacyNotificationService.markAllAsRead(currentUser.email);
-  },
-
-  deleteNotification: async (notificationId: string): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    legacyNotificationService.delete(notificationId);
-  },
-};
-
-// Helper para obtener nombre desde ID
-function getNameFromId(encodedId: string): string {
-  try {
-    const email = atob(encodedId);
-    const nicknames = JSON.parse(localStorage.getItem('nicknames') || '{}');
-    return nicknames[email] || email;
-  } catch {
-    return 'Unknown';
-  }
-}
-
-// Exportar servicio según modo
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true' || !import.meta.env.VITE_API_URL;
-export const notificationsService = USE_MOCK ? notificationsMockService : notificationsApiService;
-
-export default notificationsService;
+export const notificationsApi = USE_MOCK ? mockNotificationsService : realNotificationsService;
+export default notificationsApi;

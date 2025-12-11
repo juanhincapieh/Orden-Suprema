@@ -1,12 +1,16 @@
 export interface Notification {
   id: string;
   recipientEmail: string;
-  type: 'transfer' | 'debt_request' | 'payment_request' | 'completion_request';
+  type: 'transfer' | 'debt_request' | 'payment_request' | 'completion_request' | 'mission_assignment';
   senderEmail: string;
   senderName: string;
   amount?: number;
   message?: string;
   debtId?: string;
+  missionId?: string;
+  missionTitle?: string;
+  missionReward?: number;
+  status?: 'pending' | 'accepted' | 'rejected' | 'expired';
   createdAt: string;
   read: boolean;
 }
@@ -94,5 +98,48 @@ export const notificationService = {
 
   clear: (): void => {
     localStorage.removeItem(NOTIFICATIONS_KEY);
+  },
+
+  // Agregar notificación de asignación de misión
+  addMissionAssignmentNotification: (
+    recipientEmail: string,
+    senderEmail: string,
+    senderName: string,
+    missionId: string,
+    missionTitle: string,
+    missionReward: number
+  ): Notification => {
+    return notificationService.add({
+      recipientEmail,
+      type: 'mission_assignment',
+      senderEmail,
+      senderName,
+      missionId,
+      missionTitle,
+      missionReward,
+      status: 'pending'
+    });
+  },
+
+  // Actualizar estado de notificación de misión
+  updateMissionNotificationStatus: (
+    notificationId: string, 
+    status: 'accepted' | 'rejected' | 'expired'
+  ): void => {
+    const notifications = getNotifications();
+    const updated = notifications.map(n => 
+      n.id === notificationId ? { ...n, status, read: true } : n
+    );
+    setNotifications(updated);
+  },
+
+  // Obtener notificaciones de misión pendientes para un usuario
+  getPendingMissionAssignments: (userEmail: string): Notification[] => {
+    const notifications = getNotifications();
+    return notifications.filter(
+      n => n.recipientEmail === userEmail && 
+           n.type === 'mission_assignment' && 
+           n.status === 'pending'
+    );
   }
 };

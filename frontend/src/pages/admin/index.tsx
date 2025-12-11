@@ -482,13 +482,17 @@ const Admin = () => {
                   <option value="">
                     {isSpanish ? 'Selecciona un asesino...' : 'Select an assassin...'}
                   </option>
-                  {assassins
-                    .filter((a) => a.status === 'available')
-                    .map((assassin) => (
-                      <option key={assassin.id} value={assassin.id}>
-                        {assassin.name} (★ {assassin.rating.toFixed(1)})
-                      </option>
-                    ))}
+                  {assassins.map((assassin) => (
+                    <option key={assassin.id} value={assassin.id}>
+                      {assassin.name} (★ {assassin.rating.toFixed(1)}) - {
+                        assassin.status === 'available' 
+                          ? (isSpanish ? '✓ Disponible' : '✓ Available')
+                          : assassin.status === 'busy'
+                            ? (isSpanish ? '⏳ Ocupado' : '⏳ Busy')
+                            : (isSpanish ? '✗ Inactivo' : '✗ Inactive')
+                      }
+                    </option>
+                  ))}
                 </select>
               </div>
 

@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { authService } from '../../services/authService';
-// import { debtService } from '../../services/debtService';
-import { transactionService } from '../../services/transactionService';
-import { notificationService } from '../../services/notificationService';
+import { Contract } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
+import { usersApi, missionsApi, coinsApi, notificationsApi } from '../../services/api';
 
 export interface AssassinProfile {
   id: string;
@@ -20,100 +19,9 @@ export interface AssassinProfile {
   targetReason?: string;
 }
 
-const mockAssassins: AssassinProfile[] = [
-  {
-    id: '1',
-    name: 'John Wick',
-    nickname: 'Baba Yaga',
-    minContractValue: 50000,
-    averageRatingAllTime: 4.9,
-    averageRatingLastMonth: 5.0,
-    completedContracts: 127,
-    specialties: ['Sigilo', 'Combate cuerpo a cuerpo', 'Armas de fuego'],
-    status: 'available'
-  },
-  {
-    id: '2',
-    name: 'Vincent Grisset de Gramont',
-    nickname: 'El Marqués',
-    minContractValue: 100000,
-    averageRatingAllTime: 4.8,
-    averageRatingLastMonth: 4.9,
-    completedContracts: 89,
-    specialties: ['Estrategia', 'Coordinación', 'Alta sociedad'],
-    status: 'available'
-  },
-  {
-    id: '3',
-    name: 'Killa Harkan',
-    nickname: 'El Berlinés',
-    minContractValue: 75000,
-    averageRatingAllTime: 4.7,
-    averageRatingLastMonth: 4.8,
-    completedContracts: 156,
-    specialties: ['Combate', 'Resistencia', 'Intimidación'],
-    status: 'busy'
-  },
-  {
-    id: '4',
-    name: 'Caine',
-    nickname: 'El Ciego',
-    minContractValue: 80000,
-    averageRatingAllTime: 5.0,
-    averageRatingLastMonth: 5.0,
-    completedContracts: 203,
-    specialties: ['Percepción aumentada', 'Precisión', 'Sigilo'],
-    status: 'available'
-  },
-  {
-    id: '5',
-    name: 'Sofia Al-Azwar',
-    nickname: 'La Guardiana',
-    minContractValue: 60000,
-    averageRatingAllTime: 4.9,
-    averageRatingLastMonth: 4.9,
-    completedContracts: 98,
-    specialties: ['Tácticas caninas', 'Defensa', 'Infiltración'],
-    status: 'available'
-  },
-  {
-    id: '6',
-    name: 'Zero',
-    nickname: 'El Sushi Master',
-    minContractValue: 70000,
-    averageRatingAllTime: 4.6,
-    averageRatingLastMonth: 4.7,
-    completedContracts: 134,
-    specialties: ['Armas blancas', 'Sigilo', 'Acrobacia'],
-    status: 'available'
-  },
-  {
-    id: '7',
-    name: 'Akira',
-    nickname: 'La Sombra',
-    minContractValue: 55000,
-    averageRatingAllTime: 4.8,
-    averageRatingLastMonth: 4.9,
-    completedContracts: 112,
-    specialties: ['Ninjutsu', 'Venenos', 'Desaparición'],
-    status: 'busy'
-  },
-  {
-    id: '8',
-    name: 'Cassian',
-    nickname: 'El Vengador',
-    minContractValue: 65000,
-    averageRatingAllTime: 4.7,
-    averageRatingLastMonth: 4.6,
-    completedContracts: 87,
-    specialties: ['Rastreo', 'Combate', 'Persistencia'],
-    status: 'available'
-  }
-];
-
 export const useAssassins = () => {
   const { isSpanish } = useLanguage();
-  const [currentUser] = useState(() => authService.getCurrentUser());
+  const { user: currentUser, refreshUser } = useAuth();
   const [assassins, setAssassins] = useState<AssassinProfile[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState<'both' | 'name' | 'nickname'>('both');
@@ -123,12 +31,13 @@ export const useAssassins = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showProposeModal, setShowProposeModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  
+  const [isLoading, setIsLoading] = useState(true);
+
   // Estados para proponer misión
   const [proposeOption, setProposeOption] = useState<'existing' | 'new'>('existing');
   const [selectedMissionId, setSelectedMissionId] = useState('');
-  const [userMissions, setUserMissions] = useState<any[]>([]);
-  
+  const [userMissions, setUserMissions] = useState<Contract[]>([]);
+
   // Estados para nueva misión
   const [newMissionTitle, setNewMissionTitle] = useState('');
   const [newMissionDescription, setNewMissionDescription] = useState('');
@@ -141,37 +50,34 @@ export const useAssassins = () => {
   const [coinsToSend, setCoinsToSend] = useState('');
   const [transferMessage, setTransferMessage] = useState('');
 
-  const loadAssassins = useCallback(() => {
-    // Cargar asesinos reales del sistema
-    const realAssassins = authService.getAllAssassins();
-    
-    // Convertir usuarios a perfiles de asesinos
-    const assassinProfiles: AssassinProfile[] = realAssassins.map(user => {
-      const stats = authService.calculateAssassinStats(user.email);
-      
-      return {
-        id: user.id,
-        name: user.name,
-        nickname: user.nickname || user.name,
-        minContractValue: 50000,
-        averageRatingAllTime: stats.averageRatingAllTime || 0,
-        averageRatingLastMonth: stats.averageRatingLastMonth || 0,
-        completedContracts: stats.completedContracts || 0,
-        specialties: ['Sigilo', 'Combate', 'Precisión'],
-        status: stats.activeContracts > 0 ? 'busy' : 'available'
-      };
-    });
-    
-    // Combinar asesinos reales con mock
-    setAssassins([...assassinProfiles, ...mockAssassins]);
-    
-    // Cargar misiones del usuario si es contratista
-    if (currentUser && currentUser.role === 'contractor') {
-      const missions = authService.getUserMissions(currentUser.email);
-      const publicMissions = authService.getPublicMissions().filter(
-        m => m.contractorId === currentUser.id
-      );
-      setUserMissions([...missions, ...publicMissions]);
+  const loadAssassins = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const assassinsList = await usersApi.getAllAssassins();
+
+      const profiles: AssassinProfile[] = assassinsList.map((a) => ({
+        id: a.id,
+        name: a.name,
+        nickname: a.nickname || a.name,
+        minContractValue: a.minContractValue || 50000,
+        averageRatingAllTime: a.averageRatingAllTime || 0,
+        averageRatingLastMonth: a.averageRatingLastMonth || 0,
+        completedContracts: a.completedContracts || 0,
+        specialties: a.specialties || ['Sigilo', 'Combate', 'Precisión'],
+        status: a.status,
+      }));
+
+      setAssassins(profiles);
+
+      // Cargar misiones del usuario si es contratista
+      if (currentUser && currentUser.role === 'contractor') {
+        const missions = await missionsApi.getUserMissions();
+        setUserMissions(missions);
+      }
+    } catch (error) {
+      console.error('Error loading assassins:', error);
+    } finally {
+      setIsLoading(false);
     }
   }, [currentUser]);
 
@@ -185,7 +91,7 @@ export const useAssassins = () => {
     // Filtrar por búsqueda
     if (searchTerm && searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase().trim();
-      
+
       filtered = filtered.filter((assassin) => {
         if (searchBy === 'name') {
           return assassin.name.toLowerCase().includes(searchLower);
@@ -231,12 +137,12 @@ export const useAssassins = () => {
       setShowAuthModal(true);
       return;
     }
-    
+
     if (currentUser.role !== 'contractor') {
       alert(isSpanish ? 'Solo los contratistas pueden proponer misiones' : 'Only contractors can propose missions');
       return;
     }
-    
+
     setSelectedAssassin(assassin);
     setProposeOption('existing');
     setSelectedMissionId('');
@@ -248,7 +154,7 @@ export const useAssassins = () => {
     setShowProposeModal(true);
   };
 
-  const handleSubmitProposal = (e: React.FormEvent) => {
+  const handleSubmitProposal = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedAssassin || !currentUser) {
@@ -256,86 +162,102 @@ export const useAssassins = () => {
       return;
     }
 
-    if (proposeOption === 'existing') {
-      // Proponer misión existente
-      if (!selectedMissionId) {
-        alert(isSpanish ? 'Selecciona una misión' : 'Select a mission');
-        return;
-      }
+    try {
+      // Obtener email del asesino desde su ID (base64)
+      const assassinEmail = atob(selectedAssassin.id);
 
-      const mission = userMissions.find(m => m.id === selectedMissionId);
-      if (!mission) return;
+      if (proposeOption === 'existing') {
+        // Proponer misión existente
+        if (!selectedMissionId) {
+          alert(isSpanish ? 'Selecciona una misión' : 'Select a mission');
+          return;
+        }
 
-      // Actualizar la misión para que sea privada y dirigida a este asesino
-      if (mission.isPrivate) {
-        authService.updateMission(currentUser.email, mission.id, {
+        const mission = userMissions.find((m) => m.id === selectedMissionId);
+        if (!mission) return;
+
+        // Actualizar la misión para que sea privada y dirigida a este asesino
+        await missionsApi.updateMission(mission.id, {
           targetAssassinId: selectedAssassin.id,
-          isPrivate: true
+          isPrivate: true,
         });
-      } else {
-        authService.updatePublicMission(mission.id, {
-          targetAssassinId: selectedAssassin.id,
-          isPrivate: true
-        });
-      }
 
-      alert(
-        isSpanish
-          ? `¡Misión "${mission.title}" propuesta a ${selectedAssassin.name}!`
-          : `Mission "${mission.title}" proposed to ${selectedAssassin.name}!`
-      );
-    } else {
-      // Crear nueva misión privada
-      const reward = parseInt(newMissionReward);
+        // Enviar notificación al asesino
+        await notificationsApi.createMissionAssignment(
+          assassinEmail,
+          currentUser.email,
+          currentUser.nickname || currentUser.name,
+          mission.id,
+          mission.title,
+          mission.reward
+        );
 
-      if (!newMissionTitle || !newMissionDescription || isNaN(reward) || reward <= 0) {
-        alert(isSpanish ? 'Completa todos los campos requeridos' : 'Complete all required fields');
-        return;
-      }
-
-      if (reward > currentUser.coins) {
         alert(
           isSpanish
-            ? `No tienes suficientes monedas. Tienes ${currentUser.coins.toLocaleString()} y necesitas ${reward.toLocaleString()}`
-            : `You don't have enough coins. You have ${currentUser.coins.toLocaleString()} and need ${reward.toLocaleString()}`
+            ? `¡Misión "${mission.title}" propuesta a ${selectedAssassin.name}!`
+            : `Mission "${mission.title}" proposed to ${selectedAssassin.name}!`
         );
-        return;
+      } else {
+        // Crear nueva misión privada
+        const reward = parseInt(newMissionReward);
+
+        if (!newMissionTitle || !newMissionDescription || isNaN(reward) || reward <= 0) {
+          alert(isSpanish ? 'Completa todos los campos requeridos' : 'Complete all required fields');
+          return;
+        }
+
+        if (reward > (currentUser.coins || 0)) {
+          alert(
+            isSpanish
+              ? `No tienes suficientes monedas. Tienes ${(currentUser.coins || 0).toLocaleString()} y necesitas ${reward.toLocaleString()}`
+              : `You don't have enough coins. You have ${(currentUser.coins || 0).toLocaleString()} and need ${reward.toLocaleString()}`
+          );
+          return;
+        }
+
+        // Crear la misión
+        const newMission = await missionsApi.createMission({
+          title: newMissionTitle,
+          description: newMissionDescription,
+          reward,
+          isPrivate: true,
+          targetAssassinId: selectedAssassin.id,
+          location: newMissionLocation || undefined,
+          deadline: newMissionDeadline || undefined,
+        });
+
+        // Enviar notificación al asesino
+        await notificationsApi.createMissionAssignment(
+          assassinEmail,
+          currentUser.email,
+          currentUser.nickname || currentUser.name,
+          newMission.id,
+          newMissionTitle,
+          reward
+        );
+
+        alert(
+          isSpanish
+            ? `¡Misión creada y propuesta a ${selectedAssassin.name}!`
+            : `Mission created and proposed to ${selectedAssassin.name}!`
+        );
+
+        // Refrescar usuario para actualizar monedas
+        await refreshUser();
       }
 
-      const newMission = {
-        id: Date.now().toString(),
-        title: newMissionTitle,
-        description: newMissionDescription,
-        reward,
-        status: 'open',
-        terminado: false,
-        contractorId: currentUser.id,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        isPrivate: true,
-        targetAssassinId: selectedAssassin.id,
-        location: newMissionLocation || undefined,
-        deadline: newMissionDeadline || undefined
-      };
+      // Recargar datos
+      await loadAssassins();
 
-      authService.updateCoins(currentUser.email, -reward);
-      authService.addMission(currentUser.email, newMission);
-
-      alert(
-        isSpanish
-          ? `¡Misión creada y propuesta a ${selectedAssassin.name}!`
-          : `Mission created and proposed to ${selectedAssassin.name}!`
-      );
-
-      // Recargar la lista de asesinos
-      loadAssassins();
+      setShowProposeModal(false);
+      setSelectedAssassin(null);
+    } catch (error) {
+      console.error('Error submitting proposal:', error);
+      alert(isSpanish ? 'Error al enviar propuesta' : 'Error sending proposal');
     }
-
-    setShowProposeModal(false);
-    setSelectedAssassin(null);
   };
 
-  const handleSendCoins = (e: React.FormEvent) => {
+  const handleSendCoins = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!currentUser || !selectedAssassin) {
@@ -349,7 +271,7 @@ export const useAssassins = () => {
       return;
     }
 
-    if (amount > currentUser.coins) {
+    if (amount > (currentUser.coins || 0)) {
       alert(isSpanish ? 'No tienes suficientes monedas' : "You don't have enough coins");
       return;
     }
@@ -360,45 +282,18 @@ export const useAssassins = () => {
         ? `¿Confirmas enviar ${amount.toLocaleString()} monedas a ${selectedAssassin.name}?\n\nMensaje: "${transferMessage}"`
         : `Do you confirm sending ${amount.toLocaleString()} coins to ${selectedAssassin.name}?\n\nMessage: "${transferMessage}"`
       : isSpanish
-      ? `¿Confirmas enviar ${amount.toLocaleString()} monedas a ${selectedAssassin.name}?`
-      : `Do you confirm sending ${amount.toLocaleString()} coins to ${selectedAssassin.name}?`;
+        ? `¿Confirmas enviar ${amount.toLocaleString()} monedas a ${selectedAssassin.name}?`
+        : `Do you confirm sending ${amount.toLocaleString()} coins to ${selectedAssassin.name}?`;
 
     if (!confirm(confirmMessage)) {
       return;
     }
 
     try {
-      // Obtener el email del asesino desde su ID (que está en base64)
       const assassinEmail = atob(selectedAssassin.id);
 
-      // Descontar monedas del remitente
-      const success = authService.updateCoins(currentUser.email, -amount);
-      if (!success) {
-        alert(isSpanish ? 'Error al procesar la transferencia' : 'Error processing transfer');
-        return;
-      }
-
-      // Agregar monedas al receptor
-      authService.updateCoins(assassinEmail, amount);
-
-      // Registrar las transacciones
-      transactionService.addTransfer(
-        currentUser.email,
-        currentUser.nickname,
-        assassinEmail,
-        selectedAssassin.name,
-        amount,
-        transferMessage || undefined
-      );
-
-      // Crear notificación para el receptor
-      notificationService.addTransferNotification(
-        assassinEmail,
-        currentUser.email,
-        currentUser.nickname,
-        amount,
-        transferMessage || undefined
-      );
+      // Transferir monedas
+      await coinsApi.transferCoins(assassinEmail, amount, transferMessage || undefined);
 
       alert(
         isSpanish
@@ -412,8 +307,8 @@ export const useAssassins = () => {
       setShowSendCoinsModal(false);
       setShowDetailModal(false);
 
-      // Nota: El saldo se actualizará cuando el usuario navegue o cuando se refresque el Header
-      // Para una actualización inmediata, se necesitaría un contexto global o callback
+      // Refrescar usuario para actualizar monedas
+      await refreshUser();
     } catch (error) {
       console.error('Error sending coins:', error);
       alert(isSpanish ? 'Error al enviar monedas' : 'Error sending coins');
@@ -494,6 +389,7 @@ export const useAssassins = () => {
     handleSendCoins,
     getStatusColor,
     getStatusText,
-    isSpanish
+    isSpanish,
+    isLoading,
   };
 };

@@ -20,8 +20,8 @@ export interface Contract {
   contractorId: string;
   assassinId?: string;
   assassinName?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string;
   review?: Review;
   isPrivate?: boolean;
   targetAssassinId?: string;
@@ -44,11 +44,11 @@ export interface Negotiation {
 }
 
 export interface Review {
-  id: string;
-  contractId: string;
+  id?: string;
+  contractId?: string;
   rating: number;
   comment: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface Assassin {
@@ -76,6 +76,8 @@ export interface AssassinProfile {
     lat: number;
     lng: number;
   };
+  address?: string;
+  useAutoLocation?: boolean;
   createdAt: string;
   updatedAt: string;
 }

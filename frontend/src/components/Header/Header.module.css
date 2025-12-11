@@ -940,7 +940,7 @@
   overflow: hidden;
   white-space: nowrap;
   opacity: 0;
-  transition: max-width 2s ease-in, 0.3s ease-out, opacity 0.3s ease;
+  transition: max-width 0.8s ease-out, opacity 0.5s ease;
   font-size: 0.95rem;
   font-weight: 600;
   position: relative;

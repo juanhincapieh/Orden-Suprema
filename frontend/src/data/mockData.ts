@@ -1,6 +1,10 @@
 import { Contract } from '../types';
 
-// Usuario administrador mock
+// ============================================
+// USUARIOS MOCK
+// ============================================
+
+// Administrador
 export const mockAdmin = {
   email: 'admin@hightable.com',
   password: 'admin123',
@@ -9,27 +13,50 @@ export const mockAdmin = {
   coins: 999999
 };
 
-// Usuario asesino mock
-export const mockAssassin = {
-  email: 'johnwick@continental.com',
-  password: 'baba123',
-  nickname: 'John Wick',
-  role: 'assassin' as const,
-  coins: 250000
-};
+// Asesinos
+export const mockAssassins = [
+  {
+    email: 'johnwick@continental.com',
+    password: 'baba123',
+    nickname: 'John Wick',
+    role: 'assassin' as const,
+    coins: 250000
+  },
+  {
+    email: 'caine@continental.com',
+    password: 'caine123',
+    nickname: 'Caine',
+    role: 'assassin' as const,
+    coins: 180000
+  },
+  {
+    email: 'zero@continental.com',
+    password: 'zero123',
+    nickname: 'Zero',
+    role: 'assassin' as const,
+    coins: 150000
+  },
+  {
+    email: 'cassian@continental.com',
+    password: 'cassian123',
+    nickname: 'Cassian',
+    role: 'assassin' as const,
+    coins: 120000
+  }
+];
 
-// Usuario contratista mock
-export const mockContractor = {
-  email: 'winston@continental.com',
-  password: 'continental123',
-  nickname: 'Winston Scott',
-  role: 'contractor' as const,
-  coins: 150000
-};
+// Alias para compatibilidad
+export const mockAssassin = mockAssassins[0];
 
-// Usuarios contratistas adicionales mock
+// Contratistas
 export const mockContractors = [
-  mockContractor,
+  {
+    email: 'winston@continental.com',
+    password: 'continental123',
+    nickname: 'Winston Scott',
+    role: 'contractor' as const,
+    coins: 150000
+  },
   {
     email: 'sofia@casablanca.com',
     password: 'casablanca123',
@@ -45,7 +72,7 @@ export const mockContractors = [
     coins: 200000
   },
   {
-    email: 'adjudicator@highTable.com',
+    email: 'adjudicator@hightable.com',
     password: 'hightable123',
     nickname: 'The Adjudicator',
     role: 'contractor' as const,
@@ -60,54 +87,162 @@ export const mockContractors = [
   }
 ];
 
-// Misiones públicas mock
+// Alias para compatibilidad
+export const mockContractor = mockContractors[0];
+
+// ============================================
+// IDs CODIFICADOS (para consistencia)
+// ============================================
+const IDS = {
+  // Asesinos
+  johnWick: btoa('johnwick@continental.com'),
+  caine: btoa('caine@continental.com'),
+  zero: btoa('zero@continental.com'),
+  cassian: btoa('cassian@continental.com'),
+  // Contratistas
+  winston: btoa('winston@continental.com'),
+  sofia: btoa('sofia@casablanca.com'),
+  bowery: btoa('bowery@king.com'),
+  adjudicator: btoa('adjudicator@hightable.com'),
+  elder: btoa('elder@desert.com')
+};
+
+// ============================================
+// MISIONES PÚBLICAS (disponibles para todos)
+// ============================================
 export const mockPublicMissions: Contract[] = [
+  // Misiones abiertas (sin asesino asignado)
   {
-    id: 'mission-001',
+    id: 'pub-001',
     title: 'Eliminar a Marcus Valerio',
-    description: 'Objetivo de alta prioridad en Nueva York. Ex-miembro de la Alta Mesa que ha violado el código. Requiere discreción absoluta y experiencia en combate urbano.',
+    description: 'Objetivo de alta prioridad en Nueva York. Ex-miembro de la Alta Mesa que ha violado el código. Requiere discreción absoluta.',
     reward: 75000,
     status: 'open',
     terminado: false,
-    contractorId: btoa('winston@continental.com'),
+    contractorId: IDS.winston,
     createdAt: new Date('2024-11-05'),
     updatedAt: new Date('2024-11-05'),
     isPrivate: false,
     location: 'Nueva York, USA',
-    deadline: '2024-12-15'
+    deadline: '2025-01-15'
   },
   {
-    id: 'mission-002',
+    id: 'pub-002',
     title: 'Recuperar artefacto robado',
-    description: 'Un medallón de oro antiguo fue robado del Continental de Casablanca. El ladrón se encuentra en Marrakech. Recuperación sin daños al objeto.',
+    description: 'Un medallón de oro antiguo fue robado del Continental de Casablanca. El ladrón se encuentra en Marrakech.',
     reward: 50000,
     status: 'open',
     terminado: false,
-    contractorId: btoa('sofia@casablanca.com'),
+    contractorId: IDS.sofia,
     createdAt: new Date('2024-11-06'),
     updatedAt: new Date('2024-11-06'),
     isPrivate: false,
     location: 'Marrakech, Marruecos',
-    deadline: '2024-11-25'
+    deadline: '2025-01-25'
   },
   {
-    id: 'mission-003',
+    id: 'pub-003',
+    title: 'Eliminar a traidor de la Alta Mesa',
+    description: 'Un miembro de la Alta Mesa ha traicionado el código. Objetivo altamente protegido en Berlín. Solo asesinos de élite.',
+    reward: 200000,
+    status: 'open',
+    terminado: false,
+    contractorId: IDS.adjudicator,
+    createdAt: new Date('2024-11-07'),
+    updatedAt: new Date('2024-11-07'),
+    isPrivate: false,
+    location: 'Berlín, Alemania',
+    deadline: '2025-02-20'
+  },
+  {
+    id: 'pub-004',
+    title: 'Protección de testigo clave',
+    description: 'Proteger a un testigo durante 48 horas mientras se traslada de París a Roma. Amenazas confirmadas.',
+    reward: 85000,
+    status: 'open',
+    terminado: false,
+    contractorId: IDS.winston,
+    createdAt: new Date('2024-11-08'),
+    updatedAt: new Date('2024-11-08'),
+    isPrivate: false,
+    location: 'París - Roma',
+    deadline: '2025-01-18'
+  },
+  {
+    id: 'pub-005',
+    title: 'Infiltración en subasta clandestina',
+    description: 'Infiltrarse en subasta de armas en Dubái y eliminar al organizador. Requiere habilidades sociales y combate.',
+    reward: 95000,
+    status: 'open',
+    terminado: false,
+    contractorId: IDS.elder,
+    createdAt: new Date('2024-11-03'),
+    updatedAt: new Date('2024-11-03'),
+    isPrivate: false,
+    location: 'Dubái, EAU',
+    deadline: '2025-01-30'
+  },
+  {
+    id: 'pub-006',
+    title: 'Eliminar a sicario renegado',
+    description: 'Ex-asesino de la organización que ahora trabaja por su cuenta. Conoce nuestros métodos. Extremadamente peligroso.',
+    reward: 110000,
+    status: 'open',
+    terminado: false,
+    contractorId: IDS.bowery,
+    createdAt: new Date('2024-11-02'),
+    updatedAt: new Date('2024-11-02'),
+    isPrivate: false,
+    location: 'Tokio, Japón',
+    deadline: '2025-02-10'
+  },
+  {
+    id: 'pub-007',
+    title: 'Sabotaje de operación rival',
+    description: 'Sabotear operación de organización rival sin dejar rastros. Requiere sigilo y precisión quirúrgica.',
+    reward: 65000,
+    status: 'open',
+    terminado: false,
+    contractorId: IDS.sofia,
+    createdAt: new Date('2024-11-01'),
+    updatedAt: new Date('2024-11-01'),
+    isPrivate: false,
+    location: 'Londres, UK',
+    deadline: '2025-01-28'
+  },
+  {
+    id: 'pub-008',
+    title: 'Eliminar a hacker que amenaza la red',
+    description: 'Hacker ha penetrado sistemas de la organización. Localizar y eliminar antes de que venda la información.',
+    reward: 90000,
+    status: 'open',
+    terminado: false,
+    contractorId: IDS.bowery,
+    createdAt: new Date('2024-11-09'),
+    updatedAt: new Date('2024-11-09'),
+    isPrivate: false,
+    location: 'San Francisco, USA',
+    deadline: '2025-01-16'
+  },
+  // Misiones en negociación (con asesinos reales)
+  {
+    id: 'pub-009',
     title: 'Neutralizar red de tráfico',
-    description: 'Desmantelar operación de tráfico ilegal en los muelles de Nueva York. Múltiples objetivos. Se requiere equipo o asesino con experiencia en operaciones complejas.',
+    description: 'Desmantelar operación de tráfico ilegal en los muelles de Nueva York. Múltiples objetivos.',
     reward: 120000,
     status: 'negotiating',
     terminado: false,
-    contractorId: btoa('bowery@king.com'),
+    contractorId: IDS.bowery,
     createdAt: new Date('2024-11-04'),
     updatedAt: new Date('2024-11-08'),
     isPrivate: false,
     location: 'Nueva York, USA',
-    deadline: '2024-12-01',
+    deadline: '2025-02-01',
     negotiation: {
       id: 'neg-001',
-      contractId: 'mission-003',
+      contractId: 'pub-009',
       proposedBy: 'assassin',
-      proposedByEmail: 'caine@assassins.com',
+      proposedByEmail: 'caine@continental.com',
       proposedByName: 'Caine',
       proposedReward: 150000,
       message: 'Dada la complejidad de la operación y el número de objetivos, propongo un ajuste en la recompensa.',
@@ -116,241 +251,251 @@ export const mockPublicMissions: Contract[] = [
     }
   },
   {
-    id: 'mission-004',
-    title: 'Eliminar a traidor de la Alta Mesa',
-    description: 'Un miembro de la Alta Mesa ha traicionado el código y debe ser eliminado. Objetivo altamente protegido en Berlín. Solo asesinos de élite.',
-    reward: 200000,
-    status: 'open',
-    terminado: false,
-    contractorId: btoa('adjudicator@highTable.com'),
-    createdAt: new Date('2024-11-07'),
-    updatedAt: new Date('2024-11-07'),
-    isPrivate: false,
-    location: 'Berlín, Alemania',
-    deadline: '2024-12-20'
-  },
-  {
-    id: 'mission-005',
-    title: 'Protección de testigo clave',
-    description: 'Proteger a un testigo durante 48 horas mientras se traslada de París a Roma. Amenazas confirmadas de múltiples organizaciones.',
-    reward: 85000,
-    status: 'open',
-    terminado: false,
-    contractorId: btoa('winston@continental.com'),
-    createdAt: new Date('2024-11-08'),
-    updatedAt: new Date('2024-11-08'),
-    isPrivate: false,
-    location: 'París - Roma',
-    deadline: '2024-11-18'
-  },
-  {
-    id: 'mission-006',
-    title: 'Infiltración en subasta clandestina',
-    description: 'Infiltrarse en subasta de armas en Dubái y eliminar al organizador. Requiere habilidades sociales y combate.',
-    reward: 95000,
-    status: 'open',
-    terminado: false,
-    contractorId: btoa('elder@desert.com'),
-    createdAt: new Date('2024-11-03'),
-    updatedAt: new Date('2024-11-03'),
-    isPrivate: false,
-    location: 'Dubái, EAU',
-    deadline: '2024-11-30'
-  },
-  {
-    id: 'mission-007',
-    title: 'Eliminar a sicario renegado',
-    description: 'Ex-asesino de la organización que ahora trabaja por su cuenta. Conoce nuestros métodos. Extremadamente peligroso.',
-    reward: 110000,
-    status: 'open',
-    terminado: false,
-    contractorId: btoa('bowery@king.com'),
-    createdAt: new Date('2024-11-02'),
-    updatedAt: new Date('2024-11-02'),
-    isPrivate: false,
-    location: 'Tokio, Japón',
-    deadline: '2024-12-10'
-  },
-  {
-    id: 'mission-008',
-    title: 'Rescate de rehén en zona de guerra',
-    description: 'Diplomático secuestrado en zona de conflicto. Rescate y extracción segura. Alto riesgo, alta recompensa.',
-    reward: 180000,
-    status: 'open',
-    terminado: false,
-    contractorId: btoa('adjudicator@highTable.com'),
-    createdAt: new Date('2024-11-09'),
-    updatedAt: new Date('2024-11-09'),
-    isPrivate: false,
-    location: 'Medio Oriente',
-    deadline: '2024-11-20'
-  },
-  {
-    id: 'mission-009',
-    title: 'Sabotaje de operación rival',
-    description: 'Sabotear operación de organización rival sin dejar rastros. Requiere sigilo y precisión quirúrgica.',
-    reward: 65000,
-    status: 'open',
-    terminado: false,
-    contractorId: btoa('sofia@casablanca.com'),
-    createdAt: new Date('2024-11-01'),
-    updatedAt: new Date('2024-11-01'),
-    isPrivate: false,
-    location: 'Londres, UK',
-    deadline: '2024-11-28'
-  },
-  {
-    id: 'mission-010',
+    id: 'pub-010',
     title: 'Eliminar a líder de cartel',
-    description: 'Líder de cartel mexicano con fuerte protección. Operación en territorio hostil. Se requiere experiencia en operaciones en Latinoamérica.',
+    description: 'Líder de cartel mexicano con fuerte protección. Operación en territorio hostil.',
     reward: 140000,
     status: 'negotiating',
     terminado: false,
-    contractorId: btoa('elder@desert.com'),
+    contractorId: IDS.elder,
     createdAt: new Date('2024-10-30'),
     updatedAt: new Date('2024-11-07'),
     isPrivate: false,
     location: 'Ciudad de México, México',
-    deadline: '2024-12-05',
+    deadline: '2025-02-05',
     negotiation: {
       id: 'neg-002',
-      contractId: 'mission-010',
+      contractId: 'pub-010',
       proposedBy: 'assassin',
-      proposedByEmail: 'zero@assassins.com',
+      proposedByEmail: 'zero@continental.com',
       proposedByName: 'Zero',
       proposedReward: 160000,
       message: 'El nivel de seguridad del objetivo es mayor de lo estimado. Necesito recursos adicionales.',
       status: 'pending',
       createdAt: new Date('2024-11-07').toISOString()
     }
-  },
-  {
-    id: 'mission-011',
-    title: 'Interceptar transferencia de información',
-    description: 'Interceptar y eliminar mensajero que transporta información sensible. Debe parecer accidente.',
-    reward: 55000,
-    status: 'open',
-    terminado: false,
-    contractorId: btoa('winston@continental.com'),
-    createdAt: new Date('2024-11-08'),
-    updatedAt: new Date('2024-11-08'),
-    isPrivate: false,
-    location: 'Ginebra, Suiza',
-    deadline: '2024-11-22'
-  },
-  {
-    id: 'mission-012',
-    title: 'Eliminar a hacker que amenaza la red',
-    description: 'Hacker ha penetrado sistemas de la organización. Localizar y eliminar antes de que venda la información.',
-    reward: 90000,
-    status: 'open',
-    terminado: false,
-    contractorId: btoa('bowery@king.com'),
-    createdAt: new Date('2024-11-09'),
-    updatedAt: new Date('2024-11-09'),
-    isPrivate: false,
-    location: 'San Francisco, USA',
-    deadline: '2024-11-16'
   }
 ];
 
-// Misiones de prueba para el asesino John Wick
-const createAssassinMissions = () => {
-  const johnWickId = btoa('johnwick@continental.com');
-  const winstonId = btoa('winston@continental.com');
-  const sofiaId = btoa('sofia@casablanca.com');
-  
-  return [
-    {
-      id: 'assassin-mission-001',
-      title: 'Eliminar a Viktor Tarasov',
-      description: 'Objetivo de alta prioridad en Nueva York. Ex-jefe de la mafia rusa que ha violado el código del Continental.',
-      reward: 85000,
-      status: 'in_progress',
-      terminado: false,
-      contractorId: winstonId,
-      assassinId: johnWickId,
-      createdAt: new Date('2024-11-08'),
-      updatedAt: new Date('2024-11-09'),
-      isPrivate: true,
-      location: 'Nueva York, USA',
-      deadline: '2024-11-20'
-    },
-    {
-      id: 'assassin-mission-002',
-      title: 'Recuperar medallón robado',
-      description: 'Un medallón de oro antiguo fue robado del Continental de Casablanca. Recuperación sin daños al objeto.',
-      reward: 60000,
-      status: 'in_progress',
-      terminado: false,
-      contractorId: sofiaId,
-      assassinId: johnWickId,
-      createdAt: new Date('2024-11-07'),
-      updatedAt: new Date('2024-11-08'),
-      isPrivate: true,
-      location: 'Marrakech, Marruecos',
-      deadline: '2024-11-18'
-    },
-    {
-      id: 'assassin-mission-003',
-      title: 'Eliminar a Santino D\'Antonio',
-      description: 'Misión completada exitosamente. Objetivo neutralizado en el Continental de Roma.',
-      reward: 120000,
-      status: 'completed',
-      terminado: true,
-      contractorId: winstonId,
-      assassinId: johnWickId,
-      createdAt: new Date('2024-10-15'),
-      updatedAt: new Date('2024-10-20'),
-      isPrivate: true,
-      location: 'Roma, Italia',
-      deadline: '2024-10-25'
-    },
-    {
-      id: 'assassin-mission-004',
-      title: 'Proteger testigo clave',
-      description: 'Misión completada. Testigo trasladado exitosamente de París a Roma sin incidentes.',
-      reward: 95000,
-      status: 'completed',
-      terminado: true,
-      contractorId: sofiaId,
-      assassinId: johnWickId,
-      createdAt: new Date('2024-10-01'),
-      updatedAt: new Date('2024-10-05'),
-      isPrivate: true,
-      location: 'París - Roma',
-      deadline: '2024-10-10'
-    },
-    {
-      id: 'assassin-mission-005',
-      title: 'Eliminar a Viggo Tarasov',
-      description: 'Misión expirada. El objetivo escapó antes de la fecha límite.',
-      reward: 150000,
-      status: 'cancelled',
-      terminado: false,
-      contractorId: winstonId,
-      assassinId: johnWickId,
-      createdAt: new Date('2024-09-20'),
-      updatedAt: new Date('2024-09-30'),
-      isPrivate: true,
-      location: 'Nueva York, USA',
-      deadline: '2024-09-28'
-    }
-  ];
-};
 
-// Función para inicializar datos mock
+// ============================================
+// MISIONES PRIVADAS (asignadas a asesinos)
+// ============================================
+
+// Misiones de John Wick
+const johnWickMissions: Contract[] = [
+  {
+    id: 'jw-001',
+    title: 'Eliminar a Viktor Tarasov',
+    description: 'Objetivo de alta prioridad en Nueva York. Ex-jefe de la mafia rusa que ha violado el código del Continental.',
+    reward: 85000,
+    status: 'in_progress',
+    terminado: false,
+    contractorId: IDS.winston,
+    assassinId: IDS.johnWick,
+    assassinName: 'John Wick',
+    createdAt: new Date('2024-11-08'),
+    updatedAt: new Date('2024-11-09'),
+    isPrivate: true,
+    location: 'Nueva York, USA',
+    deadline: '2025-01-20'
+  },
+  {
+    id: 'jw-002',
+    title: 'Recuperar medallón sagrado',
+    description: 'Un medallón de oro antiguo fue robado del Continental de Casablanca. Recuperación sin daños al objeto.',
+    reward: 60000,
+    status: 'in_progress',
+    terminado: false,
+    contractorId: IDS.sofia,
+    assassinId: IDS.johnWick,
+    assassinName: 'John Wick',
+    createdAt: new Date('2024-11-07'),
+    updatedAt: new Date('2024-11-08'),
+    isPrivate: true,
+    location: 'Marrakech, Marruecos',
+    deadline: '2025-01-18'
+  },
+  {
+    id: 'jw-003',
+    title: 'Eliminar a Santino D\'Antonio',
+    description: 'Misión completada exitosamente. Objetivo neutralizado en el Continental de Roma.',
+    reward: 120000,
+    status: 'completed',
+    terminado: true,
+    contractorId: IDS.winston,
+    assassinId: IDS.johnWick,
+    assassinName: 'John Wick',
+    createdAt: new Date('2024-10-15'),
+    updatedAt: new Date('2024-10-20'),
+    isPrivate: true,
+    location: 'Roma, Italia',
+    deadline: '2024-10-25',
+    review: {
+      rating: 5,
+      comment: 'Trabajo impecable como siempre. El Baba Yaga no decepciona.',
+      createdAt: new Date('2024-10-21').toISOString()
+    }
+  },
+  {
+    id: 'jw-004',
+    title: 'Proteger testigo VIP',
+    description: 'Misión completada. Testigo trasladado exitosamente de París a Roma sin incidentes.',
+    reward: 95000,
+    status: 'completed',
+    terminado: true,
+    contractorId: IDS.sofia,
+    assassinId: IDS.johnWick,
+    assassinName: 'John Wick',
+    createdAt: new Date('2024-10-01'),
+    updatedAt: new Date('2024-10-05'),
+    isPrivate: true,
+    location: 'París - Roma',
+    deadline: '2024-10-10',
+    review: {
+      rating: 5,
+      comment: 'Profesional y eficiente. El testigo llegó sin un rasguño.',
+      createdAt: new Date('2024-10-06').toISOString()
+    }
+  },
+  {
+    id: 'jw-005',
+    title: 'Eliminar a Viggo Tarasov',
+    description: 'Misión completada. Venganza personal ejecutada.',
+    reward: 150000,
+    status: 'completed',
+    terminado: true,
+    contractorId: IDS.winston,
+    assassinId: IDS.johnWick,
+    assassinName: 'John Wick',
+    createdAt: new Date('2024-09-20'),
+    updatedAt: new Date('2024-09-28'),
+    isPrivate: true,
+    location: 'Nueva York, USA',
+    deadline: '2024-09-30',
+    review: {
+      rating: 5,
+      comment: 'Misión personal completada con determinación absoluta.',
+      createdAt: new Date('2024-09-29').toISOString()
+    }
+  }
+];
+
+// Misiones de Caine
+const caineMissions: Contract[] = [
+  {
+    id: 'ca-001',
+    title: 'Eliminar a desertor en Osaka',
+    description: 'Ex-miembro del Clan Shimazu que ha traicionado a la organización. Debe ser silenciado.',
+    reward: 70000,
+    status: 'in_progress',
+    terminado: false,
+    contractorId: IDS.adjudicator,
+    assassinId: IDS.caine,
+    assassinName: 'Caine',
+    createdAt: new Date('2024-11-10'),
+    updatedAt: new Date('2024-11-10'),
+    isPrivate: true,
+    location: 'Osaka, Japón',
+    deadline: '2025-01-25'
+  },
+  {
+    id: 'ca-002',
+    title: 'Recuperar documentos clasificados',
+    description: 'Documentos robados de la Alta Mesa. Recuperar y eliminar al ladrón.',
+    reward: 90000,
+    status: 'completed',
+    terminado: true,
+    contractorId: IDS.elder,
+    assassinId: IDS.caine,
+    assassinName: 'Caine',
+    createdAt: new Date('2024-10-20'),
+    updatedAt: new Date('2024-10-28'),
+    isPrivate: true,
+    location: 'Hong Kong',
+    deadline: '2024-11-01',
+    review: {
+      rating: 4,
+      comment: 'Misión completada eficientemente a pesar de las limitaciones.',
+      createdAt: new Date('2024-10-29').toISOString()
+    }
+  }
+];
+
+// Misiones de Zero
+const zeroMissions: Contract[] = [
+  {
+    id: 'ze-001',
+    title: 'Infiltrar organización rival',
+    description: 'Infiltrarse en los Yakuza de Tokio y obtener información sobre sus operaciones.',
+    reward: 100000,
+    status: 'in_progress',
+    terminado: false,
+    contractorId: IDS.bowery,
+    assassinId: IDS.zero,
+    assassinName: 'Zero',
+    createdAt: new Date('2024-11-05'),
+    updatedAt: new Date('2024-11-06'),
+    isPrivate: true,
+    location: 'Tokio, Japón',
+    deadline: '2025-02-01'
+  },
+  {
+    id: 'ze-002',
+    title: 'Eliminar a traidor del gremio',
+    description: 'Misión completada. Traidor eliminado en combate ceremonial.',
+    reward: 80000,
+    status: 'completed',
+    terminado: true,
+    contractorId: IDS.adjudicator,
+    assassinId: IDS.zero,
+    assassinName: 'Zero',
+    createdAt: new Date('2024-10-10'),
+    updatedAt: new Date('2024-10-15'),
+    isPrivate: true,
+    location: 'Kioto, Japón',
+    deadline: '2024-10-20',
+    review: {
+      rating: 5,
+      comment: 'Ejecución perfecta. Honor restaurado.',
+      createdAt: new Date('2024-10-16').toISOString()
+    }
+  }
+];
+
+// Misiones de Cassian
+const cassianMissions: Contract[] = [
+  {
+    id: 'cs-001',
+    title: 'Proteger cargamento valioso',
+    description: 'Escoltar cargamento de arte desde Roma hasta Ginebra. Alto valor, múltiples amenazas.',
+    reward: 75000,
+    status: 'in_progress',
+    terminado: false,
+    contractorId: IDS.sofia,
+    assassinId: IDS.cassian,
+    assassinName: 'Cassian',
+    createdAt: new Date('2024-11-12'),
+    updatedAt: new Date('2024-11-12'),
+    isPrivate: true,
+    location: 'Roma - Ginebra',
+    deadline: '2025-01-30'
+  }
+];
+
+// ============================================
+// FUNCIÓN DE INICIALIZACIÓN
+// ============================================
 export const initializeMockData = () => {
   // Verificar si ya hay datos
   const existingPublicMissions = localStorage.getItem('publicMissions');
   
   if (!existingPublicMissions) {
-    // Inicializar misiones públicas
     localStorage.setItem('publicMissions', JSON.stringify(mockPublicMissions));
     console.log('✅ Misiones públicas inicializadas');
   }
 
-  // Registrar usuarios mock si no existen
+  // Registrar usuarios mock
   const users = localStorage.getItem('users');
   const usersDict = users ? JSON.parse(users) : {};
   const roles = localStorage.getItem('roles');
@@ -371,14 +516,16 @@ export const initializeMockData = () => {
     newUsersAdded++;
   }
   
-  // Registrar asesino
-  if (!usersDict[mockAssassin.email]) {
-    usersDict[mockAssassin.email] = mockAssassin.password;
-    rolesDict[mockAssassin.email] = mockAssassin.role;
-    nicknamesDict[mockAssassin.email] = mockAssassin.nickname;
-    coinsDict[mockAssassin.email] = mockAssassin.coins;
-    newUsersAdded++;
-  }
+  // Registrar asesinos
+  mockAssassins.forEach(assassin => {
+    if (!usersDict[assassin.email]) {
+      usersDict[assassin.email] = assassin.password;
+      rolesDict[assassin.email] = assassin.role;
+      nicknamesDict[assassin.email] = assassin.nickname;
+      coinsDict[assassin.email] = assassin.coins;
+      newUsersAdded++;
+    }
+  });
   
   // Registrar contratistas
   mockContractors.forEach(contractor => {
@@ -396,18 +543,23 @@ export const initializeMockData = () => {
     localStorage.setItem('roles', JSON.stringify(rolesDict));
     localStorage.setItem('nicknames', JSON.stringify(nicknamesDict));
     localStorage.setItem('coins', JSON.stringify(coinsDict));
-    
     console.log(`✅ ${newUsersAdded} usuarios mock registrados`);
   }
   
-  // Inicializar misiones del asesino John Wick
+  // Inicializar misiones privadas de asesinos
   const existingUserMissions = localStorage.getItem('userMissions');
   if (!existingUserMissions) {
-    const assassinMissions = createAssassinMissions();
-    const userMissionsDict: any = {};
+    const userMissionsDict: Record<string, Contract[]> = {};
     
     // Agrupar misiones por contratista
-    assassinMissions.forEach(mission => {
+    const allPrivateMissions = [
+      ...johnWickMissions,
+      ...caineMissions,
+      ...zeroMissions,
+      ...cassianMissions
+    ];
+    
+    allPrivateMissions.forEach(mission => {
       const contractorEmail = atob(mission.contractorId);
       if (!userMissionsDict[contractorEmail]) {
         userMissionsDict[contractorEmail] = [];
@@ -416,6 +568,28 @@ export const initializeMockData = () => {
     });
     
     localStorage.setItem('userMissions', JSON.stringify(userMissionsDict));
-    console.log('✅ Misiones del asesino inicializadas');
+    console.log('✅ Misiones privadas de asesinos inicializadas');
   }
 };
+
+// ============================================
+// CREDENCIALES DE PRUEBA (para referencia)
+// ============================================
+/*
+ADMINISTRADOR:
+  Email: admin@hightable.com
+  Password: admin123
+
+ASESINOS:
+  Email: johnwick@continental.com | Password: baba123
+  Email: caine@continental.com | Password: caine123
+  Email: zero@continental.com | Password: zero123
+  Email: cassian@continental.com | Password: cassian123
+
+CONTRATISTAS:
+  Email: winston@continental.com | Password: continental123
+  Email: sofia@casablanca.com | Password: casablanca123
+  Email: bowery@king.com | Password: bowery123
+  Email: adjudicator@hightable.com | Password: hightable123
+  Email: elder@desert.com | Password: elder123
+*/

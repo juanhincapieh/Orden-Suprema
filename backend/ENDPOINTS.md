@@ -22,6 +22,7 @@
 | GET | `/users/assassins` | Obtener todos los asesinos | Sí | No |
 | GET | `/users/:userId` | Obtener usuario por ID | Sí | No |
 | GET | `/users/:userId/status` | Obtener estado de suspensión | Sí | No |
+| GET | `/users/:userId/stats` | Obtener estadísticas de asesino | Sí | No |
 | PUT | `/users/:userId/role` | Actualizar rol de usuario | Sí | Sí |
 | PUT | `/users/:userId/suspend` | Suspender usuario | Sí | Sí |
 | PUT | `/users/:userId/unsuspend` | Reactivar usuario | Sí | Sí |
@@ -134,10 +135,11 @@
 ---
 
 ## Objetivos (`/targets`)
-| Método | Endpoint | Descripción | Auth |
-|--------|----------|-------------|------|
-| GET | `/targets` | Obtener objetivos | Sí |
-| GET | `/targets/:userId` | Verificar si usuario es objetivo | Sí |
+| Método | Endpoint | Descripción | Auth | Admin |
+|--------|----------|-------------|------|-------|
+| GET | `/targets` | Obtener estado de objetivo del usuario actual | Sí | No |
+| GET | `/targets/all` | Obtener todos los objetivos | Sí | Sí |
+| GET | `/targets/:userId` | Verificar si usuario específico es objetivo | Sí | No |
 
 ---
 

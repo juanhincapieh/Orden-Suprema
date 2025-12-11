@@ -60,10 +60,10 @@
   right: 0;
   width: 400px;
   max-height: 600px;
-  background: var(--bg-card);
+  background: #1a1a1a;
   border: 1px solid var(--gold-alpha-30);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   z-index: 1000;
   animation: slideDown 0.3s ease-out;
 }
@@ -146,6 +146,19 @@
 .notificationCard:hover {
   border-color: var(--gold-alpha-30);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Tarjeta de asignación de misión */
+.missionAssignmentCard {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(30, 30, 30, 0.95) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.missionAssignmentCard:hover {
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.25), 0 4px 8px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
 }
 
 .notificationHeader {
@@ -297,4 +310,16 @@
   background: var(--gold-alpha-30);
   border-color: var(--primary-gold);
   transform: translateY(-1px);
+}
+
+
+/* Mission title in notifications */
+.missionTitle {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.missionTitle strong {
+  color: var(--primary-gold);
 }

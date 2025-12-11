@@ -272,7 +272,7 @@ const MissionDetailModal = ({
                 
                 if (confirm(confirmMessage)) {
                   onCompleteMission!(mission);
-                  onClose();
+                  // El cierre del modal se maneja desde el componente padre
                 }
               }}
             >

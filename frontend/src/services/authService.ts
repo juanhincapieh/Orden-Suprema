@@ -570,7 +570,19 @@ export const authService = {
 
   calculateAssassinStats: (email: string): any => {
     const assassinId = btoa(email);
-    const allMissions = authService.getAllMissions();
+    
+    // Obtener todas las misiones (privadas + públicas)
+    const privateMissions = authService.getAllMissions();
+    const publicMissions = authService.getPublicMissions();
+    
+    // Combinar evitando duplicados
+    const missionMap = new Map();
+    [...privateMissions, ...publicMissions].forEach(m => {
+      if (!missionMap.has(m.id)) {
+        missionMap.set(m.id, m);
+      }
+    });
+    const allMissions = Array.from(missionMap.values());
     
     // Filter missions for this assassin
     const assassinMissions = allMissions.filter(m => m.assassinId === assassinId);
