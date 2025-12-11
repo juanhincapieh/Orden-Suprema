@@ -104,3 +104,83 @@ export const getUnreadCount = async (req: Request, res: Response) => {
     return errorResponse(res, 'INTERNAL_ERROR', 'Error al contar notificaciones', 500);
   }
 };
+
+// Crear notificación de asignación de misión
+export const createMissionAssignment = async (req: Request, res: Response) => {
+  try {
+    const { recipientId, missionId, missionTitle, missionReward } = req.body;
+    const senderId = req.user!.userId;
+
+    // Obtener nombre del remitente
+    const sender = await User.findByPk(senderId);
+    if (!sender) {
+      return errorResponse(res, 'NOT_FOUND', 'Usuario no encontrado', 404);
+    }
+
+    const notification = await Notification.create({
+      userId: recipientId,
+      type: 'mission_assignment',
+      senderId,
+      senderName: sender.nickname || sender.email,
+      missionId,
+      missionTitle,
+      missionReward,
+      status: 'pending',
+      read: false,
+    });
+
+    return successResponse(res, { notification }, 201);
+  } catch (error) {
+    console.error('CreateMissionAssignment error:', error);
+    return errorResponse(res, 'INTERNAL_ERROR', 'Error al crear notificación', 500);
+  }
+};
+
+// Obtener notificaciones de asignación de misión pendientes
+export const getPendingMissionAssignments = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.userId;
+
+    const notifications = await Notification.findAll({
+      where: {
+        userId,
+        type: 'mission_assignment',
+        status: 'pending',
+      },
+      order: [['createdAt', 'DESC']],
+    });
+
+    return successResponse(res, { notifications });
+  } catch (error) {
+    console.error('GetPendingMissionAssignments error:', error);
+    return errorResponse(res, 'INTERNAL_ERROR', 'Error al obtener asignaciones pendientes', 500);
+  }
+};
+
+// Actualizar estado de notificación de asignación de misión
+export const updateMissionAssignmentStatus = async (req: Request, res: Response) => {
+  try {
+    const { notificationId } = req.params;
+    const { status } = req.body;
+    const userId = req.user!.userId;
+
+    if (!['accepted', 'rejected', 'expired'].includes(status)) {
+      return errorResponse(res, 'INVALID_STATUS', 'Estado inválido', 400);
+    }
+
+    const notification = await Notification.findOne({
+      where: { id: notificationId, userId, type: 'mission_assignment' },
+    });
+
+    if (!notification) {
+      return notFoundResponse(res, 'Notificación');
+    }
+
+    await notification.update({ status, read: true });
+
+    return successResponse(res, { notification });
+  } catch (error) {
+    console.error('UpdateMissionAssignmentStatus error:', error);
+    return errorResponse(res, 'INTERNAL_ERROR', 'Error al actualizar estado', 500);
+  }
+};

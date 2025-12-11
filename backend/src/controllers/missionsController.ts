@@ -182,7 +182,7 @@ export const updateMission = async (req: Request, res: Response) => {
 export const assignMission = async (req: Request, res: Response) => {
   try {
     const { missionId } = req.params;
-    const { assassinId } = req.body;
+    const { assassinId, sendNotificationOnly } = req.body;
 
     const mission = await Mission.findByPk(missionId);
     if (!mission) {
@@ -194,13 +194,39 @@ export const assignMission = async (req: Request, res: Response) => {
       return errorResponse(res, 'INVALID_ASSASSIN', 'Asesino no válido', 400);
     }
 
+    const sender = await User.findByPk(req.user!.userId);
+
+    // Si sendNotificationOnly es true, solo enviar notificación (asesino ocupado)
+    if (sendNotificationOnly) {
+      await Notification.create({
+        userId: assassinId,
+        type: 'mission_assignment',
+        senderId: req.user!.userId,
+        senderName: sender?.nickname || sender?.email || 'Admin',
+        missionId: mission.id,
+        missionTitle: mission.title,
+        missionReward: mission.reward,
+        status: 'pending',
+      });
+
+      return successResponse(res, { 
+        notificationSent: true,
+        message: 'Notificación de asignación enviada al asesino'
+      });
+    }
+
+    // Asignar directamente
     await mission.update({ assassinId, status: 'in_progress' });
 
     await Notification.create({
       userId: assassinId,
-      type: 'mission_assigned',
+      type: 'mission_assignment',
       senderId: req.user!.userId,
+      senderName: sender?.nickname || sender?.email || 'Admin',
       missionId: mission.id,
+      missionTitle: mission.title,
+      missionReward: mission.reward,
+      status: 'accepted',
       message: `Se te ha asignado la misión: ${mission.title}`,
     });
 
@@ -272,5 +298,46 @@ export const deleteMission = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('DeleteMission error:', error);
     return errorResponse(res, 'INTERNAL_ERROR', 'Error al eliminar misión', 500);
+  }
+};
+
+// Aceptar misión desde notificación
+export const acceptMissionFromNotification = async (req: Request, res: Response) => {
+  try {
+    const { missionId } = req.params;
+    const userId = req.user!.userId;
+
+    const mission = await Mission.findByPk(missionId);
+    if (!mission) {
+      return notFoundResponse(res, 'Misión');
+    }
+
+    // Verificar si la misión ya fue asignada a otro
+    if (mission.assassinId && mission.status === 'in_progress') {
+      return errorResponse(
+        res,
+        'MISSION_ALREADY_ASSIGNED',
+        'Lo sentimos, esta misión ya ha sido asignada a otro asesino',
+        409
+      );
+    }
+
+    // Verificar que el usuario es un asesino
+    const user = await User.findByPk(userId);
+    if (!user || user.role !== 'assassin') {
+      return forbiddenResponse(res, 'Solo los asesinos pueden aceptar misiones');
+    }
+
+    // Asignar la misión
+    await mission.update({
+      assassinId: userId,
+      status: 'in_progress',
+    });
+
+    const missionWithDetails = await getMissionWithDetails(mission);
+    return successResponse(res, { mission: missionWithDetails });
+  } catch (error) {
+    console.error('AcceptMissionFromNotification error:', error);
+    return errorResponse(res, 'INTERNAL_ERROR', 'Error al aceptar misión', 500);
   }
 };

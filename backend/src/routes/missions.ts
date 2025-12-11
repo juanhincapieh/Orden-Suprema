@@ -10,6 +10,7 @@ import {
   assignMission,
   completeMission,
   deleteMission,
+  acceptMissionFromNotification,
 } from '../controllers/missionsController';
 import { createNegotiation } from '../controllers/negotiationsController';
 import { createReview } from '../controllers/reviewsController';
@@ -25,6 +26,7 @@ router.get('/:missionId', authenticate, getMissionById);
 router.post('/', authenticate, createMission);
 router.put('/:missionId', authenticate, updateMission);
 router.post('/:missionId/assign', authenticate, assignMission);
+router.post('/:missionId/accept', authenticate, acceptMissionFromNotification);
 router.post('/:missionId/complete', authenticate, completeMission);
 router.delete('/:missionId', authenticate, deleteMission);
 

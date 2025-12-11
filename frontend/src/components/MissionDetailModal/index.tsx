@@ -27,8 +27,17 @@ const MissionDetailModal = ({
 }: MissionDetailModalProps) => {
   if (!isOpen || !mission) return null;
 
+  // Normalizar el estado para manejar tanto 'in_progress' como 'in-progress'
+  const normalizeStatus = (status: string) => {
+    if (status === 'in-progress') return 'in_progress';
+    return status;
+  };
+
+  const normalizedStatus = normalizeStatus(mission.status);
+
   const getStatusColor = (status: string) => {
-    switch (status) {
+    const normalized = normalizeStatus(status);
+    switch (normalized) {
       case 'open':
         return '#4ade80';
       case 'negotiating':
@@ -45,8 +54,9 @@ const MissionDetailModal = ({
   };
 
   const getStatusText = (status: string) => {
+    const normalized = normalizeStatus(status);
     if (isSpanish) {
-      switch (status) {
+      switch (normalized) {
         case 'open':
           return 'Abierta';
         case 'negotiating':
@@ -62,7 +72,7 @@ const MissionDetailModal = ({
       }
     }
 
-    switch (status) {
+    switch (normalized) {
       case 'open':
         return 'Open';
       case 'negotiating':
@@ -82,7 +92,7 @@ const MissionDetailModal = ({
   const isAssassin = currentUser && currentUser.role === 'assassin' && mission.assassinId === currentUser.id;
   const shouldShowNegotiationDetails = showNegotiation && mission.negotiation && isOwner;
   const shouldShowNegotiationMessage = showNegotiation && mission.negotiation && !isOwner;
-  const canComplete = isAssassin && mission.status === 'in_progress' && !mission.terminado && onCompleteMission;
+  const canComplete = isAssassin && normalizedStatus === 'in_progress' && !mission.terminado && onCompleteMission;
 
   // Debug logs
   console.log('🔍 Modal Debug:', {

@@ -9,9 +9,11 @@ interface AssassinProfileAttributes {
   status: 'available' | 'busy' | 'inactive';
   locationLat?: number;
   locationLng?: number;
+  address?: string;
+  useAutoLocation: boolean;
 }
 
-interface AssassinProfileCreationAttributes extends Optional<AssassinProfileAttributes, 'id' | 'minContractValue' | 'specialties' | 'status' | 'locationLat' | 'locationLng'> {}
+interface AssassinProfileCreationAttributes extends Optional<AssassinProfileAttributes, 'id' | 'minContractValue' | 'specialties' | 'status' | 'locationLat' | 'locationLng' | 'address' | 'useAutoLocation'> {}
 
 class AssassinProfile extends Model<AssassinProfileAttributes, AssassinProfileCreationAttributes> implements AssassinProfileAttributes {
   declare id: string;
@@ -21,6 +23,8 @@ class AssassinProfile extends Model<AssassinProfileAttributes, AssassinProfileCr
   declare status: 'available' | 'busy' | 'inactive';
   declare locationLat?: number;
   declare locationLng?: number;
+  declare address?: string;
+  declare useAutoLocation: boolean;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 
@@ -66,6 +70,15 @@ AssassinProfile.init(
     locationLng: {
       type: DataTypes.FLOAT,
       allowNull: true,
+    },
+    address: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    useAutoLocation: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
   },
   {

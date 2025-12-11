@@ -26,6 +26,7 @@ router.use('/notifications', notificationsRoutes);
 router.use('/reports', reportsRoutes);
 router.use('/debts', debtsRoutes);
 router.use('/assassin-profiles', assassinsRoutes);
+router.use('/assassins', assassinsRoutes); // Alias para compatibilidad con frontend
 router.use('/targets', targetsRoutes);
 router.use('/leaderboard', leaderboardRoutes);
 

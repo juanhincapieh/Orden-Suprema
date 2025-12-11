@@ -64,7 +64,7 @@ export const useAssassin = () => {
         mission.assassinId === encodedEmail && 
         !mission.terminado &&
         mission.status !== 'completed' &&
-        (mission.status === 'in-progress' || mission.status === 'in_progress')
+        (mission.status === 'in-progress' || mission.status === 'in_progress' || mission.status === 'negotiating')
     ) as Contract[];
 
     setActiveMissions(activeMissionsList);

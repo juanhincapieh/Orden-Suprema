@@ -137,6 +137,18 @@ export const updateAssassinProfile = async (req: Request, res: Response) => {
     if (updates.status) {
       await profile.update({ status: updates.status });
     }
+    if (updates.location) {
+      await profile.update({
+        locationLat: updates.location.lat,
+        locationLng: updates.location.lng,
+      });
+    }
+    if (updates.address !== undefined) {
+      await profile.update({ address: updates.address });
+    }
+    if (updates.useAutoLocation !== undefined) {
+      await profile.update({ useAutoLocation: updates.useAutoLocation });
+    }
 
     const stats = await getAssassinStats(user.id);
 
@@ -158,5 +170,79 @@ export const updateAssassinProfile = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('UpdateAssassinProfile error:', error);
     return errorResponse(res, 'INTERNAL_ERROR', 'Error al actualizar perfil', 500);
+  }
+};
+
+
+// Actualizar ubicación del asesino
+export const updateAssassinLocation = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.userId;
+    const { lat, lng, address, useAutoLocation } = req.body;
+
+    const user = await User.findOne({
+      where: { id: userId, role: 'assassin' },
+      include: [{ model: AssassinProfile, as: 'assassinProfile' }],
+    });
+
+    if (!user) {
+      return notFoundResponse(res, 'Perfil de asesino');
+    }
+
+    let profile = (user as any).assassinProfile;
+    if (!profile) {
+      profile = await AssassinProfile.create({ userId: user.id });
+    }
+
+    await profile.update({
+      locationLat: lat,
+      locationLng: lng,
+      address: address || null,
+      useAutoLocation: useAutoLocation ?? true,
+    });
+
+    return successResponse(res, {
+      location: {
+        lat: profile.locationLat,
+        lng: profile.locationLng,
+        address: profile.address,
+        useAutoLocation: profile.useAutoLocation,
+      },
+    });
+  } catch (error) {
+    console.error('UpdateAssassinLocation error:', error);
+    return errorResponse(res, 'INTERNAL_ERROR', 'Error al actualizar ubicación', 500);
+  }
+};
+
+// Obtener ubicación del asesino
+export const getAssassinLocation = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.userId;
+
+    const user = await User.findOne({
+      where: { id: userId, role: 'assassin' },
+      include: [{ model: AssassinProfile, as: 'assassinProfile' }],
+    });
+
+    if (!user) {
+      return notFoundResponse(res, 'Perfil de asesino');
+    }
+
+    const profile = (user as any).assassinProfile;
+
+    return successResponse(res, {
+      location: profile
+        ? {
+            lat: profile.locationLat,
+            lng: profile.locationLng,
+            address: profile.address,
+            useAutoLocation: profile.useAutoLocation,
+          }
+        : null,
+    });
+  } catch (error) {
+    console.error('GetAssassinLocation error:', error);
+    return errorResponse(res, 'INTERNAL_ERROR', 'Error al obtener ubicación', 500);
   }
 };

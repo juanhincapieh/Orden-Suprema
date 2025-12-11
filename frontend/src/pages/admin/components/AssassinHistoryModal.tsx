@@ -59,16 +59,29 @@ export const AssassinHistoryModal = ({
   useEffect(() => {
     if (!assassin) return;
 
-    const assassinId = assassin.id;
+    // El assassinId en las misiones está codificado como btoa(email)
+    const assassinId = btoa(assassin.email);
     const allMissions = authService.getAllMissions();
+    const publicMissions = authService.getPublicMissions();
+    
+    // Combinar todas las misiones evitando duplicados
+    const missionMap = new Map();
+    [...allMissions, ...publicMissions].forEach(m => {
+      if (!missionMap.has(m.id)) {
+        missionMap.set(m.id, m);
+      }
+    });
+    const combinedMissions = Array.from(missionMap.values());
     
     // Filter missions for this assassin
-    const assassinMissions = allMissions.filter(m => m.assassinId === assassinId);
+    const assassinMissions = combinedMissions.filter(m => m.assassinId === assassinId);
     setMissions(assassinMissions);
 
     // Calculate statistics
-    const completed = assassinMissions.filter(m => m.status === 'completed');
-    const inProgress = assassinMissions.filter(m => m.status === 'in_progress');
+    const completed = assassinMissions.filter(m => m.status === 'completed' || m.terminado);
+    const inProgress = assassinMissions.filter(m => 
+      (m.status === 'in_progress' || m.status === 'in-progress') && !m.terminado
+    );
     const cancelled = assassinMissions.filter(m => m.status === 'cancelled');
 
     // Calculate average rating from completed missions with reviews
