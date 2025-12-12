@@ -301,6 +301,25 @@ export const deleteMission = async (req: Request, res: Response) => {
   }
 };
 
+// Obtener misiones de un asesino específico (para admin)
+export const getAssassinMissions = async (req: Request, res: Response) => {
+  try {
+    const { assassinId } = req.params;
+
+    const missions = await Mission.findAll({
+      where: { assassinId },
+      order: [['updatedAt', 'DESC']],
+    });
+
+    const missionsWithDetails = await Promise.all(missions.map(getMissionWithDetails));
+
+    return successResponse(res, { missions: missionsWithDetails });
+  } catch (error) {
+    console.error('GetAssassinMissions error:', error);
+    return errorResponse(res, 'INTERNAL_ERROR', 'Error al obtener misiones del asesino', 500);
+  }
+};
+
 // Aceptar misión desde notificación
 export const acceptMissionFromNotification = async (req: Request, res: Response) => {
   try {

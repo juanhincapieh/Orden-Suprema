@@ -223,6 +223,22 @@ const mockMissionsService = {
     
     return newReview;
   },
+
+  // Obtener misiones de un asesino específico (para admin)
+  getAssassinMissions: async (assassinId: string): Promise<Contract[]> => {
+    // En mock, buscar en todas las misiones
+    const publicMissions = JSON.parse(localStorage.getItem('publicMissions') || '[]');
+    const userMissionsDict = JSON.parse(localStorage.getItem('userMissions') || '{}');
+    
+    const allMissions: Contract[] = [...publicMissions];
+    Object.values(userMissionsDict).forEach((missions: any) => {
+      if (Array.isArray(missions)) {
+        allMissions.push(...missions);
+      }
+    });
+    
+    return allMissions.filter((m: any) => m.assassinId === assassinId);
+  },
 };
 
 // ============================================
@@ -231,7 +247,7 @@ const mockMissionsService = {
 
 const realMissionsService = {
   getPublicMissions: async (): Promise<Contract[]> => {
-    const response = await api.get<{ missions: Contract[] }>('/missions');
+    const response = await api.get<{ missions: Contract[] }>('/missions/public');
     return response.missions;
   },
 
@@ -291,6 +307,12 @@ const realMissionsService = {
   createReview: async (missionId: string, review: { rating: number; comment: string }): Promise<any> => {
     const response = await api.post<{ review: any }>(`/missions/${missionId}/review`, review);
     return response.review;
+  },
+
+  // Obtener misiones de un asesino específico (para admin)
+  getAssassinMissions: async (assassinId: string): Promise<Contract[]> => {
+    const response = await api.get<{ missions: Contract[] }>(`/missions/assassin/${assassinId}`);
+    return response.missions;
   },
 };
 

@@ -18,6 +18,7 @@ export interface Contract {
   status: 'open' | 'in_progress' | 'completed' | 'cancelled' | 'negotiating';
   terminado: boolean;
   contractorId: string;
+  contractorName?: string;
   assassinId?: string;
   assassinName?: string;
   createdAt: Date | string;

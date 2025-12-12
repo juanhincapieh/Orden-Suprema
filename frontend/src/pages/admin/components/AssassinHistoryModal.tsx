@@ -73,10 +73,8 @@ export const AssassinHistoryModal = ({
           totalEarnings: assassinStats.totalEarnings
         });
 
-        // Obtener misiones públicas y filtrar las del asesino
-        const publicMissions = await missionsApi.getPublicMissions();
-        const assassinId = btoa(assassin.email);
-        const assassinMissions = publicMissions.filter(m => m.assassinId === assassinId);
+        // Obtener misiones del asesino usando el nuevo endpoint
+        const assassinMissions = await missionsApi.getAssassinMissions(assassin.id);
         setMissions(assassinMissions);
       } catch (error) {
         console.error('Error loading assassin history:', error);
@@ -171,14 +169,8 @@ export const AssassinHistoryModal = ({
                   return dateB.getTime() - dateA.getTime();
                 })
                 .map((mission) => {
-                  // Get contractor name from contractorId (base64 encoded email)
-                  let contractorName = 'Unknown';
-                  try {
-                    const contractorEmail = atob(mission.contractorId);
-                    contractorName = contractorEmail.split('@')[0];
-                  } catch {
-                    contractorName = 'Unknown';
-                  }
+                  // Get contractor name from mission details (comes from backend)
+                  const contractorName = mission.contractorName || 'Unknown';
 
                   // Format date
                   const missionDate = new Date(mission.updatedAt || mission.createdAt);
