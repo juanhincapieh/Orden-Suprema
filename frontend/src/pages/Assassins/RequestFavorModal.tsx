@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, TriangleAlert, CheckCircle } from 'lucide-react';
 import { AssassinProfile } from './useAssassins';
-import { debtService } from '../../services/debtService';
+import { debtsApi } from '../../services/api';
 import styles from './RequestFavorModal.module.css';
 
 interface User {
@@ -24,7 +24,7 @@ export const RequestFavorModal = ({
   isOpen,
   onClose,
   targetAssassin,
-  currentUser,
+  currentUser: _currentUser,
   isSpanish,
   onSuccess
 }: RequestFavorModalProps) => {
@@ -58,11 +58,14 @@ export const RequestFavorModal = ({
         );
       }
 
-      // Crear solicitud de favor
-      const debtorId = btoa(currentUser.email); // El que pide el favor (yo)
-      const creditorId = targetAssassin.id; // El que lo hará (el otro asesino)
+      // Crear solicitud de favor usando el servicio API unificado
+      // Obtener email del asesino desde su ID (base64)
+      const creditorEmail = atob(targetAssassin.id);
 
-      debtService.createFavorRequest(debtorId, creditorId, favorDescription, isSpanish ? 'es' : 'en');
+      await debtsApi.createFavorRequest({
+        creditorEmail,
+        description: favorDescription
+      });
 
       setSuccess(true);
       setTimeout(() => {

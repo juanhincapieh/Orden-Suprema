@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAssassins } from './useAssassins';
 import { RequestFavorButton } from './RequestFavorButton';
-import { debtService } from '../../services/debtService';
+import { debtsUtils } from '../../services/api';
 import { Search, Coins, Star, Check, Target, AlertTriangle, X, Lock, Key, Sparkles, Lightbulb, DollarSign } from 'lucide-react';
 import styles from './Assassins.module.css';
 
@@ -131,8 +131,8 @@ const Assassins = () => {
         {/* Lista de asesinos */}
         <div className={styles.assassinsGrid} key={`grid-${searchTerm}-${searchBy}-${filterStatus}-${sortBy}`}>
           {filteredAssassins.map((assassin) => {
-            const isTarget = debtService.isTarget(assassin.id);
-            const targetInfo = isTarget ? debtService.getTargetInfo(assassin.id) : null;
+            const isTarget = debtsUtils.isTarget(assassin.id);
+            const targetInfo = isTarget ? debtsUtils.getTargetInfo(assassin.id) : null;
             
             return (
               <div key={assassin.id} className={`${styles.assassinCard} ${isTarget ? styles.targetCard : ''}`}>
@@ -249,8 +249,8 @@ const Assassins = () => {
 
       {/* Modal de detalles */}
       {showDetailModal && selectedAssassin && (() => {
-        const isTarget = debtService.isTarget(selectedAssassin.id);
-        const targetInfo = isTarget ? debtService.getTargetInfo(selectedAssassin.id) : null;
+        const isTarget = debtsUtils.isTarget(selectedAssassin.id);
+        const targetInfo = isTarget ? debtsUtils.getTargetInfo(selectedAssassin.id) : null;
         
         return (
           <div className={styles.modalOverlay} onClick={() => setShowDetailModal(false)}>
