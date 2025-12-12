@@ -18,11 +18,14 @@ export const getNotifications = async (req: Request, res: Response) => {
         id: n.id,
         type: n.type,
         senderEmail: sender?.email || null,
-        senderName: sender?.nickname || null,
+        senderName: n.senderName || sender?.nickname || null,
         amount: n.amount,
         message: n.message,
         debtId: n.debtId,
         missionId: n.missionId,
+        missionTitle: n.missionTitle || null,
+        missionReward: n.missionReward || null,
+        status: n.status || null,
         read: n.read,
         createdAt: n.createdAt,
       };
@@ -108,7 +111,7 @@ export const getUnreadCount = async (req: Request, res: Response) => {
 // Crear notificación de asignación de misión
 export const createMissionAssignment = async (req: Request, res: Response) => {
   try {
-    const { recipientId, missionId, missionTitle, missionReward } = req.body;
+    const { recipientId, recipientEmail, missionId, missionTitle, missionReward } = req.body;
     const senderId = req.user!.userId;
 
     // Obtener nombre del remitente
@@ -117,8 +120,22 @@ export const createMissionAssignment = async (req: Request, res: Response) => {
       return errorResponse(res, 'NOT_FOUND', 'Usuario no encontrado', 404);
     }
 
+    // Resolver el destinatario - puede venir como ID o como email
+    let targetUserId = recipientId;
+    if (!targetUserId && recipientEmail) {
+      const recipient = await User.findOne({ where: { email: recipientEmail } });
+      if (!recipient) {
+        return errorResponse(res, 'NOT_FOUND', 'Destinatario no encontrado', 404);
+      }
+      targetUserId = recipient.id;
+    }
+
+    if (!targetUserId) {
+      return errorResponse(res, 'VALIDATION_ERROR', 'Se requiere recipientId o recipientEmail', 400);
+    }
+
     const notification = await Notification.create({
-      userId: recipientId,
+      userId: targetUserId,
       type: 'mission_assignment',
       senderId,
       senderName: sender.nickname || sender.email,
