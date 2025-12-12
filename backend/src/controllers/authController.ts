@@ -87,6 +87,7 @@ export const getMe = async (req: Request, res: Response) => {
       return unauthorizedResponse(res, 'Usuario no encontrado');
     }
 
+    // Devolver el usuario directamente (el frontend espera los campos del usuario en data)
     return successResponse(res, user.toSafeJSON());
   } catch (error) {
     console.error('GetMe error:', error);
