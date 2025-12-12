@@ -6,6 +6,7 @@ import { usersApi, missionsApi, coinsApi, notificationsApi } from '../../service
 
 export interface AssassinProfile {
   id: string;
+  email: string;
   name: string;
   nickname: string;
   minContractValue: number;
@@ -55,8 +56,14 @@ export const useAssassins = () => {
       setIsLoading(true);
       const assassinsList = await usersApi.getAllAssassins();
 
-      const profiles: AssassinProfile[] = assassinsList.map((a) => ({
+      // Filtrar al usuario actual si es un asesino (no mostrarse a sí mismo)
+      const filteredList = currentUser?.role === 'assassin'
+        ? assassinsList.filter((a) => a.email !== currentUser.email && a.id !== currentUser.id)
+        : assassinsList;
+
+      const profiles: AssassinProfile[] = filteredList.map((a) => ({
         id: a.id,
+        email: a.email,
         name: a.name,
         nickname: a.nickname || a.name,
         minContractValue: a.minContractValue || 50000,
@@ -163,8 +170,8 @@ export const useAssassins = () => {
     }
 
     try {
-      // Obtener email del asesino desde su ID (base64)
-      const assassinEmail = atob(selectedAssassin.id);
+      // Usar el email del asesino directamente del perfil
+      const assassinEmail = selectedAssassin.email;
 
       if (proposeOption === 'existing') {
         // Proponer misión existente
@@ -290,7 +297,15 @@ export const useAssassins = () => {
     }
 
     try {
-      const assassinEmail = atob(selectedAssassin.id);
+      // Usar el email directamente del perfil del asesino
+      const assassinEmail = selectedAssassin.email;
+      
+      console.log('💰 Enviando monedas:', { assassinEmail, amount, selectedAssassin });
+      
+      if (!assassinEmail) {
+        alert(isSpanish ? 'Error: Email del asesino no encontrado' : 'Error: Assassin email not found');
+        return;
+      }
 
       // Transferir monedas
       await coinsApi.transferCoins(assassinEmail, amount, transferMessage || undefined);
