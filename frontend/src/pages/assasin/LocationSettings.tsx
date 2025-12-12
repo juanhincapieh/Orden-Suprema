@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Navigation, Save, Loader } from 'lucide-react';
+import { usersApi } from '../../services/api';
 import styles from './Assassin.module.css';
 
 interface LocationSettingsProps {
@@ -26,16 +27,23 @@ export const LocationSettings = ({ userEmail, isSpanish, onLocationUpdate }: Loc
 
   // Cargar configuración guardada
   useEffect(() => {
-    const stored = localStorage.getItem('assassinLocations');
-    const locations = stored ? JSON.parse(stored) : {};
-    const savedLocation = locations[userEmail];
-    
-    if (savedLocation) {
-      setUseAutoLocation(savedLocation.useAutoLocation ?? true);
-      setManualAddress(savedLocation.address || '');
-      if (savedLocation.lat && savedLocation.lng) {
-        setCurrentLocation({ lat: savedLocation.lat, lng: savedLocation.lng });
+    const loadLocation = async () => {
+      try {
+        const savedLocation = await usersApi.getAssassinLocation();
+        if (savedLocation) {
+          setUseAutoLocation(savedLocation.useAutoLocation ?? true);
+          setManualAddress(savedLocation.address || '');
+          if (savedLocation.lat && savedLocation.lng) {
+            setCurrentLocation({ lat: savedLocation.lat, lng: savedLocation.lng });
+          }
+        }
+      } catch (err) {
+        console.error('Error loading location:', err);
       }
+    };
+    
+    if (userEmail) {
+      loadLocation();
     }
   }, [userEmail]);
 
@@ -133,22 +141,8 @@ export const LocationSettings = ({ userEmail, isSpanish, onLocationUpdate }: Loc
         setCurrentLocation(coords);
       }
 
-      // Guardar en localStorage
-      const stored = localStorage.getItem('assassinLocations');
-      const locations = stored ? JSON.parse(stored) : {};
-      locations[userEmail] = locationData;
-      localStorage.setItem('assassinLocations', JSON.stringify(locations));
-
-      // También actualizar el perfil del asesino
-      const profiles = localStorage.getItem('assassinProfiles');
-      const profilesDict = profiles ? JSON.parse(profiles) : {};
-      if (!profilesDict[userEmail]) {
-        profilesDict[userEmail] = {};
-      }
-      profilesDict[userEmail].location = { lat: locationData.lat, lng: locationData.lng };
-      profilesDict[userEmail].address = locationData.address;
-      profilesDict[userEmail].useAutoLocation = locationData.useAutoLocation;
-      localStorage.setItem('assassinProfiles', JSON.stringify(profilesDict));
+      // Guardar usando la API
+      await usersApi.updateAssassinLocation(locationData);
 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);

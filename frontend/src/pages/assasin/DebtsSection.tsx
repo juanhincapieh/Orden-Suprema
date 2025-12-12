@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Debt } from '../../services/debtService';
+import { Debt } from '../../services/api';
 import { DebtCard } from './DebtCard';
 import { Coins, Sparkles, CheckCircle, Inbox, Send, Download, FileClock } from 'lucide-react';
 import styles from './DebtsSection.module.css';

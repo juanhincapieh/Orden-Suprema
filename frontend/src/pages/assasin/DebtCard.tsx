@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Debt } from '../../services/debtService';
+import { Debt } from '../../services/api';
 import { RequestPaymentModal } from './RequestPaymentModal';
 import { CheckCircle, AlertCircle, Clock, HelpCircle, Target, Coins } from 'lucide-react';
 import styles from './DebtCard.module.css';

@@ -5,7 +5,7 @@ import { DebtsSection } from './DebtsSection';
 import { RegisterDebtModal } from './RegisterDebtModal';
 import { LocationSettings } from './LocationSettings';
 import { MissionAssignmentNotifications } from './MissionAssignmentNotifications';
-import { debtService } from '../../services/debtService';
+import { debtsApi, Debt } from '../../services/api';
 import MissionDetailModal from '../../components/MissionDetailModal';
 import { Star, Calendar, Coins } from 'lucide-react';
 import styles from './Assassin.module.css';
@@ -49,23 +49,16 @@ const Assassin = () => {
   const [availableAssassins, setAvailableAssassins] = useState<any[]>([]);
 
   // Cargar asesinos disponibles
-  const loadAssassins = () => {
+  const loadAssassins = async () => {
     try {
-      const users = localStorage.getItem('roles');
-      const nicknames = localStorage.getItem('nicknames');
+      const { usersApi } = await import('../../services/api');
+      const assassinsList = await usersApi.getAllAssassins();
       
-      if (!users) return;
-      
-      const rolesDict = JSON.parse(users);
-      const nicknamesDict = nicknames ? JSON.parse(nicknames) : {};
-      
-      const assassins = Object.entries(rolesDict)
-        .filter(([, role]) => role === 'assassin')
-        .map(([email]) => ({
-          email,
-          name: email.split('@')[0],
-          nickname: nicknamesDict[email] || email.split('@')[0]
-        }));
+      const assassins = assassinsList.map((a) => ({
+        email: a.email,
+        name: a.name,
+        nickname: a.nickname || a.name
+      }));
       
       setAvailableAssassins(assassins);
       console.log('🗡️ Asesinos disponibles:', assassins);
@@ -75,17 +68,13 @@ const Assassin = () => {
   };
 
   // Cargar deudas
-  const loadDebts = () => {
+  const loadDebts = async () => {
     try {
-      const userIdEncoded = btoa(userEmail);
-      const debts = debtService.getDebtsForAssassin(userIdEncoded);
-      
-      // Obtener todas las deudas del localStorage
-      const allDebtsStored = localStorage.getItem('assassinDebts');
-      const allDebts = allDebtsStored ? JSON.parse(allDebtsStored) : [];
+      const debts = await debtsApi.getDebts();
       
       // Filtrar deudas pendientes que este usuario creó
-      const pending = allDebts.filter((debt: any) => 
+      const userIdEncoded = btoa(userEmail);
+      const pending = [...debts.debtsIOwe, ...debts.debtsOwedToMe].filter((debt: Debt) => 
         debt.debtorId === userIdEncoded && debt.status === 'pending'
       );
       
@@ -106,24 +95,24 @@ const Assassin = () => {
   }, [userEmail]);
 
   // Handlers para deudas
-  const handleRequestPayment = (debtId: string, description: string) => {
+  const handleRequestPayment = async (debtId: string, description: string) => {
     try {
-      debtService.requestPayment(debtId, description);
+      await debtsApi.requestPayment(debtId, { paymentDescription: description });
       alert(isSpanish ? '¡Solicitud de pago enviada!' : 'Payment request sent!');
-      loadDebts();
+      await loadDebts();
     } catch (error: any) {
       console.error('Error requesting payment:', error);
       alert(error.message);
     }
   };
 
-  const handleMarkCompleted = (debtId: string) => {
+  const handleMarkCompleted = async (debtId: string) => {
     try {
-      debtService.markAsCompleted(debtId);
+      await debtsApi.markAsCompleted(debtId);
       alert(isSpanish 
         ? 'Solicitud de completación enviada al acreedor' 
         : 'Completion request sent to creditor');
-      loadDebts();
+      await loadDebts();
     } catch (error: any) {
       console.error('Error marking as completed:', error);
       alert(error.message);
@@ -133,34 +122,31 @@ const Assassin = () => {
   const getAssassinName = (assassinId: string): string => {
     try {
       const email = atob(assassinId);
-      const nicknames = localStorage.getItem('nicknames');
-      const nicknamesDict = nicknames ? JSON.parse(nicknames) : {};
-      return nicknamesDict[email] || email;
+      // Buscar en la lista de asesinos cargados
+      const assassin = availableAssassins.find(a => a.email === email);
+      if (assassin) {
+        return assassin.nickname || assassin.name;
+      }
+      return email.split('@')[0];
     } catch {
       return 'Unknown';
     }
   };
 
-  const handleRegisterDebt = (creditorEmail: string, description: string) => {
+  const handleRegisterDebt = async (creditorEmail: string, description: string) => {
     try {
-      // YO soy el deudor (quien debe), el otro es el acreedor (a quien le debo)
-      const debtorId = btoa(userEmail); // YO
-      const creditorId = btoa(creditorEmail); // A QUIEN LE DEBO
-      
-      // Crear la solicitud de favor - YO solicito registrar que LE DEBO al otro
-      debtService.createFavorRequest(
-        debtorId, // YO (quien debe)
-        creditorId, // EL OTRO (quien me hizo el favor)
-        description,
-        isSpanish ? 'es' : 'en'
-      );
+      // Crear la solicitud de favor usando el servicio API
+      await debtsApi.createFavorRequest({
+        creditorEmail,
+        description
+      });
       
       alert(isSpanish 
         ? '¡Deuda registrada! El otro asesino debe aceptar que te hizo el favor.'
         : 'Debt registered! The other assassin must accept that they did you the favor.');
       
       setShowRegisterDebtModal(false);
-      loadDebts();
+      await loadDebts();
     } catch (error: any) {
       console.error('Error registering debt:', error);
       alert(error.message);
@@ -312,16 +298,21 @@ const Assassin = () => {
           }}
           isSpanish={isSpanish}
           showNegotiation={false}
-          onCompleteMission={(mission) => {
-            // Usar la función del hook que actualiza el estado de React correctamente
-            const result = completeMission(mission);
-            
+          onCompleteMission={async (mission) => {
             // Cerrar el modal inmediatamente para evitar re-completar
             setShowDetailModal(false);
             
-            alert(isSpanish 
-              ? `¡Misión completada! Has recibido ${result.reward.toLocaleString()} monedas.\n\nSaldo anterior: ${result.oldBalance.toLocaleString()}\nNuevo saldo: ${result.newBalance.toLocaleString()}`
-              : `Mission completed! You received ${result.reward.toLocaleString()} coins.\n\nPrevious balance: ${result.oldBalance.toLocaleString()}\nNew balance: ${result.newBalance.toLocaleString()}`);
+            try {
+              // Usar la función del hook que actualiza el estado de React correctamente
+              const result = await completeMission(mission);
+              
+              alert(isSpanish 
+                ? `¡Misión completada! Has recibido ${result.reward.toLocaleString()} monedas.\n\nSaldo anterior: ${result.oldBalance.toLocaleString()}\nNuevo saldo: ${result.newBalance.toLocaleString()}`
+                : `Mission completed! You received ${result.reward.toLocaleString()} coins.\n\nPrevious balance: ${result.oldBalance.toLocaleString()}\nNew balance: ${result.newBalance.toLocaleString()}`);
+            } catch (error) {
+              console.error('Error completing mission:', error);
+              alert(isSpanish ? 'Error al completar la misión' : 'Error completing mission');
+            }
           }}
         />
 

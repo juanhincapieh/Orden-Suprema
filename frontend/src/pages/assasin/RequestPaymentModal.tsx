@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Lightbulb, X } from 'lucide-react';
-import { Debt } from '../../services/debtService';
+import { Debt } from '../../services/api';
 import styles from '../Assassins/RequestFavorModal.module.css'; // Reutilizar estilos
 
 interface RequestPaymentModalProps {
