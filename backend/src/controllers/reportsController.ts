@@ -81,14 +81,33 @@ export const resolveReport = async (req: Request, res: Response) => {
   try {
     const { reportId } = req.params;
 
-    const report = await Report.findByPk(reportId);
+    const report = await Report.findByPk(reportId, {
+      include: [
+        { model: Mission, as: 'mission' },
+        { model: User, as: 'reporter' },
+      ],
+    });
     if (!report) {
       return notFoundResponse(res, 'Reporte');
     }
 
     await report.update({ status: 'resolved' });
 
-    return successResponse(res, {});
+    const mission = (report as any).mission;
+    const reporter = (report as any).reporter;
+
+    return successResponse(res, {
+      report: {
+        id: report.id,
+        contractId: report.missionId,
+        contractTitle: mission?.title || 'Misión eliminada',
+        reporterEmail: reporter?.email || '',
+        reporterName: reporter?.nickname || '',
+        description: report.description,
+        status: 'resolved',
+        createdAt: report.createdAt,
+      },
+    });
   } catch (error) {
     console.error('ResolveReport error:', error);
     return errorResponse(res, 'INTERNAL_ERROR', 'Error al resolver reporte', 500);
@@ -99,16 +118,92 @@ export const cancelReport = async (req: Request, res: Response) => {
   try {
     const { reportId } = req.params;
 
-    const report = await Report.findByPk(reportId);
+    const report = await Report.findByPk(reportId, {
+      include: [
+        { model: Mission, as: 'mission' },
+        { model: User, as: 'reporter' },
+      ],
+    });
     if (!report) {
       return notFoundResponse(res, 'Reporte');
     }
 
     await report.update({ status: 'cancelled' });
 
-    return successResponse(res, {});
+    const mission = (report as any).mission;
+    const reporter = (report as any).reporter;
+
+    return successResponse(res, {
+      report: {
+        id: report.id,
+        contractId: report.missionId,
+        contractTitle: mission?.title || 'Misión eliminada',
+        reporterEmail: reporter?.email || '',
+        reporterName: reporter?.nickname || '',
+        description: report.description,
+        status: 'cancelled',
+        createdAt: report.createdAt,
+      },
+    });
   } catch (error) {
     console.error('CancelReport error:', error);
     return errorResponse(res, 'INTERNAL_ERROR', 'Error al cancelar reporte', 500);
+  }
+};
+
+export const updateReport = async (req: Request, res: Response) => {
+  try {
+    const { reportId } = req.params;
+    const updates = req.body;
+
+    const report = await Report.findByPk(reportId, {
+      include: [
+        { model: Mission, as: 'mission' },
+        { model: User, as: 'reporter' },
+      ],
+    });
+
+    if (!report) {
+      return notFoundResponse(res, 'Reporte');
+    }
+
+    await report.update(updates);
+
+    const mission = (report as any).mission;
+    const reporter = (report as any).reporter;
+
+    return successResponse(res, {
+      report: {
+        id: report.id,
+        contractId: report.missionId,
+        contractTitle: mission?.title || 'Misión eliminada',
+        reporterEmail: reporter?.email || '',
+        reporterName: reporter?.nickname || '',
+        description: report.description,
+        status: report.status,
+        createdAt: report.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error('UpdateReport error:', error);
+    return errorResponse(res, 'INTERNAL_ERROR', 'Error al actualizar reporte', 500);
+  }
+};
+
+export const deleteReport = async (req: Request, res: Response) => {
+  try {
+    const { reportId } = req.params;
+
+    const report = await Report.findByPk(reportId);
+    if (!report) {
+      return notFoundResponse(res, 'Reporte');
+    }
+
+    await report.destroy();
+
+    return successResponse(res, {});
+  } catch (error) {
+    console.error('DeleteReport error:', error);
+    return errorResponse(res, 'INTERNAL_ERROR', 'Error al eliminar reporte', 500);
   }
 };
