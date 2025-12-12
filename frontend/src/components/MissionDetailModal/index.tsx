@@ -12,6 +12,8 @@ interface MissionDetailModalProps {
   onAcceptNegotiation?: (mission: Contract) => void;
   onRejectNegotiation?: (mission: Contract) => void;
   onCompleteMission?: (mission: Contract) => void;
+  onAcceptMission?: (mission: Contract) => void;
+  onNegotiateMission?: (mission: Contract) => void;
 }
 
 const MissionDetailModal = ({
@@ -23,7 +25,9 @@ const MissionDetailModal = ({
   showNegotiation = true,
   onAcceptNegotiation,
   onRejectNegotiation,
-  onCompleteMission
+  onCompleteMission,
+  onAcceptMission,
+  onNegotiateMission
 }: MissionDetailModalProps) => {
   if (!isOpen || !mission) return null;
 
@@ -90,8 +94,16 @@ const MissionDetailModal = ({
 
   const isOwner = currentUser && mission.contractorId === currentUser.id;
   const isAssassin = currentUser && currentUser.role === 'assassin' && mission.assassinId === currentUser.id;
-  const shouldShowNegotiationDetails = showNegotiation && mission.negotiation && isOwner;
-  const shouldShowNegotiationMessage = showNegotiation && mission.negotiation && !isOwner;
+  
+  // Verificar si el usuario actual envió la negociación
+  const isNegotiationOwner = currentUser && mission.negotiation && (
+    mission.negotiation.proposedByEmail === currentUser.email
+  );
+  
+  // Mostrar detalles de negociación si es el dueño de la misión O si el usuario envió la negociación
+  const shouldShowNegotiationDetails = showNegotiation && mission.negotiation && (isOwner || isNegotiationOwner);
+  // Mostrar mensaje genérico solo si hay negociación y el usuario no es dueño ni envió la negociación
+  const shouldShowNegotiationMessage = showNegotiation && mission.negotiation && !isOwner && !isNegotiationOwner;
   const canComplete = isAssassin && normalizedStatus === 'in_progress' && !mission.terminado && onCompleteMission;
 
   // Debug logs
@@ -204,15 +216,28 @@ const MissionDetailModal = ({
           {shouldShowNegotiationDetails && (
             <div className={styles.modalSection}>
               <h3 className={styles.sectionTitle}>
-                {isSpanish ? 'Negociación activa' : 'Active negotiation'}
+                {isNegotiationOwner && !isOwner
+                  ? (isSpanish ? 'Tu propuesta' : 'Your proposal')
+                  : (isSpanish ? 'Negociación activa' : 'Active negotiation')}
               </h3>
               <div className={styles.negotiationBox}>
                 <p className={styles.negotiationProposer}>
-                  <strong>{mission.negotiation!.proposedByName}</strong>{' '}
-                  {isSpanish ? 'propone' : 'proposes'}:{' '}
-                  <span className={styles.negotiationReward}>
-                    <Coins size={16} /> {mission.negotiation!.proposedReward.toLocaleString()}
-                  </span>
+                  {isNegotiationOwner && !isOwner ? (
+                    <>
+                      {isSpanish ? 'Propusiste' : 'You proposed'}:{' '}
+                      <span className={styles.negotiationReward}>
+                        <Coins size={16} /> {mission.negotiation!.proposedReward.toLocaleString()}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <strong>{mission.negotiation!.proposedByName}</strong>{' '}
+                      {isSpanish ? 'propone' : 'proposes'}:{' '}
+                      <span className={styles.negotiationReward}>
+                        <Coins size={16} /> {mission.negotiation!.proposedReward.toLocaleString()}
+                      </span>
+                    </>
+                  )}
                 </p>
                 {mission.negotiation!.message && (
                   <p className={styles.negotiationMessage}>
@@ -222,8 +247,20 @@ const MissionDetailModal = ({
                 <p className={styles.negotiationDate}>
                   {new Date(mission.negotiation!.createdAt).toLocaleString()}
                 </p>
+                
+                {/* Mostrar estado de la propuesta si el usuario la envió */}
+                {isNegotiationOwner && !isOwner && (
+                  <p className={styles.negotiationStatus}>
+                    {mission.negotiation!.status === 'pending' 
+                      ? (isSpanish ? '⏳ Esperando respuesta del contratista' : '⏳ Waiting for contractor response')
+                      : mission.negotiation!.status === 'accepted'
+                        ? (isSpanish ? '✅ Propuesta aceptada' : '✅ Proposal accepted')
+                        : (isSpanish ? '❌ Propuesta rechazada' : '❌ Proposal rejected')}
+                  </p>
+                )}
 
-                {mission.negotiation!.status === 'pending' && onAcceptNegotiation && onRejectNegotiation && (
+                {/* Solo mostrar botones de aceptar/rechazar al dueño de la misión */}
+                {isOwner && mission.negotiation!.status === 'pending' && onAcceptNegotiation && onRejectNegotiation && (
                   <div className={styles.negotiationActions}>
                     <button
                       className={styles.acceptButton}
@@ -279,6 +316,29 @@ const MissionDetailModal = ({
               <CheckCircle className={styles.buttonIcon} size={18} />
               {isSpanish ? 'Marcar como Completada' : 'Mark as Completed'}
             </button>
+          </div>
+        )}
+
+        {/* Botones de aceptar y negociar para misiones abiertas */}
+        {normalizedStatus === 'open' && !isOwner && (onAcceptMission || onNegotiateMission) && (
+          <div className={styles.modalFooter}>
+            {onAcceptMission && (!currentUser || currentUser.role === 'assassin') && (
+              <button
+                className={styles.acceptMissionButton}
+                onClick={() => onAcceptMission(mission)}
+              >
+                <CheckCircle className={styles.buttonIcon} size={18} />
+                {isSpanish ? 'Aceptar Misión' : 'Accept Mission'}
+              </button>
+            )}
+            {onNegotiateMission && (
+              <button
+                className={styles.negotiateMissionButton}
+                onClick={() => onNegotiateMission(mission)}
+              >
+                {isSpanish ? 'Iniciar Negociación' : 'Start Negotiation'}
+              </button>
+            )}
           </div>
         )}
       </div>

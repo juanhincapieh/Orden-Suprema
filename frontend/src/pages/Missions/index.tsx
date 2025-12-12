@@ -195,24 +195,15 @@ const Missions = () => {
         currentUser={currentUser}
         isSpanish={isSpanish}
         showNegotiation={true}
+        onAcceptMission={(mission) => {
+          setShowDetailModal(false);
+          handleAcceptMission(mission);
+        }}
+        onNegotiateMission={(mission) => {
+          setShowDetailModal(false);
+          handleNegotiateClick(mission);
+        }}
       />
-
-      {/* Botón de negociación en modal */}
-      {showDetailModal && selectedMission && currentUser && selectedMission.status === 'open' && (
-        <div className={styles.modalOverlay} style={{ pointerEvents: 'none' }}>
-          <div className={styles.modal} style={{ pointerEvents: 'auto' }}>
-            <button
-              className={styles.modalNegotiateButton}
-              onClick={() => {
-                setShowDetailModal(false);
-                handleNegotiateClick(selectedMission);
-              }}
-            >
-              {isSpanish ? 'Iniciar negociación' : 'Start negotiation'}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Modal de negociación */}
       {showNegotiateModal && selectedMission && currentUser && (
