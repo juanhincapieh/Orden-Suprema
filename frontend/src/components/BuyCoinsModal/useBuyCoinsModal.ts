@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import { authService } from '../../services/authService';
-import { transactionService } from '../../services/transactionService';
+import { coinsApi } from '../../services/api';
 
 const COIN_PACKAGES = [
-  { amount: 500, price: 5 },
-  { amount: 1000, price: 9 },
-  { amount: 2500, price: 20 },
-  { amount: 5000, price: 35 },
-  { amount: 10000, price: 60 }
+  { id: 'pack_500', amount: 500, price: 5 },
+  { id: 'pack_1000', amount: 1000, price: 9 },
+  { id: 'pack_2500', amount: 2500, price: 20 },
+  { id: 'pack_5000', amount: 5000, price: 35 },
+  { id: 'pack_10000', amount: 10000, price: 60 }
 ];
 
 interface UseBuyCoinsModalProps {
@@ -16,52 +15,48 @@ interface UseBuyCoinsModalProps {
   onPurchaseComplete?: () => void;
 }
 
-export const useBuyCoinsModal = ({ userEmail, onClose, onPurchaseComplete }: UseBuyCoinsModalProps) => {
+export const useBuyCoinsModal = ({ userEmail: _userEmail, onClose, onPurchaseComplete }: UseBuyCoinsModalProps) => {
   const [selectedPackage, setSelectedPackage] = useState(COIN_PACKAGES[0]);
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCvv] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const isSpanish = navigator.language.toLowerCase().startsWith('es');
 
-  const handleBuyCoins = (e: React.FormEvent) => {
+  const handleBuyCoins = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Obtener el usuario actual para registrar la transacción
-    const currentUser = authService.getCurrentUser();
-    if (!currentUser) {
-      alert(isSpanish ? 'Error: Usuario no encontrado' : 'Error: User not found');
-      return;
-    }
-
-    // authService.updateCoins ya actualiza el currentUser en localStorage
-    authService.updateCoins(userEmail, selectedPackage.amount);
-
-    // Registrar la transacción para que el admin pueda verla
-    transactionService.addPurchase(
-      userEmail,
-      currentUser.nickname,
-      selectedPackage.amount,
-      selectedPackage.price
-    );
-
-    alert(
-      isSpanish
-        ? `¡Compra exitosa! Has recibido ${selectedPackage.amount.toLocaleString()} monedas.`
-        : `Purchase successful! You received ${selectedPackage.amount.toLocaleString()} coins.`
-    );
-
-    setCardNumber('');
-    setCardName('');
-    setExpiryDate('');
-    setCvv('');
     
-    onClose();
-    
-    // Notificar al componente padre para que actualice el estado
-    if (onPurchaseComplete) {
-      onPurchaseComplete();
+    if (isProcessing) return;
+    setIsProcessing(true);
+
+    try {
+      // Usar el servicio API unificado para comprar monedas
+      await coinsApi.purchaseCoins(selectedPackage.amount, selectedPackage.id);
+
+      alert(
+        isSpanish
+          ? `¡Compra exitosa! Has recibido ${selectedPackage.amount.toLocaleString()} monedas.`
+          : `Purchase successful! You received ${selectedPackage.amount.toLocaleString()} coins.`
+      );
+
+      setCardNumber('');
+      setCardName('');
+      setExpiryDate('');
+      setCvv('');
+      
+      onClose();
+      
+      // Notificar al componente padre para que actualice el estado
+      if (onPurchaseComplete) {
+        onPurchaseComplete();
+      }
+    } catch (error) {
+      console.error('Error purchasing coins:', error);
+      alert(isSpanish ? 'Error al procesar la compra' : 'Error processing purchase');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
