@@ -108,11 +108,11 @@ async function request<T>(
     return data.data as T;
   } catch (error) {
     if (error instanceof ApiError) {
-      // Si es error 401, limpiar token y redirigir a login
+      // Si es error 401, limpiar token (no redirigir automáticamente para evitar loops)
       if (error.status === 401) {
         removeToken();
         localStorage.removeItem('currentUser');
-        window.location.href = '/login';
+        // No redirigir automáticamente - dejar que el AuthContext maneje la redirección
       }
       throw error;
     }
