@@ -241,6 +241,7 @@ export const useAssassin = () => {
   };
 
   return {
+    currentUser,
     userEmail,
     userName,
     userCoins,
