@@ -1,5 +1,6 @@
 // Missions API Service - Supports both mock and real backend
-import { api, USE_MOCK, getCurrentUserEmail } from './index';
+import { api } from './index';
+import { USE_MOCK, getCurrentUserEmail } from './config';
 import { Contract, Negotiation } from '../../types';
 
 // ============================================
@@ -206,6 +207,22 @@ const mockMissionsService = {
     
     return newNegotiation;
   },
+
+  // Crear reseña
+  createReview: async (missionId: string, review: { rating: number; comment: string }): Promise<any> => {
+    const newReview = {
+      id: Date.now().toString(),
+      contractId: missionId,
+      rating: review.rating,
+      comment: review.comment,
+      createdAt: new Date().toISOString(),
+    };
+    
+    // Actualizar misión con la reseña
+    await mockMissionsService.updateMission(missionId, { review: newReview });
+    
+    return newReview;
+  },
 };
 
 // ============================================
@@ -268,6 +285,12 @@ const realMissionsService = {
   createNegotiation: async (missionId: string, negotiation: Partial<Negotiation>): Promise<Negotiation> => {
     const response = await api.post<{ negotiation: Negotiation }>(`/missions/${missionId}/negotiate`, negotiation);
     return response.negotiation;
+  },
+
+  // Crear reseña
+  createReview: async (missionId: string, review: { rating: number; comment: string }): Promise<any> => {
+    const response = await api.post<{ review: any }>(`/missions/${missionId}/review`, review);
+    return response.review;
   },
 };
 

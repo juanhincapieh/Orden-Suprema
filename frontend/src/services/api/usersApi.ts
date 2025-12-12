@@ -1,5 +1,6 @@
 // Users API Service - Supports both mock and real backend
-import { api, USE_MOCK } from './index';
+import { api } from './index';
+import { USE_MOCK } from './config';
 import { User, AssassinProfile } from '../../types';
 
 export interface AssassinStats {
@@ -230,6 +231,33 @@ const mockUsersService = {
     const profiles = JSON.parse(localStorage.getItem('assassinProfiles') || '{}');
     return profiles[email] || null;
   },
+
+  // Obtener ubicación del asesino
+  getAssassinLocation: async (): Promise<{ lat: number; lng: number; address?: string; useAutoLocation: boolean } | null> => {
+    const email = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!).email : null;
+    if (!email) return null;
+    
+    const locations = JSON.parse(localStorage.getItem('assassinLocations') || '{}');
+    return locations[email] || null;
+  },
+
+  // Actualizar ubicación del asesino
+  updateAssassinLocation: async (location: { lat: number; lng: number; address?: string; useAutoLocation: boolean }): Promise<void> => {
+    const email = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!).email : null;
+    if (!email) throw new Error('Not authenticated');
+    
+    const locations = JSON.parse(localStorage.getItem('assassinLocations') || '{}');
+    locations[email] = location;
+    localStorage.setItem('assassinLocations', JSON.stringify(locations));
+    
+    // También actualizar el perfil
+    const profiles = JSON.parse(localStorage.getItem('assassinProfiles') || '{}');
+    if (!profiles[email]) profiles[email] = {};
+    profiles[email].location = { lat: location.lat, lng: location.lng };
+    profiles[email].address = location.address;
+    profiles[email].useAutoLocation = location.useAutoLocation;
+    localStorage.setItem('assassinProfiles', JSON.stringify(profiles));
+  },
 };
 
 // ============================================
@@ -276,6 +304,21 @@ const realUsersService = {
     } catch {
       return null;
     }
+  },
+
+  // Obtener ubicación del asesino
+  getAssassinLocation: async (): Promise<{ lat: number; lng: number; address?: string; useAutoLocation: boolean } | null> => {
+    try {
+      const response = await api.get<{ location: { lat: number; lng: number; address?: string; useAutoLocation: boolean } | null }>('/assassins/location');
+      return response.location;
+    } catch {
+      return null;
+    }
+  },
+
+  // Actualizar ubicación del asesino
+  updateAssassinLocation: async (location: { lat: number; lng: number; address?: string; useAutoLocation: boolean }): Promise<void> => {
+    await api.put('/assassins/location', location);
   },
 };
 

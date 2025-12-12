@@ -231,4 +231,19 @@ export const debtsMockService = {
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true' || !import.meta.env.VITE_API_URL;
 export const debtsService = USE_MOCK ? debtsMockService : debtsApiService;
 
+// Funciones síncronas de utilidad (usan localStorage directamente para compatibilidad)
+export const debtsUtils = {
+  // Verificar si un asesino es objetivo (síncrono para UI)
+  isTarget: (assassinId: string): boolean => {
+    const targets = JSON.parse(localStorage.getItem('assassinTargets') || '[]');
+    return targets.some((t: TargetStatus) => t.assassinId === assassinId);
+  },
+
+  // Obtener info de objetivo (síncrono para UI)
+  getTargetInfo: (assassinId: string): TargetStatus | null => {
+    const targets = JSON.parse(localStorage.getItem('assassinTargets') || '[]');
+    return targets.find((t: TargetStatus) => t.assassinId === assassinId) || null;
+  },
+};
+
 export default debtsService;

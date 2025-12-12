@@ -1,5 +1,6 @@
 // Reports API Service - Supports both mock and real backend
-import { api, USE_MOCK, getCurrentUserEmail } from './index';
+import { api } from './index';
+import { USE_MOCK, getCurrentUserEmail } from './config';
 import { Report } from '../../types';
 
 // ============================================
@@ -85,6 +86,13 @@ const realReportsService = {
   },
 
   update: async (reportId: string, updates: Partial<Report>): Promise<Report> => {
+    // El backend tiene endpoints específicos para resolve/cancel
+    if (updates.status === 'resolved') {
+      return realReportsService.penalize(reportId);
+    } else if (updates.status === 'cancelled') {
+      return realReportsService.cancel(reportId);
+    }
+    // Para otras actualizaciones, usar el endpoint genérico si existe
     const response = await api.put<{ report: Report }>(`/reports/${reportId}`, updates);
     return response.report;
   },
@@ -94,11 +102,13 @@ const realReportsService = {
   },
 
   penalize: async (reportId: string): Promise<Report> => {
-    return realReportsService.update(reportId, { status: 'resolved' });
+    const response = await api.put<{ report: Report }>(`/reports/${reportId}/resolve`);
+    return response.report || { id: reportId, status: 'resolved' } as Report;
   },
 
   cancel: async (reportId: string): Promise<Report> => {
-    return realReportsService.update(reportId, { status: 'cancelled' });
+    const response = await api.put<{ report: Report }>(`/reports/${reportId}/cancel`);
+    return response.report || { id: reportId, status: 'cancelled' } as Report;
   },
 };
 

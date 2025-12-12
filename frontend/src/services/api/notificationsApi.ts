@@ -1,5 +1,6 @@
 // Notifications API Service - Supports both mock and real backend
-import { api, USE_MOCK, getCurrentUserEmail } from './index';
+import { api } from './index';
+import { USE_MOCK, getCurrentUserEmail } from './config';
 
 export interface Notification {
   id: string;
@@ -183,9 +184,8 @@ const realNotificationsService = {
     missionTitle: string,
     missionReward: number
   ): Promise<Notification> => {
-    // Necesitamos obtener el ID del usuario por email
     const response = await api.post<{ notification: Notification }>('/notifications/mission-assignment', {
-      recipientId: recipientEmail, // El backend debería resolver esto
+      recipientEmail,
       missionId,
       missionTitle,
       missionReward,

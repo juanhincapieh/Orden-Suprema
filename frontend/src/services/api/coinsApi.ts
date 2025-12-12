@@ -1,5 +1,6 @@
 // Coins & Transactions API Service - Supports both mock and real backend
-import { api, USE_MOCK, getCurrentUserEmail } from './index';
+import { api } from './index';
+import { USE_MOCK, getCurrentUserEmail } from './config';
 import { Transaction } from '../../types';
 
 // ============================================
