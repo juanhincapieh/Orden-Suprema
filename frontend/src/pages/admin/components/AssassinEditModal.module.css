@@ -26,8 +26,8 @@
 
 /* Modal Container */
 .modal {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  border: 2px solid rgba(212, 175, 55, 0.4);
+  background: var(--bg-secondary);
+  border: 2px solid var(--gold-alpha-40);
   border-radius: 20px;
   padding: 2.5rem;
   max-width: 600px;
@@ -36,7 +36,7 @@
   overflow-y: auto;
   position: relative;
   animation: scaleIn 0.3s ease-out;
-  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+  box-shadow: var(--shadow-gold-xl);
 }
 
 @keyframes scaleIn {
@@ -55,15 +55,15 @@
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  background: rgba(212, 175, 55, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
   border-radius: 50%;
   width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #d4af37;
+  color: var(--primary-gold);
   font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -71,8 +71,8 @@
 }
 
 .closeButton:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.25);
-  border-color: #d4af37;
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
   transform: rotate(90deg);
 }
 
@@ -85,7 +85,7 @@
 .modalTitle {
   font-size: 2rem;
   font-weight: 700;
-  color: #f5f5f5;
+  color: var(--text-primary);
   margin-bottom: 2rem;
   text-align: center;
   letter-spacing: 0.5px;
@@ -99,22 +99,22 @@
   gap: 1rem;
   margin-bottom: 2rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  border-bottom: 1px solid var(--gold-alpha-20);
 }
 
 .assassinAvatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  background: var(--gradient-gold);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
   font-weight: bold;
-  color: #1a1a1a;
-  border: 3px solid #d4af37;
-  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+  color: var(--bg-primary);
+  border: 3px solid var(--primary-gold);
+  box-shadow: var(--shadow-gold-lg);
 }
 
 .currentStatusBadge {
@@ -122,7 +122,7 @@
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--bg-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -153,7 +153,7 @@
 }
 
 .label {
-  color: #d4af37;
+  color: var(--primary-gold);
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -163,19 +163,19 @@
 .input {
   width: 100%;
   padding: 0.875rem 1rem;
-  background: rgba(30, 30, 30, 0.8);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
   border-radius: 10px;
-  color: #f5f5f5;
+  color: var(--text-primary);
   font-size: 1rem;
   transition: all 0.3s ease;
   outline: none;
 }
 
 .input:focus {
-  border-color: #d4af37;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
-  background: rgba(30, 30, 30, 1);
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-focus);
+  background: var(--bg-secondary);
 }
 
 .input:disabled {
@@ -207,7 +207,7 @@
   right: 1rem;
   font-size: 1.25rem;
   pointer-events: none;
-  color: #d4af37;
+  color: var(--primary-gold);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -217,10 +217,10 @@
 .select {
   width: 100%;
   padding: 0.875rem 1rem;
-  background: rgba(30, 30, 30, 0.8);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
   border-radius: 10px;
-  color: #f5f5f5;
+  color: var(--text-primary);
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -228,9 +228,9 @@
 }
 
 .select:focus {
-  border-color: #d4af37;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
-  background: rgba(30, 30, 30, 1);
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-focus);
+  background: var(--bg-secondary);
 }
 
 .select:disabled {
@@ -239,8 +239,8 @@
 }
 
 .select option {
-  background: #2d2d2d;
-  color: #f5f5f5;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 /* Specialty Input */
@@ -255,10 +255,10 @@
 
 .addButton {
   padding: 0.875rem 1.5rem;
-  background: rgba(212, 175, 55, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
   border-radius: 10px;
-  color: #d4af37;
+  color: var(--primary-gold);
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -267,8 +267,8 @@
 }
 
 .addButton:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.25);
-  border-color: #d4af37;
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
   transform: translateY(-2px);
 }
 
@@ -290,10 +290,10 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: rgba(212, 175, 55, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
   border-radius: 20px;
-  color: #f5f5f5;
+  color: var(--text-primary);
   font-size: 0.9rem;
   animation: tagSlideIn 0.3s ease-out;
 }
@@ -312,7 +312,7 @@
 .removeTagButton {
   background: none;
   border: none;
-  color: #d4af37;
+  color: var(--primary-gold);
   font-size: 1rem;
   cursor: pointer;
   padding: 0;
@@ -326,7 +326,7 @@
 }
 
 .removeTagButton:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.2);
+  background: var(--gold-alpha-20);
   transform: scale(1.1);
 }
 
@@ -364,7 +364,7 @@
   gap: 1rem;
   margin-top: 1rem;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  border-top: 1px solid var(--gold-alpha-20);
 }
 
 .cancelButton,
@@ -380,26 +380,26 @@
 }
 
 .cancelButton {
-  background: rgba(212, 175, 55, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  color: #d4af37;
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
+  color: var(--primary-gold);
 }
 
 .cancelButton:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.25);
-  border-color: #d4af37;
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
   transform: translateY(-2px);
 }
 
 .saveButton {
-  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
-  color: #1a1a1a;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  background: var(--gradient-gold);
+  color: var(--bg-primary);
+  box-shadow: var(--shadow-gold-sm);
 }
 
 .saveButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+  box-shadow: var(--shadow-gold-lg);
 }
 
 .cancelButton:disabled,
@@ -416,7 +416,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -427,8 +427,8 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid rgba(212, 175, 55, 0.2);
-  border-top-color: #d4af37;
+  border: 4px solid var(--gold-alpha-20);
+  border-top-color: var(--primary-gold);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -485,15 +485,15 @@
 }
 
 .modal::-webkit-scrollbar-track {
-  background: rgba(30, 30, 30, 0.5);
+  background: var(--bg-tertiary);
   border-radius: 10px;
 }
 
 .modal::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.3);
+  background: var(--gold-alpha-30);
   border-radius: 10px;
 }
 
 .modal::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.5);
+  background: var(--gold-alpha-50);
 }
