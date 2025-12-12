@@ -249,6 +249,18 @@ const Header = () => {
         >
           <span className={styles.flagText}>{isSpanish ? 'ES' : 'EN'}</span>
         </button>
+        {/* Botón de tema cuando NO está logueado */}
+        {!currentUser && (
+          <button
+            className={styles.themeButton}
+            onClick={toggleTheme}
+            aria-label={isSpanish ? 'Cambiar tema' : 'Toggle theme'}
+            title={isSpanish ? (theme === 'dark' ? 'Modo claro' : 'Modo oscuro') : (theme === 'dark' ? 'Light mode' : 'Dark mode')}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+        )}
+
         {currentUser ? (
           <>
             <button 
