@@ -24,7 +24,7 @@
 
 .bellIcon {
   font-size: 1.5rem;
-  color: #d4af37;
+  color: var(--primary-gold);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,10 +60,10 @@
   right: 0;
   width: 400px;
   max-height: 600px;
-  background: #1a1a1a;
+  background: var(--bg-secondary);
   border: 1px solid var(--gold-alpha-30);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow-dark);
   z-index: 1000;
   animation: slideDown 0.3s ease-out;
 }
@@ -150,14 +150,14 @@
 
 /* Tarjeta de asignación de misión */
 .missionAssignmentCard {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(30, 30, 30, 0.95) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15), 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: var(--warning-alpha-10);
+  border: 1px solid var(--warning-alpha-40);
+  box-shadow: 0 4px 12px var(--warning-alpha-15), var(--shadow-dark);
 }
 
 .missionAssignmentCard:hover {
-  border-color: rgba(245, 158, 11, 0.6);
-  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.25), 0 4px 8px rgba(0, 0, 0, 0.4);
+  border-color: var(--status-warning);
+  box-shadow: 0 6px 16px var(--warning-alpha-30), var(--shadow-dark);
   transform: translateY(-2px);
 }
 

@@ -34,7 +34,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #1e1e1e;
+  background: var(--bg-tertiary);
   border: 2px solid var(--gold-alpha-30);
   border-radius: 8px;
   padding: 0.5rem;
@@ -49,7 +49,7 @@
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  background: rgba(212, 175, 55, 0.2);
+  background: var(--gold-alpha-20);
   border: 1px solid var(--gold-alpha-30);
   border-radius: 6px;
   width: 32px;
@@ -63,7 +63,7 @@
 }
 
 .refreshButton:hover {
-  background: rgba(212, 175, 55, 0.3);
+  background: var(--gold-alpha-30);
   border-color: var(--primary-gold);
   transform: rotate(180deg);
 }
@@ -76,7 +76,7 @@
 .input {
   flex: 1;
   padding: 0.875rem 1rem;
-  background: rgba(30, 30, 30, 0.8);
+  background: var(--bg-card);
   border: 1px solid var(--gold-alpha-30);
   border-radius: 8px;
   color: var(--text-primary);
@@ -90,7 +90,7 @@
 
 .input:focus {
   border-color: var(--primary-gold);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  box-shadow: var(--shadow-gold-focus);
 }
 
 .input::placeholder {
@@ -100,13 +100,13 @@
 }
 
 .inputSuccess {
-  border-color: #4ade80;
-  background: rgba(74, 222, 128, 0.1);
+  border-color: var(--status-success);
+  background: var(--success-alpha-10);
 }
 
 .inputError {
-  border-color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--status-danger);
+  background: var(--error-alpha-15);
 }
 
 .verifyButton {
@@ -124,7 +124,7 @@
 
 .verifyButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+  box-shadow: var(--shadow-gold-lg);
 }
 
 .verifyButton:disabled {
@@ -138,10 +138,10 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: rgba(74, 222, 128, 0.1);
-  border: 1px solid rgba(74, 222, 128, 0.3);
+  background: var(--success-alpha-10);
+  border: 1px solid var(--success-alpha-30);
   border-radius: 8px;
-  color: #4ade80;
+  color: var(--status-success);
   font-size: 0.9rem;
   font-weight: 600;
   animation: slideIn 0.3s ease-out;
@@ -156,10 +156,10 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: var(--error-alpha-15);
+  border: 1px solid var(--error-alpha-30);
   border-radius: 8px;
-  color: #ef4444;
+  color: var(--status-danger);
   font-size: 0.9rem;
   font-weight: 600;
   animation: shake 0.5s ease-out;

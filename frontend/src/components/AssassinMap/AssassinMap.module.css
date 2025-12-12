@@ -18,8 +18,8 @@
   position: absolute;
   bottom: 20px;
   right: 20px;
-  background: rgba(30, 30, 30, 0.95);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
   border-radius: 8px;
   padding: 1rem;
   z-index: 1000;
@@ -49,18 +49,18 @@
 
 /* Estilos para los popups de Leaflet */
 :global(.leaflet-popup-content-wrapper) {
-  background: rgba(30, 30, 30, 0.95);
-  color: white;
+  background: var(--bg-card);
+  color: var(--text-primary);
   border-radius: 8px;
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  border: 1px solid var(--gold-alpha-30);
 }
 
 :global(.leaflet-popup-tip) {
-  background: rgba(30, 30, 30, 0.95);
+  background: var(--bg-card);
 }
 
 :global(.leaflet-popup-close-button) {
-  color: white !important;
+  color: var(--text-primary) !important;
 }
 
 :global(.leaflet-popup-close-button:hover) {

@@ -78,13 +78,13 @@
   overflow: hidden;
   padding: 0.75rem;
   border-radius: 0.5rem;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
 }
 
 .navButton:hover:not(:disabled) {
-  border-color: rgba(212, 175, 55, 0.5);
-  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--gold-alpha-50);
+  background: var(--gold-alpha-10);
 }
 
 .navButton:disabled {
@@ -96,19 +96,19 @@
 .navIcon {
   width: 1.25rem;
   height: 1.25rem;
-  color: #cd853f;
+  color: var(--primary-gold);
   transition: color 0.3s ease;
 }
 
 .navButton:hover .navIcon {
-  color: #d4af37;
+  color: var(--gold-hover);
 }
 
 .navGlow {
   position: absolute;
   inset: 0;
   border-radius: 0.5rem;
-  background: rgba(212, 175, 55, 0.1);
+  background: var(--gold-alpha-10);
   filter: blur(8px);
   pointer-events: none;
 }
@@ -172,6 +172,33 @@
 
 .flag:active {
   transform: scale(1.05) rotate(0deg);
+}
+
+/* Botón de tema (cuando no está logueado) */
+.themeButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gold-alpha-10);
+  border: 1px solid var(--gold-alpha-30);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  padding: 0;
+  color: var(--primary-gold);
+}
+
+.themeButton:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-gold-md);
+  border-color: var(--primary-gold);
+  background: var(--gold-alpha-20);
+}
+
+.themeButton:active {
+  transform: scale(1.05);
 }
 
 .loginButton {
@@ -337,7 +364,7 @@
   top: calc(100% + 1rem);
   right: 0;
   min-width: 280px;
-  background: var(--gradient-dark-reverse);
+  background: var(--bg-secondary);
   border: 2px solid var(--gold-alpha-40);
   border-radius: 12px;
   box-shadow: var(--shadow-dark);
@@ -537,7 +564,7 @@
     left: -100%;
     width: 280px;
     height: 100vh;
-    background: var(--gradient-dark);
+    background: var(--bg-secondary);
     border-right: 2px solid var(--gold-alpha-40);
     flex-direction: column;
     justify-content: flex-start;
@@ -546,7 +573,7 @@
     gap: 0.5rem;
     z-index: 1000;
     transition: left 0.3s ease;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-dark);
     overflow-y: auto;
   }
 
@@ -960,15 +987,15 @@
   position: relative;
   z-index: 1;
   margin-left: 0.5rem;
-  color: #d4af37;
+  color: var(--primary-gold);
 }
 
 /* Estado activo del botón */
 .navButtonActive {
-  background: rgba(212, 175, 55, 0.15);
-  border-color: rgba(212, 175, 55, 0.6);
+  background: var(--gold-alpha-15);
+  border-color: var(--gold-alpha-60);
 }
 
 .navButtonActive .navIcon {
-  color: #d4af37;
+  color: var(--primary-gold);
 }
