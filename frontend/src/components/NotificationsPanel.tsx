@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Bell, Mailbox, Coins, Banknote, Mail, CheckCircle, Target, Check, X } from 'lucide-react';
-import { DebtNotification, debtService } from '../services/debtService';
-import { Notification, notificationService } from '../services/notificationService';
+import { notificationsApi, missionsApi, debtsApi, Notification, DebtNotification } from '../services/api';
 import styles from './NotificationsPanel.module.css';
 
 interface User {
@@ -23,33 +22,38 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
   const [isLoading, setIsLoading] = useState(false);
 
   // Cargar notificaciones
-  const loadNotifications = () => {
+  const loadNotifications = async () => {
     if (!currentUser) return;
 
     try {
-      // Cargar notificaciones de deudas (solo para asesinos)
+      // Cargar notificaciones de deudas (solo para asesinos) - usando localStorage para compatibilidad
       if (currentUser.role === 'assassin') {
         const userIdEncoded = btoa(currentUser.email);
-        const userDebtNotifications = debtService.getNotificationsForAssassin(userIdEncoded);
+        const storedNotifications = localStorage.getItem('debtNotifications');
+        const allDebtNotifications: DebtNotification[] = storedNotifications ? JSON.parse(storedNotifications) : [];
+        const userDebtNotifications = allDebtNotifications.filter(n => n.recipientId === userIdEncoded);
         setDebtNotifications(userDebtNotifications);
       }
 
-      // Cargar notificaciones generales (transferencias y asignaciones de misión)
-      const userNotifications = notificationService.getForUser(currentUser.email);
-      // También incluir notificaciones de asignación de misión pendientes
-      const pendingMissionAssignments = notificationService.getPendingMissionAssignments(currentUser.email);
+      // Cargar notificaciones generales usando el servicio API unificado
+      const allNotifications = await notificationsApi.getAll();
+      
+      // También cargar asignaciones pendientes
+      const pendingAssignments = await notificationsApi.getPendingMissionAssignments();
+      
       // Combinar y evitar duplicados
-      const allNotifications = [...userNotifications];
-      pendingMissionAssignments.forEach(n => {
-        if (!allNotifications.find(existing => existing.id === n.id)) {
-          allNotifications.push(n);
+      const combined = [...allNotifications];
+      pendingAssignments.forEach((n: Notification) => {
+        if (!combined.find(existing => existing.id === n.id)) {
+          combined.push(n);
         }
       });
-      setTransferNotifications(allNotifications);
+      
+      setTransferNotifications(combined);
       
       console.log('📬 Notificaciones cargadas:', {
         deudas: debtNotifications.length,
-        generales: allNotifications.length
+        generales: combined.length
       });
     } catch (error) {
       console.error('Error loading notifications:', error);
@@ -66,20 +70,20 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
   const getAssassinName = (assassinId: string): string => {
     try {
       const email = atob(assassinId);
-      const nicknames = localStorage.getItem('nicknames');
-      const nicknamesDict = nicknames ? JSON.parse(nicknames) : {};
-      return nicknamesDict[email] || email;
+      // Intentar obtener el nombre del sender de la notificación
+      // o usar el email como fallback
+      return email.split('@')[0];
     } catch {
       return 'Unknown';
     }
   };
 
-  const handleAcceptFavor = async (notificationId: string, debtId: string) => {
+  const handleAcceptFavor = async (_notificationId: string, debtId: string) => {
     setIsLoading(true);
     try {
-      debtService.acceptFavorRequest(notificationId, debtId);
+      await debtsApi.acceptFavorRequest(debtId);
       alert(isSpanish ? '¡Favor aceptado! Se ha creado una deuda.' : 'Favor accepted! A debt has been created.');
-      loadNotifications();
+      await loadNotifications();
     } catch (error: any) {
       console.error('Error accepting favor:', error);
       alert(error.message);
@@ -88,12 +92,12 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
     }
   };
 
-  const handleRejectFavor = async (notificationId: string, debtId: string) => {
+  const handleRejectFavor = async (_notificationId: string, debtId: string) => {
     setIsLoading(true);
     try {
-      debtService.rejectFavorRequest(notificationId, debtId);
+      await debtsApi.rejectFavorRequest(debtId);
       alert(isSpanish ? 'Favor rechazado.' : 'Favor rejected.');
-      loadNotifications();
+      await loadNotifications();
     } catch (error: any) {
       console.error('Error rejecting favor:', error);
       alert(error.message);
@@ -102,12 +106,12 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
     }
   };
 
-  const handleAcceptPayment = async (notificationId: string, debtId: string) => {
+  const handleAcceptPayment = async (_notificationId: string, debtId: string) => {
     setIsLoading(true);
     try {
-      debtService.acceptPayment(notificationId, debtId);
+      await debtsApi.acceptPayment(debtId);
       alert(isSpanish ? '¡Pago aceptado! La deuda está en curso.' : 'Payment accepted! The debt is in progress.');
-      loadNotifications();
+      await loadNotifications();
     } catch (error: any) {
       console.error('Error accepting payment:', error);
       alert(error.message);
@@ -116,7 +120,7 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
     }
   };
 
-  const handleRejectPayment = async (notificationId: string, debtId: string) => {
+  const handleRejectPayment = async (_notificationId: string, debtId: string) => {
     if (!confirm(isSpanish 
       ? '⚠️ Al rechazar el pago, serás marcado como OBJETIVO. ¿Estás seguro?' 
       : '⚠️ By rejecting payment, you will be marked as TARGET. Are you sure?')) {
@@ -125,11 +129,11 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
 
     setIsLoading(true);
     try {
-      debtService.rejectPayment(notificationId, debtId);
+      await debtsApi.rejectPayment(debtId);
       alert(isSpanish 
         ? '🎯 Has sido marcado como objetivo por rechazar el pago.' 
         : '🎯 You have been marked as target for rejecting payment.');
-      loadNotifications();
+      await loadNotifications();
     } catch (error: any) {
       console.error('Error rejecting payment:', error);
       alert(error.message);
@@ -138,12 +142,12 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
     }
   };
 
-  const handleConfirmCompletion = async (notificationId: string, debtId: string) => {
+  const handleConfirmCompletion = async (_notificationId: string, debtId: string) => {
     setIsLoading(true);
     try {
-      debtService.confirmCompletion(notificationId, debtId);
+      await debtsApi.confirmCompletion(debtId);
       alert(isSpanish ? '✅ Deuda completada y eliminada.' : '✅ Debt completed and removed.');
-      loadNotifications();
+      await loadNotifications();
     } catch (error: any) {
       console.error('Error confirming completion:', error);
       alert(error.message);
@@ -152,12 +156,12 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
     }
   };
 
-  const handleRejectCompletion = async (notificationId: string, debtId: string) => {
+  const handleRejectCompletion = async (_notificationId: string, debtId: string) => {
     setIsLoading(true);
     try {
-      debtService.rejectCompletion(notificationId, debtId);
+      await debtsApi.rejectCompletion(debtId);
       alert(isSpanish ? 'Completación rechazada. La deuda sigue en curso.' : 'Completion rejected. Debt remains in progress.');
-      loadNotifications();
+      await loadNotifications();
     } catch (error: any) {
       console.error('Error rejecting completion:', error);
       alert(error.message);
@@ -170,9 +174,13 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
     return null;
   }
 
-  const handleDismissTransfer = (notificationId: string) => {
-    notificationService.markAsRead(notificationId);
-    loadNotifications();
+  const handleDismissTransfer = async (notificationId: string) => {
+    try {
+      await notificationsApi.markAsRead(notificationId);
+      await loadNotifications();
+    } catch (error) {
+      console.error('Error dismissing notification:', error);
+    }
   };
 
   // Manejar aceptación de misión
@@ -181,33 +189,13 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
     
     setIsLoading(true);
     try {
-      // Buscar la misión en publicMissions y userMissions
-      const publicMissionsStr = localStorage.getItem('publicMissions');
-      const publicMissions = publicMissionsStr ? JSON.parse(publicMissionsStr) : [];
-      const userMissionsStr = localStorage.getItem('userMissions');
-      const userMissionsDict = userMissionsStr ? JSON.parse(userMissionsStr) : {};
-      
-      let mission = publicMissions.find((m: any) => m.id === notification.missionId);
-      let missionLocation: 'public' | 'private' | null = mission ? 'public' : null;
-      let contractorEmail = '';
-      
-      // Si no está en públicas, buscar en privadas
-      if (!mission) {
-        for (const email of Object.keys(userMissionsDict)) {
-          const found = userMissionsDict[email].find((m: any) => m.id === notification.missionId);
-          if (found) {
-            mission = found;
-            missionLocation = 'private';
-            contractorEmail = email;
-            break;
-          }
-        }
-      }
+      // Verificar si la misión existe y está disponible
+      const mission = await missionsApi.getMissionById(notification.missionId);
       
       if (!mission) {
         alert(isSpanish ? 'La misión ya no existe' : 'Mission no longer exists');
-        notificationService.updateMissionNotificationStatus(notification.id, 'expired');
-        loadNotifications();
+        await notificationsApi.updateMissionAssignmentStatus(notification.id, 'expired');
+        await loadNotifications();
         setIsLoading(false);
         return;
       }
@@ -216,51 +204,24 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
         alert(isSpanish 
           ? 'Lo sentimos, esta misión ya ha sido asignada a otro asesino' 
           : 'Sorry, this mission has already been assigned to another assassin');
-        notificationService.updateMissionNotificationStatus(notification.id, 'expired');
-        loadNotifications();
+        await notificationsApi.updateMissionAssignmentStatus(notification.id, 'expired');
+        await loadNotifications();
         setIsLoading(false);
         return;
       }
 
-      // Asignar la misión
-      const assassinId = btoa(currentUser.email);
-      const nicknames = localStorage.getItem('nicknames');
-      const nicknamesDict = nicknames ? JSON.parse(nicknames) : {};
-      const assassinName = nicknamesDict[currentUser.email] || currentUser.email.split('@')[0];
+      // Asignar la misión usando el servicio API
+      const userId = btoa(currentUser.email);
+      await missionsApi.assignMission(notification.missionId, userId);
 
-      const updateData = {
-        assassinId,
-        assassinName,
-        status: 'in_progress',
-        updatedAt: new Date().toISOString()
-      };
-
-      if (missionLocation === 'public') {
-        const publicIndex = publicMissions.findIndex((m: any) => m.id === notification.missionId);
-        if (publicIndex !== -1) {
-          publicMissions[publicIndex] = { ...publicMissions[publicIndex], ...updateData };
-          localStorage.setItem('publicMissions', JSON.stringify(publicMissions));
-        }
-      } else if (missionLocation === 'private' && contractorEmail) {
-        const missionIndex = userMissionsDict[contractorEmail].findIndex(
-          (m: any) => m.id === notification.missionId
-        );
-        if (missionIndex !== -1) {
-          userMissionsDict[contractorEmail][missionIndex] = {
-            ...userMissionsDict[contractorEmail][missionIndex],
-            ...updateData
-          };
-          localStorage.setItem('userMissions', JSON.stringify(userMissionsDict));
-        }
-      }
-
-      notificationService.updateMissionNotificationStatus(notification.id, 'accepted');
+      // Marcar notificación como aceptada
+      await notificationsApi.updateMissionAssignmentStatus(notification.id, 'accepted');
       
       alert(isSpanish 
         ? `¡Has aceptado la misión "${notification.missionTitle}"!` 
         : `You have accepted the mission "${notification.missionTitle}"!`);
       
-      loadNotifications();
+      await loadNotifications();
     } catch (error) {
       console.error('Error accepting mission:', error);
       alert(isSpanish ? 'Error al aceptar la misión' : 'Error accepting mission');
@@ -270,15 +231,19 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
   };
 
   // Manejar rechazo de misión
-  const handleRejectMission = (notification: Notification) => {
+  const handleRejectMission = async (notification: Notification) => {
     if (confirm(isSpanish 
       ? `¿Estás seguro de rechazar la misión "${notification.missionTitle}"?` 
       : `Are you sure you want to reject the mission "${notification.missionTitle}"?`)) {
-      notificationService.updateMissionNotificationStatus(notification.id, 'rejected');
-      alert(isSpanish 
-        ? 'Misión rechazada. La misión quedará disponible para otros asesinos.' 
-        : 'Mission rejected. The mission will be available for other assassins.');
-      loadNotifications();
+      try {
+        await notificationsApi.updateMissionAssignmentStatus(notification.id, 'rejected');
+        alert(isSpanish 
+          ? 'Misión rechazada. La misión quedará disponible para otros asesinos.' 
+          : 'Mission rejected. The mission will be available for other assassins.');
+        await loadNotifications();
+      } catch (error) {
+        console.error('Error rejecting mission:', error);
+      }
     }
   };
 

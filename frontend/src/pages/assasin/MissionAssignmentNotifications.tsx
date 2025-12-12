@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Bell, Check, X, Coins, AlertTriangle } from 'lucide-react';
-import { notificationService, Notification } from '../../services/notificationService';
-import { authService } from '../../services/authService';
+import { notificationsApi, missionsApi, Notification } from '../../services/api';
 import styles from './Assassin.module.css';
 
 interface MissionAssignmentNotificationsProps {
@@ -18,9 +17,13 @@ export const MissionAssignmentNotifications = ({
   const [pendingAssignments, setPendingAssignments] = useState<Notification[]>([]);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
-  const loadPendingAssignments = () => {
-    const pending = notificationService.getPendingMissionAssignments(userEmail);
-    setPendingAssignments(pending);
+  const loadPendingAssignments = async () => {
+    try {
+      const pending = await notificationsApi.getPendingMissionAssignments();
+      setPendingAssignments(pending);
+    } catch (error) {
+      console.error('Error loading pending assignments:', error);
+    }
   };
 
   useEffect(() => {
@@ -30,45 +33,48 @@ export const MissionAssignmentNotifications = ({
     return () => clearInterval(interval);
   }, [userEmail]);
 
-  const checkMissionAvailability = (missionId: string): { available: boolean; reason?: string } => {
-    // Buscar la misión en publicMissions y userMissions
-    const publicMissions = authService.getPublicMissions();
-    const allMissions = authService.getAllMissions();
-    
-    const mission = publicMissions.find(m => m.id === missionId) || 
-                    allMissions.find(m => m.id === missionId);
+  const checkMissionAvailability = async (missionId: string): Promise<{ available: boolean; reason?: string }> => {
+    try {
+      const mission = await missionsApi.getMissionById(missionId);
 
-    if (!mission) {
+      if (!mission) {
+        return { 
+          available: false, 
+          reason: isSpanish ? 'La misión ya no existe' : 'Mission no longer exists' 
+        };
+      }
+
+      if (mission.assassinId && mission.status === 'in_progress') {
+        return { 
+          available: false, 
+          reason: isSpanish 
+            ? 'Lo sentimos, esta misión ya ha sido asignada a otro asesino' 
+            : 'Sorry, this mission has already been assigned to another assassin' 
+        };
+      }
+
+      if (mission.status === 'completed' || mission.terminado) {
+        return { 
+          available: false, 
+          reason: isSpanish ? 'Esta misión ya ha sido completada' : 'This mission has been completed' 
+        };
+      }
+
+      if (mission.status === 'cancelled') {
+        return { 
+          available: false, 
+          reason: isSpanish ? 'Esta misión ha sido cancelada' : 'This mission has been cancelled' 
+        };
+      }
+
+      return { available: true };
+    } catch (error) {
+      console.error('Error checking mission availability:', error);
       return { 
         available: false, 
-        reason: isSpanish ? 'La misión ya no existe' : 'Mission no longer exists' 
+        reason: isSpanish ? 'Error al verificar la misión' : 'Error checking mission' 
       };
     }
-
-    if (mission.assassinId && mission.status === 'in_progress') {
-      return { 
-        available: false, 
-        reason: isSpanish 
-          ? 'Lo sentimos, esta misión ya ha sido asignada a otro asesino' 
-          : 'Sorry, this mission has already been assigned to another assassin' 
-      };
-    }
-
-    if (mission.status === 'completed' || mission.terminado) {
-      return { 
-        available: false, 
-        reason: isSpanish ? 'Esta misión ya ha sido completada' : 'This mission has been completed' 
-      };
-    }
-
-    if (mission.status === 'cancelled') {
-      return { 
-        available: false, 
-        reason: isSpanish ? 'Esta misión ha sido cancelada' : 'This mission has been cancelled' 
-      };
-    }
-
-    return { available: true };
   };
 
   const handleAccept = async (notification: Notification) => {
@@ -77,76 +83,26 @@ export const MissionAssignmentNotifications = ({
     setProcessingId(notification.id);
 
     // Verificar disponibilidad de la misión
-    const availability = checkMissionAvailability(notification.missionId);
+    const availability = await checkMissionAvailability(notification.missionId);
     
     if (!availability.available) {
       alert(availability.reason);
-      notificationService.updateMissionNotificationStatus(notification.id, 'expired');
-      loadPendingAssignments();
+      await notificationsApi.updateMissionAssignmentStatus(notification.id, 'expired');
+      await loadPendingAssignments();
       setProcessingId(null);
       return;
     }
 
     try {
       const assassinId = btoa(userEmail);
-      const nicknames = localStorage.getItem('nicknames');
-      const nicknamesDict = nicknames ? JSON.parse(nicknames) : {};
-      const assassinName = nicknamesDict[userEmail] || userEmail.split('@')[0];
-
-      const updateData = {
-        assassinId,
-        assassinName,
-        status: 'in_progress' as const,
-        updatedAt: new Date().toISOString()
-      };
 
       console.log('🎯 Aceptando misión:', notification.missionId);
-      console.log('🎯 Datos de actualización:', updateData);
 
-      // Buscar y actualizar la misión en publicMissions
-      const publicMissionsStr = localStorage.getItem('publicMissions');
-      const publicMissions = publicMissionsStr ? JSON.parse(publicMissionsStr) : [];
-      const publicIndex = publicMissions.findIndex((m: any) => m.id === notification.missionId);
-      
-      let missionUpdated = false;
-
-      if (publicIndex !== -1) {
-        console.log('✅ Misión encontrada en publicMissions, índice:', publicIndex);
-        publicMissions[publicIndex] = {
-          ...publicMissions[publicIndex],
-          ...updateData
-        };
-        localStorage.setItem('publicMissions', JSON.stringify(publicMissions));
-        missionUpdated = true;
-        console.log('✅ Misión actualizada en publicMissions');
-      }
-      
-      // También buscar en userMissions
-      const userMissionsStr = localStorage.getItem('userMissions');
-      const userMissionsDict = userMissionsStr ? JSON.parse(userMissionsStr) : {};
-      
-      for (const email of Object.keys(userMissionsDict)) {
-        const missions = userMissionsDict[email];
-        const missionIndex = missions.findIndex((m: any) => m.id === notification.missionId);
-        if (missionIndex !== -1) {
-          console.log('✅ Misión encontrada en userMissions de:', email);
-          userMissionsDict[email][missionIndex] = {
-            ...userMissionsDict[email][missionIndex],
-            ...updateData
-          };
-          localStorage.setItem('userMissions', JSON.stringify(userMissionsDict));
-          missionUpdated = true;
-          console.log('✅ Misión actualizada en userMissions');
-          break;
-        }
-      }
-
-      if (!missionUpdated) {
-        console.error('❌ No se encontró la misión en ningún lugar');
-      }
+      // Asignar la misión usando el servicio API unificado
+      await missionsApi.assignMission(notification.missionId, assassinId);
 
       // Marcar notificación como aceptada
-      notificationService.updateMissionNotificationStatus(notification.id, 'accepted');
+      await notificationsApi.updateMissionAssignmentStatus(notification.id, 'accepted');
 
       alert(
         isSpanish
@@ -154,7 +110,7 @@ export const MissionAssignmentNotifications = ({
           : `You have accepted the mission "${notification.missionTitle}"!`
       );
 
-      loadPendingAssignments();
+      await loadPendingAssignments();
       
       if (onMissionAccepted) {
         onMissionAccepted();
@@ -167,20 +123,24 @@ export const MissionAssignmentNotifications = ({
     }
   };
 
-  const handleReject = (notification: Notification) => {
+  const handleReject = async (notification: Notification) => {
     if (confirm(
       isSpanish
         ? `¿Estás seguro de rechazar la misión "${notification.missionTitle}"?`
         : `Are you sure you want to reject the mission "${notification.missionTitle}"?`
     )) {
-      notificationService.updateMissionNotificationStatus(notification.id, 'rejected');
-      loadPendingAssignments();
-      
-      alert(
-        isSpanish
-          ? 'Misión rechazada. La misión quedará disponible para otros asesinos.'
-          : 'Mission rejected. The mission will be available for other assassins.'
-      );
+      try {
+        await notificationsApi.updateMissionAssignmentStatus(notification.id, 'rejected');
+        await loadPendingAssignments();
+        
+        alert(
+          isSpanish
+            ? 'Misión rechazada. La misión quedará disponible para otros asesinos.'
+            : 'Mission rejected. The mission will be available for other assassins.'
+        );
+      } catch (error) {
+        console.error('Error rejecting mission:', error);
+      }
     }
   };
 
