@@ -23,8 +23,8 @@
 }
 
 .modal {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-  border: 2px solid rgba(212, 175, 55, 0.4);
+  background: var(--bg-secondary);
+  border: 2px solid var(--gold-alpha-40);
   border-radius: 20px;
   padding: 2.5rem;
   max-width: 600px;
@@ -33,7 +33,7 @@
   overflow-y: auto;
   position: relative;
   animation: scaleIn 0.3s ease-out;
-  box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+  box-shadow: var(--shadow-gold-xl);
 }
 
 @keyframes scaleIn {
@@ -51,30 +51,30 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: rgba(212, 175, 55, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: var(--gold-alpha-15);
+  border: 1px solid var(--gold-alpha-30);
   border-radius: 50%;
   width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #d4af37;
+  color: var(--primary-gold);
   font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .closeButton:hover {
-  background: rgba(212, 175, 55, 0.25);
-  border-color: #d4af37;
+  background: var(--gold-alpha-25);
+  border-color: var(--primary-gold);
   transform: rotate(90deg);
 }
 
 .modalTitle {
   font-size: 2rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
   margin-bottom: 2rem;
   text-align: center;
   letter-spacing: 1px;
@@ -93,23 +93,23 @@
   align-items: center;
   gap: 0.5rem;
   padding: 1.25rem 0.75rem;
-  background: rgba(30, 30, 30, 0.6);
-  border: 2px solid rgba(212, 175, 55, 0.3);
+  background: var(--bg-card);
+  border: 2px solid var(--gold-alpha-30);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .packageCard:hover {
-  border-color: rgba(212, 175, 55, 0.6);
+  border-color: var(--gold-alpha-60);
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
+  box-shadow: var(--shadow-gold-md);
 }
 
 .packageActive {
-  background: rgba(212, 175, 55, 0.15);
-  border-color: #d4af37;
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  background: var(--gold-alpha-15);
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-md);
 }
 
 .packageIcon {
@@ -119,12 +119,12 @@
 .packageAmount {
   font-size: 1rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .packagePrice {
   font-size: 0.9rem;
-  color: #d4af37;
+  color: var(--primary-gold);
   font-weight: 600;
 }
 
@@ -147,7 +147,7 @@
 }
 
 .label {
-  color: #b0b0b0;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -155,23 +155,23 @@
 .input {
   width: 100%;
   padding: 0.875rem 1rem;
-  background: rgba(30, 30, 30, 0.8);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: var(--bg-card);
+  border: 1px solid var(--gold-alpha-30);
   border-radius: 8px;
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 1rem;
   transition: all 0.3s ease;
   outline: none;
 }
 
 .input:focus {
-  border-color: #d4af37;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-  background: rgba(30, 30, 30, 1);
+  border-color: var(--primary-gold);
+  box-shadow: var(--shadow-gold-focus);
+  background: var(--bg-secondary);
 }
 
 .input::placeholder {
-  color: #606060;
+  color: var(--text-muted);
 }
 
 .totalSection {
@@ -179,8 +179,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem;
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: var(--gold-alpha-10);
+  border: 1px solid var(--gold-alpha-30);
   border-radius: 12px;
   margin-top: 0.5rem;
 }
@@ -188,22 +188,22 @@
 .totalLabel {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .totalAmount {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #d4af37;
+  color: var(--primary-gold);
 }
 
 .buyButton {
   width: 100%;
   padding: 1.25rem;
-  background: linear-gradient(135deg, #d4af37 0%, #c9a02c 100%);
+  background: var(--gradient-gold);
   border: none;
   border-radius: 12px;
-  color: #0a0a0a;
+  color: var(--bg-primary);
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -230,7 +230,7 @@
 
 .buyButton:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+  box-shadow: var(--shadow-gold-xl);
 }
 
 .buyButton:active {
