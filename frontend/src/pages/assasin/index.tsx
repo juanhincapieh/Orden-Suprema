@@ -12,6 +12,7 @@ import styles from './Assassin.module.css';
 
 const Assassin = () => {
   const {
+    currentUser,
     userName,
     userEmail,
     userCoins,
@@ -227,6 +228,7 @@ const Assassin = () => {
 
         {/* Mission Assignment Notifications */}
         <MissionAssignmentNotifications
+          userId={currentUser?.id || ''}
           userEmail={userEmail}
           isSpanish={isSpanish}
           onMissionAccepted={reloadMissions}
@@ -290,12 +292,7 @@ const Assassin = () => {
           mission={selectedMission}
           isOpen={showDetailModal}
           onClose={() => setShowDetailModal(false)}
-          currentUser={{ 
-            email: userEmail, 
-            role: 'assassin', 
-            nickname: userName,
-            id: btoa(userEmail)
-          }}
+          currentUser={currentUser}
           isSpanish={isSpanish}
           showNegotiation={false}
           onCompleteMission={async (mission) => {

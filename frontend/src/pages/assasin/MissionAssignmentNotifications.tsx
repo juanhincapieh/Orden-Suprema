@@ -4,12 +4,14 @@ import { notificationsApi, missionsApi, Notification } from '../../services/api'
 import styles from './Assassin.module.css';
 
 interface MissionAssignmentNotificationsProps {
+  userId: string;
   userEmail: string;
   isSpanish: boolean;
   onMissionAccepted?: () => void;
 }
 
 export const MissionAssignmentNotifications = ({
+  userId,
   userEmail,
   isSpanish,
   onMissionAccepted
@@ -94,12 +96,10 @@ export const MissionAssignmentNotifications = ({
     }
 
     try {
-      const assassinId = btoa(userEmail);
-
-      console.log('🎯 Aceptando misión:', notification.missionId);
+      console.log('🎯 Aceptando misión:', notification.missionId, 'para usuario:', userId);
 
       // Asignar la misión usando el servicio API unificado
-      await missionsApi.assignMission(notification.missionId, assassinId);
+      await missionsApi.assignMission(notification.missionId, userId);
 
       // Marcar notificación como aceptada
       await notificationsApi.updateMissionAssignmentStatus(notification.id, 'accepted');
