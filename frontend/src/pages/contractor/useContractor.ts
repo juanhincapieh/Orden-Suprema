@@ -72,7 +72,8 @@ export const useContractor = () => {
         createdAt: new Date().toISOString(),
       };
 
-      await missionsApi.updateMission(selectedContract.id, { review: newReview });
+      // Usar el método específico para crear reseñas
+      await missionsApi.createReview(selectedContract.id, { rating, comment });
 
       setContracts(
         contracts.map((c) => (c.id === selectedContract.id ? { ...c, review: newReview } : c))
