@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Bell, Mailbox, Coins, Banknote, Mail, CheckCircle, Target, Check, X } from 'lucide-react';
 import { notificationsApi, missionsApi, debtsApi, Notification, DebtNotification } from '../services/api';
+import { dispatchNotificationUpdate, subscribeToNotificationUpdates } from '../utils/notificationEvents';
 import styles from './NotificationsPanel.module.css';
 
 interface User {
@@ -49,7 +50,18 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
         }
       });
       
-      setTransferNotifications(combined);
+      // Filtrar notificaciones que ya fueron procesadas (accepted, rejected, expired)
+      // y las que ya fueron leídas (excepto transferencias que solo se marcan como leídas)
+      const filtered = combined.filter(n => {
+        // Para asignaciones de misión, solo mostrar las pendientes
+        if (n.type === 'mission_assignment') {
+          return n.status === 'pending';
+        }
+        // Para otras notificaciones, mostrar las no leídas
+        return !n.read;
+      });
+      
+      setTransferNotifications(filtered);
       
       console.log('📬 Notificaciones cargadas:', {
         deudas: debtNotifications.length,
@@ -64,7 +76,12 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
     loadNotifications();
     // Recargar cada 30 segundos
     const interval = setInterval(loadNotifications, 30000);
-    return () => clearInterval(interval);
+    // Suscribirse a eventos de actualización de notificaciones
+    const unsubscribe = subscribeToNotificationUpdates(loadNotifications);
+    return () => {
+      clearInterval(interval);
+      unsubscribe();
+    };
   }, [currentUser]);
 
   const getAssassinName = (assassinId: string): string => {
@@ -211,7 +228,8 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
       }
 
       // Asignar la misión usando el servicio API
-      const userId = btoa(currentUser.email);
+      // Usar el ID real del usuario si está disponible, sino usar btoa(email) para compatibilidad
+      const userId = (currentUser as any).id || btoa(currentUser.email);
       await missionsApi.assignMission(notification.missionId, userId);
 
       // Marcar notificación como aceptada
@@ -222,6 +240,9 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
         : `You have accepted the mission "${notification.missionTitle}"!`);
       
       await loadNotifications();
+      
+      // Notificar a otros componentes que las notificaciones han cambiado
+      dispatchNotificationUpdate();
     } catch (error) {
       console.error('Error accepting mission:', error);
       alert(isSpanish ? 'Error al aceptar la misión' : 'Error accepting mission');
@@ -241,6 +262,9 @@ export const NotificationsPanel = ({ currentUser, isSpanish }: NotificationsPane
           ? 'Misión rechazada. La misión quedará disponible para otros asesinos.' 
           : 'Mission rejected. The mission will be available for other assassins.');
         await loadNotifications();
+        
+        // Notificar a otros componentes que las notificaciones han cambiado
+        dispatchNotificationUpdate();
       } catch (error) {
         console.error('Error rejecting mission:', error);
       }

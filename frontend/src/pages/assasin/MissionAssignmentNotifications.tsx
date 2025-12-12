@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Bell, Check, X, Coins, AlertTriangle } from 'lucide-react';
 import { notificationsApi, missionsApi, Notification } from '../../services/api';
+import { dispatchNotificationUpdate, subscribeToNotificationUpdates } from '../../utils/notificationEvents';
 import styles from './Assassin.module.css';
 
 interface MissionAssignmentNotificationsProps {
@@ -32,7 +33,12 @@ export const MissionAssignmentNotifications = ({
     loadPendingAssignments();
     // Recargar cada 30 segundos
     const interval = setInterval(loadPendingAssignments, 30000);
-    return () => clearInterval(interval);
+    // Suscribirse a eventos de actualización de notificaciones
+    const unsubscribe = subscribeToNotificationUpdates(loadPendingAssignments);
+    return () => {
+      clearInterval(interval);
+      unsubscribe();
+    };
   }, [userEmail]);
 
   const checkMissionAvailability = async (missionId: string): Promise<{ available: boolean; reason?: string }> => {
@@ -112,6 +118,9 @@ export const MissionAssignmentNotifications = ({
 
       await loadPendingAssignments();
       
+      // Notificar a otros componentes que las notificaciones han cambiado
+      dispatchNotificationUpdate();
+      
       if (onMissionAccepted) {
         onMissionAccepted();
       }
@@ -132,6 +141,9 @@ export const MissionAssignmentNotifications = ({
       try {
         await notificationsApi.updateMissionAssignmentStatus(notification.id, 'rejected');
         await loadPendingAssignments();
+        
+        // Notificar a otros componentes que las notificaciones han cambiado
+        dispatchNotificationUpdate();
         
         alert(
           isSpanish
