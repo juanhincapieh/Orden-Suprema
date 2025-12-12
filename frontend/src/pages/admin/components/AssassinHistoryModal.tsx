@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { X, Star, CheckCircle, Coins, RefreshCw, ClipboardList, Calendar } from 'lucide-react';
 import { AssassinProfile } from '../../../types';
-import { authService } from '../../../services/authService';
+import { missionsApi, usersApi } from '../../../services/api';
 import styles from './AssassinHistoryModal.module.css';
 
 export interface AssassinHistoryModalProps {
@@ -59,48 +59,31 @@ export const AssassinHistoryModal = ({
   useEffect(() => {
     if (!assassin) return;
 
-    // El assassinId en las misiones está codificado como btoa(email)
-    const assassinId = btoa(assassin.email);
-    const allMissions = authService.getAllMissions();
-    const publicMissions = authService.getPublicMissions();
-    
-    // Combinar todas las misiones evitando duplicados
-    const missionMap = new Map();
-    [...allMissions, ...publicMissions].forEach(m => {
-      if (!missionMap.has(m.id)) {
-        missionMap.set(m.id, m);
+    const loadMissionsAndStats = async () => {
+      try {
+        // Obtener estadísticas del asesino usando el servicio API
+        const assassinStats = await usersApi.getAssassinStats(assassin.id);
+        
+        setStats({
+          totalMissions: assassinStats.completedContracts + assassinStats.activeContracts,
+          completed: assassinStats.completedContracts,
+          inProgress: assassinStats.activeContracts,
+          cancelled: 0,
+          averageRating: assassinStats.averageRatingAllTime,
+          totalEarnings: assassinStats.totalEarnings
+        });
+
+        // Obtener misiones públicas y filtrar las del asesino
+        const publicMissions = await missionsApi.getPublicMissions();
+        const assassinId = btoa(assassin.email);
+        const assassinMissions = publicMissions.filter(m => m.assassinId === assassinId);
+        setMissions(assassinMissions);
+      } catch (error) {
+        console.error('Error loading assassin history:', error);
       }
-    });
-    const combinedMissions = Array.from(missionMap.values());
-    
-    // Filter missions for this assassin
-    const assassinMissions = combinedMissions.filter(m => m.assassinId === assassinId);
-    setMissions(assassinMissions);
+    };
 
-    // Calculate statistics
-    const completed = assassinMissions.filter(m => m.status === 'completed' || m.terminado);
-    const inProgress = assassinMissions.filter(m => 
-      (m.status === 'in_progress' || m.status === 'in-progress') && !m.terminado
-    );
-    const cancelled = assassinMissions.filter(m => m.status === 'cancelled');
-
-    // Calculate average rating from completed missions with reviews
-    const missionsWithReviews = completed.filter(m => m.review && m.review.rating);
-    const averageRating = missionsWithReviews.length > 0
-      ? missionsWithReviews.reduce((sum, m) => sum + m.review.rating, 0) / missionsWithReviews.length
-      : 0;
-
-    // Calculate total earnings from completed missions
-    const totalEarnings = completed.reduce((sum, m) => sum + (m.reward || 0), 0);
-
-    setStats({
-      totalMissions: assassinMissions.length,
-      completed: completed.length,
-      inProgress: inProgress.length,
-      cancelled: cancelled.length,
-      averageRating,
-      totalEarnings
-    });
+    loadMissionsAndStats();
   }, [assassin]);
 
   // Handle escape key
@@ -188,11 +171,14 @@ export const AssassinHistoryModal = ({
                   return dateB.getTime() - dateA.getTime();
                 })
                 .map((mission) => {
-                  // Get contractor name
-                  const contractorEmail = atob(mission.contractorId);
-                  const allUsers = authService.getAllUsers();
-                  const contractor = allUsers.find(u => u.email === contractorEmail);
-                  const contractorName = contractor?.nickname || contractor?.name || 'Unknown';
+                  // Get contractor name from contractorId (base64 encoded email)
+                  let contractorName = 'Unknown';
+                  try {
+                    const contractorEmail = atob(mission.contractorId);
+                    contractorName = contractorEmail.split('@')[0];
+                  } catch {
+                    contractorName = 'Unknown';
+                  }
 
                   // Format date
                   const missionDate = new Date(mission.updatedAt || mission.createdAt);
