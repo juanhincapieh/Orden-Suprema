@@ -15,6 +15,8 @@ import { authenticate, requireAdmin } from '../middleware/auth';
 const router = Router();
 
 router.get('/', authenticate, requireAdmin, getAllUsers);
+// Ruta pública para ver asesinos (sin autenticación)
+router.get('/assassins/public', getAssassins);
 router.get('/assassins', authenticate, getAssassins);
 router.get('/:userId', authenticate, getUserById);
 router.get('/:userId/status', authenticate, getUserStatus);

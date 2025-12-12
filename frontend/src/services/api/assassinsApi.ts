@@ -28,7 +28,7 @@ export interface UpdateProfileData {
 export const assassinsApiService = {
   // Obtener todos los asesinos (básico)
   getAllAssassins: async (): Promise<Assassin[]> => {
-    const response = await api.get<AssassinsResponse>('/users/assassins');
+    const response = await api.get<AssassinsResponse>('/users/assassins/public');
     return response.assassins;
   },
 

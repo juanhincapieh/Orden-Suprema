@@ -271,7 +271,7 @@ const realUsersService = {
   },
 
   getAllAssassins: async (): Promise<AssassinWithStats[]> => {
-    const response = await api.get<{ assassins: AssassinWithStats[] }>('/users/assassins');
+    const response = await api.get<{ assassins: AssassinWithStats[] }>('/users/assassins/public');
     return response.assassins;
   },
 
